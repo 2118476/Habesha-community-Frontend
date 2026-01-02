@@ -1,0 +1,512 @@
+/*!
+ * Enterprise Animated Background System
+ * 
+ * Modern, subtle animated backgrounds that work across all pages.
+ * Features aurora gradients, floating blobs, and animated grids.
+ * Fully respects prefers-reduced-motion and theme switching.
+ */
+
+/* ===================================================================
+ * BACKGROUND TOKENS
+ * =================================================================== */
+
+:root {
+  /* Light theme - VERY minimal decorative elements on pure white */
+  /* Keep these extremely subtle to maintain clean white appearance */
+  --aurora-color-1: rgba(14, 165, 233, 0.015);
+  --aurora-color-2: rgba(147, 51, 234, 0.01);
+  --aurora-color-3: rgba(59, 130, 246, 0.01);
+  --aurora-color-4: rgba(14, 165, 233, 0.015);
+  
+  --blob-color-1: rgba(14, 165, 233, 0.02);
+  --blob-color-2: rgba(147, 51, 234, 0.015);
+  --blob-color-3: rgba(59, 130, 246, 0.015);
+  
+  --grid-color: rgba(0, 0, 0, 0.01);
+  --grid-glow: rgba(14, 165, 233, 0.02);
+  
+  --bg-anim-slow: 40s;
+  --bg-anim-med: 25s;
+  --bg-anim-fast: 15s;
+  
+  --noise-opacity: 0.005;
+}
+
+:root[data-theme="dark"] {
+  /* Dark theme - vibrant blue gradient effects over black/blue gradient */
+  --aurora-color-1: rgba(56, 189, 248, 0.18);
+  --aurora-color-2: rgba(30, 58, 138, 0.25);
+  --aurora-color-3: rgba(59, 130, 246, 0.15);
+  --aurora-color-4: rgba(56, 189, 248, 0.20);
+  
+  --blob-color-1: rgba(56, 189, 248, 0.15);
+  --blob-color-2: rgba(30, 58, 138, 0.18);
+  --blob-color-3: rgba(59, 130, 246, 0.12);
+  
+  --grid-color: rgba(56, 189, 248, 0.08);
+  --grid-glow: rgba(56, 189, 248, 0.15);
+  
+  --noise-opacity: 0.025;
+}
+
+/* ===================================================================
+ * KEYFRAME ANIMATIONS
+ * =================================================================== */
+
+@keyframes aurora-drift {
+  0%, 100% {
+    transform: translate(0%, 0%) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translate(5%, -5%) rotate(90deg) scale(1.1);
+  }
+  50% {
+    transform: translate(-3%, 8%) rotate(180deg) scale(0.95);
+  }
+  75% {
+    transform: translate(8%, 3%) rotate(270deg) scale(1.05);
+  }
+}
+
+@keyframes aurora-pulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+@keyframes blob-float {
+  0%, 100% {
+    transform: translate(0%, 0%) scale(1);
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  }
+  25% {
+    transform: translate(5%, 5%) scale(1.05);
+    border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+  }
+  50% {
+    transform: translate(-5%, 8%) scale(0.95);
+    border-radius: 50% 60% 30% 60% / 30% 60% 70% 40%;
+  }
+  75% {
+    transform: translate(8%, -5%) scale(1.02);
+    border-radius: 60% 40% 60% 30% / 70% 30% 60% 40%;
+  }
+}
+
+@keyframes blob-morph {
+  0%, 100% {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  }
+  50% {
+    border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+  }
+}
+
+@keyframes grid-pan {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(50px, 50px);
+  }
+}
+
+@keyframes grid-pulse {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes noise-grain {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  10% {
+    transform: translate(-5%, -5%);
+  }
+  20% {
+    transform: translate(-10%, 5%);
+  }
+  30% {
+    transform: translate(5%, -10%);
+  }
+  40% {
+    transform: translate(-5%, 15%);
+  }
+  50% {
+    transform: translate(-10%, 5%);
+  }
+  60% {
+    transform: translate(15%, 0%);
+  }
+  70% {
+    transform: translate(0%, 10%);
+  }
+  80% {
+    transform: translate(-15%, 0%);
+  }
+  90% {
+    transform: translate(10%, 5%);
+  }
+}
+
+/* ===================================================================
+ * AURORA GLASS GRADIENT BACKGROUND
+ * =================================================================== */
+
+.bg-aurora {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Hide on auth pages */
+body:has(.account-container) .bg-aurora {
+  display: none !important;
+}
+
+.bg-aurora::before,
+.bg-aurora::after {
+  content: '';
+  position: absolute;
+  width: 150%;
+  height: 150%;
+  top: -25%;
+  left: -25%;
+  background: radial-gradient(
+    ellipse at center,
+    var(--aurora-color-1) 0%,
+    var(--aurora-color-2) 25%,
+    var(--aurora-color-3) 50%,
+    var(--aurora-color-4) 75%,
+    transparent 100%
+  );
+  filter: blur(80px);
+  opacity: 0.7;
+  animation: aurora-drift var(--bg-anim-slow) ease-in-out infinite,
+             aurora-pulse var(--bg-anim-med) ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.bg-aurora::after {
+  animation-delay: calc(var(--bg-anim-slow) / -2);
+  animation-direction: reverse;
+}
+
+/* Noise overlay for texture */
+.bg-aurora .noise {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: var(--noise-opacity);
+  animation: noise-grain 8s steps(10) infinite;
+  pointer-events: none;
+}
+
+/* ===================================================================
+ * FLOATING ORGANIC BLOBS
+ * =================================================================== */
+
+.bg-blobs {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Hide on auth pages */
+body:has(.account-container) .bg-blobs {
+  display: none !important;
+}
+
+.bg-blobs .blob {
+  position: absolute;
+  filter: blur(60px);
+  opacity: 0.6;
+  animation: blob-float var(--bg-anim-slow) ease-in-out infinite,
+             blob-morph var(--bg-anim-med) ease-in-out infinite;
+  will-change: transform, border-radius;
+}
+
+.bg-blobs .blob:nth-child(1) {
+  width: 500px;
+  height: 500px;
+  top: -10%;
+  left: -10%;
+  background: var(--blob-color-1);
+  animation-delay: 0s;
+}
+
+.bg-blobs .blob:nth-child(2) {
+  width: 600px;
+  height: 600px;
+  top: 40%;
+  right: -15%;
+  background: var(--blob-color-2);
+  animation-delay: calc(var(--bg-anim-slow) / -3);
+}
+
+.bg-blobs .blob:nth-child(3) {
+  width: 450px;
+  height: 450px;
+  bottom: -10%;
+  left: 30%;
+  background: var(--blob-color-3);
+  animation-delay: calc(var(--bg-anim-slow) / -2);
+}
+
+/* Parallax effect on scroll */
+.bg-blobs[data-parallax="true"] .blob {
+  transition: transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* ===================================================================
+ * MODERN GRID / DOTS MOTION FIELD
+ * =================================================================== */
+
+.bg-grid {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Hide on auth pages */
+body:has(.account-container) .bg-grid {
+  display: none !important;
+}
+
+.bg-grid::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background-image: 
+    radial-gradient(circle at center, var(--grid-color) 1px, transparent 1px),
+    radial-gradient(circle at center, var(--grid-glow) 1px, transparent 1px);
+  background-size: 50px 50px, 100px 100px;
+  background-position: 0 0, 25px 25px;
+  animation: grid-pan var(--bg-anim-slow) linear infinite,
+             grid-pulse var(--bg-anim-med) ease-in-out infinite;
+  opacity: 0.4;
+  will-change: transform, opacity;
+}
+
+/* Radial gradient overlay for depth */
+.bg-grid::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 0%,
+    var(--bg-app-solid) 100%
+  );
+  pointer-events: none;
+}
+
+/* ===================================================================
+ * COMBINED BACKGROUND (Aurora + Blobs)
+ * =================================================================== */
+
+.bg-combined {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Hide on auth pages */
+body:has(.account-container) .bg-combined {
+  display: none !important;
+}
+
+/* Aurora layer */
+.bg-combined .aurora-layer {
+  position: absolute;
+  width: 150%;
+  height: 150%;
+  top: -25%;
+  left: -25%;
+  background: radial-gradient(
+    ellipse at top left,
+    var(--aurora-color-1) 0%,
+    var(--aurora-color-2) 30%,
+    transparent 70%
+  );
+  filter: blur(100px);
+  opacity: 0.5;
+  animation: aurora-drift var(--bg-anim-slow) ease-in-out infinite;
+}
+
+/* Blob layer */
+.bg-combined .blob-layer {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  filter: blur(80px);
+  opacity: 0.4;
+  animation: blob-float calc(var(--bg-anim-slow) * 0.8) ease-in-out infinite,
+             blob-morph var(--bg-anim-med) ease-in-out infinite;
+}
+
+.bg-combined .blob-layer:nth-child(2) {
+  top: 10%;
+  right: 10%;
+  background: var(--blob-color-1);
+}
+
+.bg-combined .blob-layer:nth-child(3) {
+  bottom: 15%;
+  left: 15%;
+  background: var(--blob-color-2);
+  animation-delay: calc(var(--bg-anim-slow) / -2);
+}
+
+/* ===================================================================
+ * UTILITY CLASSES
+ * =================================================================== */
+
+/* Apply to body or main container - DISABLED for clean backgrounds */
+.has-animated-bg {
+  /* Disabled - no animated backgrounds */
+  position: static;
+  isolation: auto;
+}
+
+/* Ensure content is above background */
+.content-layer {
+  position: relative;
+  z-index: 1;
+}
+
+/* Glass surface that works with animated backgrounds */
+.glass-surface {
+  background: var(--surface-1);
+  backdrop-filter: blur(var(--glass-blur-md)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-md)) saturate(180%);
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-subtle),
+              inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* ===================================================================
+ * REDUCED MOTION SUPPORT
+ * =================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-aurora::before,
+  .bg-aurora::after,
+  .bg-aurora .noise,
+  .bg-blobs .blob,
+  .bg-grid::before,
+  .bg-combined .aurora-layer,
+  .bg-combined .blob-layer {
+    animation: none !important;
+    opacity: 0.3 !important;
+  }
+  
+  /* Static positions for reduced motion */
+  .bg-blobs .blob {
+    filter: blur(80px);
+  }
+  
+  .bg-aurora::before,
+  .bg-aurora::after {
+    filter: blur(100px);
+  }
+}
+
+/* ===================================================================
+ * RESPONSIVE ADJUSTMENTS
+ * =================================================================== */
+
+@media (max-width: 768px) {
+  /* Reduce complexity on mobile for performance */
+  .bg-aurora::before,
+  .bg-aurora::after {
+    filter: blur(60px);
+  }
+  
+  .bg-blobs .blob {
+    filter: blur(40px);
+    opacity: 0.4;
+  }
+  
+  .bg-blobs .blob:nth-child(1) {
+    width: 300px;
+    height: 300px;
+  }
+  
+  .bg-blobs .blob:nth-child(2) {
+    width: 350px;
+    height: 350px;
+  }
+  
+  .bg-blobs .blob:nth-child(3) {
+    width: 280px;
+    height: 280px;
+  }
+  
+  .bg-grid::before {
+    background-size: 40px 40px, 80px 80px;
+  }
+}
+
+/* ===================================================================
+ * PERFORMANCE OPTIMIZATIONS
+ * =================================================================== */
+
+.bg-aurora,
+.bg-blobs,
+.bg-grid,
+.bg-combined {
+  /* GPU acceleration */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  
+  /* Prevent layout thrashing */
+  contain: layout style paint;
+}
+
+/* Reduce animations on battery saver mode */
+@media (prefers-reduced-motion: reduce), (prefers-reduced-data: reduce) {
+  .bg-aurora,
+  .bg-blobs,
+  .bg-grid,
+  .bg-combined {
+    display: none;
+  }
+}

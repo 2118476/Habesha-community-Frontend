@@ -1,0 +1,379 @@
+/* ==========================================================================
+   NotificationsPage.module.scss — Dedicated notifications page
+   - Sticky top bar with actions
+   - Grouped list with date labels
+   - Nice focus/hover states matching tokens
+   - Dark/HC & reduced-motion friendly
+   ========================================================================== */
+
+.page {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 16px;
+  min-height: 100vh;
+  
+  /* Solid background - Gumtree style */
+  background: var(--surface-0, #ffffff) !important;
+  background-color: var(--surface-0, #ffffff) !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  
+  /* Solid topbar - Gumtree style */
+  background: var(--surface-0, #ffffff) !important;
+  background-color: var(--surface-0, #ffffff) !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  
+  border-bottom: 1px solid var(--border-1, #e1e5e9);
+  padding: 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  
+  /* Ensure seamless coverage */
+  margin: -16px -16px 16px -16px;
+  padding-left: 16px;
+  padding-right: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 800;
+  margin: 0;
+}
+
+.actions {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+}
+
+.action {
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border-1, #e6e8ee);
+  background: var(--surface-2, #f7f9fc);
+  color: var(--on-surface, #0b1220);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .12s ease, border-color .12s ease;
+
+  &:hover {
+    background: color-mix(in oklab, var(--surface-2, #f7f9fc) 70%, transparent);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--brand, #0a84ff);
+    outline-offset: 2px;
+  }
+}
+
+.list {
+  display: grid;
+  gap: 0; /* Remove gaps - Gumtree style flush rows */
+  padding-top: 8px;
+  
+  /* Solid background - no transparency */
+  background: var(--surface-0, #ffffff) !important;
+  background-color: var(--surface-0, #ffffff) !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  
+  margin: 0;
+  
+  /* polish */
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--on-surface, #0b1220) 24%, transparent) transparent;
+}
+.list::-webkit-scrollbar { width: 10px; height: 10px; }
+.list::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--on-surface, #0b1220) 22%, transparent);
+  border-radius: 999px;
+}
+
+.group { 
+  padding-block: 0; /* Remove padding to prevent gaps */
+  
+  /* Add dividers between day groups - Gumtree style */
+  &:not(:first-child) {
+    border-top: 1px solid var(--border-soft, #f0f2f5);
+    margin-top: 8px;
+    padding-top: 8px;
+  }
+}
+
+.groupLabel {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+  color: var(--text-2, #64748b);
+  margin: 0;
+  padding: 12px 16px 6px 16px;
+  
+  /* Solid sticky header - Gumtree style */
+  background: var(--surface-0, #ffffff) !important;
+  background-color: var(--surface-0, #ffffff) !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  
+  position: sticky;
+  top: 60px; /* Account for topbar height */
+  z-index: 1;
+}
+
+.loader,
+.empty {
+  padding: 16px;
+  color: var(--on-surface-2, #64748b);
+  text-align: center;
+}
+
+.sentinel {
+  height: 1px;
+}
+
+/* Gumtree-style notification rows - solid, flush, no cards */
+.list :global(a[role="listitem"]) {
+  border-radius: 0 !important; /* Remove card styling */
+  padding: 16px !important;
+  margin: 0 !important; /* Remove card margins */
+  
+  /* Solid row background - no glass effects */
+  background: var(--surface-0, #ffffff) !important;
+  background-color: var(--surface-0, #ffffff) !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  
+  border: none !important;
+  box-shadow: none !important;
+  
+  /* Gumtree-style dividers between rows */
+  border-bottom: 1px solid var(--border-soft, rgba(0, 0, 0, 0.04)) !important;
+  
+  /* FIX LAYOUT FOR TIMESTAMP VISIBILITY */
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 12px !important;
+  
+  /* REMOVE FIXED HEIGHT - LET CONTENT DETERMINE HEIGHT */
+  height: auto !important;
+  min-height: auto !important;
+  
+  /* ENSURE TEXT IS VISIBLE */
+  overflow: visible !important;
+  
+  transition: background-color 0.15s ease !important;
+  transform: none !important;
+  
+  /* ENHANCED UNREAD STYLING */
+  &[data-unread="true"] {
+    background: #f0f7ff !important; /* Light blue tint */
+    background-color: #f0f7ff !important;
+    border-left: 3px solid #3b82f6 !important;
+    position: relative !important;
+    
+    /* Subtle glow effect for unread items */
+    box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.1) !important;
+    
+    &:hover {
+      background: #e6f3ff !important; /* Slightly darker on hover */
+      background-color: #e6f3ff !important;
+      box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.2) !important;
+    }
+  }
+  
+  /* FIX TEXT CONTENT STYLING */
+  :global(.notification-title) {
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    line-height: 1.4 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    
+    /* ENSURE TEXT WRAPS PROPERLY */
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow: visible !important;
+  }
+  
+  :global(.notification-time) {
+    font-size: 12px !important;
+    font-weight: 400 !important;
+    opacity: 0.6 !important;
+    
+    /* FIX TIMESTAMP CLIPPING */
+    line-height: 1.4 !important;
+    margin: 0 !important;
+    padding: 2px 0 0 0 !important; /* Small top padding to prevent baseline clipping */
+    
+    /* ENSURE TIMESTAMP IS FULLY VISIBLE */
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow: visible !important;
+  }
+  
+  :global(.notification-dot) {
+    width: 8px !important;
+    height: 8px !important;
+    border-radius: 50% !important;
+    background: #3b82f6 !important;
+    flex-shrink: 0 !important;
+    margin-top: 4px !important;
+  }
+}
+
+.list :global(a[role="listitem"]:hover) {
+  background: var(--surface-1, #f8f9fa) !important;
+  background-color: var(--surface-1, #f8f9fa) !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  
+  border-color: var(--border-soft, rgba(0, 0, 0, 0.04)) !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.list :global(a[role="listitem"]:focus-visible) {
+  outline: 2px solid var(--brand, #0a84ff);
+  outline-offset: -2px; /* Inside the element */
+  background: var(--surface-1, #f8f9fa) !important;
+}
+
+/* ─────────────── Dark theme (Gumtree Style) ─────────────── */
+:global([data-theme="dark"]) {
+  .page {
+    background: var(--surface-0, #0b1220) !important;
+    background-color: var(--surface-0, #0b1220) !important;
+    background-image: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  
+  .topbar {
+    border-bottom-color: var(--border-1, #1e293b);
+    background: var(--surface-0, #0b1220) !important;
+    background-color: var(--surface-0, #0b1220) !important;
+    background-image: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  }
+  
+  .list {
+    background: var(--surface-0, #0b1220) !important;
+    background-color: var(--surface-0, #0b1220) !important;
+    background-image: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  
+  .group {
+    &:not(:first-child) {
+      border-top-color: var(--border-soft, #1e293b);
+    }
+  }
+  
+  .groupLabel {
+    background: var(--surface-0, #0b1220) !important;
+    background-color: var(--surface-0, #0b1220) !important;
+    background-image: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    color: var(--text-2, #94a3b8);
+  }
+  
+  .action {
+    background: var(--surface-1, #1e293b) !important;
+    border-color: var(--border-1, #334155);
+    color: var(--text-1, #e2e8f0);
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  
+  .list :global(a[role="listitem"]) {
+    background: var(--surface-0, #0b1220) !important;
+    background-color: var(--surface-0, #0b1220) !important;
+    background-image: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border-bottom-color: var(--border-soft, rgba(255, 255, 255, 0.06)) !important;
+    box-shadow: none !important;
+    
+    /* ENSURE PROPER LAYOUT IN DARK MODE */
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+    
+    /* ENHANCED UNREAD STYLING FOR DARK MODE */
+    &[data-unread="true"] {
+      background: #1a2332 !important; /* Subtle darker blue tint */
+      background-color: #1a2332 !important;
+      border-left: 3px solid #3b82f6 !important;
+      box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.15) !important;
+      
+      &:hover {
+        background: #1f2937 !important; /* Slightly lighter on hover */
+        background-color: #1f2937 !important;
+        box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.25) !important;
+      }
+    }
+    
+    :global(.notification-title) {
+      color: var(--text-1, #e2e8f0) !important;
+      line-height: 1.4 !important;
+      white-space: normal !important;
+      overflow: visible !important;
+    }
+    
+    :global(.notification-time) {
+      color: var(--text-2, #94a3b8) !important;
+      line-height: 1.4 !important;
+      padding: 2px 0 0 0 !important;
+      white-space: normal !important;
+      overflow: visible !important;
+    }
+    
+    :global(.notification-dot) {
+      background: #3b82f6 !important;
+    }
+  }
+  
+  .list :global(a[role="listitem"]:hover) {
+    background: var(--surface-1, #1e293b) !important;
+    background-color: var(--surface-1, #1e293b) !important;
+    background-image: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border-bottom-color: var(--border-soft, rgba(255, 255, 255, 0.06)) !important;
+    box-shadow: none !important;
+  }
+}
+
+/* ─────────────── Reduced motion & High Contrast ─────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .action { transition: none; }
+}
+
+@media (forced-colors: active) {
+  .topbar, .action, .list :global(a[role="listitem"]) {
+    border: 1px solid CanvasText;
+  }
+  .list :global(a[role="listitem"]:focus-visible),
+  .action:focus-visible {
+    outline: 2px solid Highlight;
+  }
+}

@@ -1,0 +1,59 @@
+/*! Light theme overrides --------------------------------------------------- */
+/*
+ * Light Mode: Pure white backgrounds + black text
+ * 
+ * This file ensures light mode maintains clean, bright appearance
+ * with maximum readability. The default `:root` block in `_tokens.scss`
+ * defines the base light palette, but we add explicit overrides here
+ * to ensure consistency across all components.
+ */
+:root[data-theme="light"] {
+  /* Ensure pure white backgrounds */
+  --bg-app: #ffffff;
+  --bg-app-solid: #ffffff;
+  
+  /* Surfaces should be white or very close to white */
+  --surface-0: #ffffff;
+  --surface-1: #ffffff;
+  --surface-2: #fafafa;
+  --surface-elevated: #ffffff;
+  
+  /* Text must be black/very dark for readability */
+  --on-surface-0: #0a0a0a;
+  --on-surface-1: #000000;
+  --on-surface-2: #000000;
+  --on-surface-muted: #666666;
+  
+  /* Ensure all surfaces use proper colors */
+  .surface,
+  .card,
+  .panel {
+    background: var(--surface-1);
+    color: var(--on-surface-1);
+    border: 1px solid var(--border-soft);
+  }
+  
+  /* Inputs and form elements */
+  input,
+  textarea,
+  select {
+    background: #ffffff;
+    color: #000000;
+    border: 1px solid var(--border-soft);
+  }
+  
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--on-surface-muted);
+  }
+  
+  /* Buttons */
+  button {
+    color: var(--on-surface-1);
+  }
+  
+  /* Links */
+  a {
+    color: var(--brand);
+  }
+}

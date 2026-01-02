@@ -1,0 +1,83 @@
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spinner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.circle {
+  border-radius: 50%;
+  border-style: solid;
+  animation: spin var(--motion-med) linear infinite;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .circle {
+    animation: spin var(--motion-fast) linear infinite;
+  }
+}
+
+/* Sizes */
+.xs .circle {
+  width: 12px;
+  height: 12px;
+  border-width: 1.5px;
+}
+
+.sm .circle {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+}
+
+.md .circle {
+  width: 24px;
+  height: 24px;
+  border-width: 2.5px;
+}
+
+.lg .circle {
+  width: 32px;
+  height: 32px;
+  border-width: 3px;
+}
+
+.xl .circle {
+  width: 40px;
+  height: 40px;
+  border-width: 3.5px;
+}
+
+/* Colors */
+.brand .circle {
+  border-color: var(--brand) transparent var(--brand) transparent;
+}
+
+.white .circle {
+  border-color: #ffffff transparent #ffffff transparent;
+}
+
+.muted .circle {
+  border-color: var(--on-surface-muted) transparent var(--on-surface-muted) transparent;
+}
+
+.danger .circle {
+  border-color: var(--danger) transparent var(--danger) transparent;
+}
+
+.success .circle {
+  border-color: var(--success) transparent var(--success) transparent;
+}
+
+/* Inline variant */
+.inline {
+  display: inline-flex;
+  vertical-align: middle;
+  margin-left: var(--space-2);
+}

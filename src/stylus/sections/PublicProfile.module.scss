@@ -1,0 +1,1546 @@
+/* ==========================================================================
+   PublicProfile.module.scss — PUBLIC PROFILE (light-first, modern UI)
+   - White hero card
+   - Quick stats row
+   - Sticky tabs (About / Ads / Rentals / Services / Events / Photos)
+   - Friend / Message / More actions bar
+   - Mutual friends grid
+   - Contact / Reach me card
+   - Listings grid cards (user's Ads / Rentals / Services / Events / Swap)
+   - Photos grid
+   - Report modal
+   - A11y (focus rings), responsive container queries, dark mode support
+   ========================================================================== */
+
+/* ========================== DESIGN TOKENS ========================== */
+:root {
+  --pf-ink-1: var(--on-surface-1);
+  --pf-ink-2: var(--on-surface-muted);
+
+  --pf-bg:        var(--surface-0);
+  --pf-surface:   var(--surface-1);
+  --pf-surface-2: var(--surface-2);
+  --pf-border:    var(--border-soft);
+
+  --pf-brand:     var(--brand);
+
+  --pf-radius-sm: 8px;
+  --pf-radius-md: 12px;
+  --pf-radius-lg: 14px;
+  --pf-radius-xl: 20px;
+
+  --pf-shadow-1: var(--shadow-subtle);
+  --pf-shadow-2: var(--shadow-soft);
+  --pf-shadow-inner: inset 0 1px 0 rgba(255,255,255,.6);
+
+  --pf-ring: 0 0 0 3px color-mix(in oklab, var(--pf-brand) 40%, transparent);
+
+  --pf-hero-gap: 16px;
+  --pf-hero-pad: clamp(16px, 2vw, 20px);
+
+  --pf-tab-rail-h: 48px;
+  --pf-tab-radius: 999px;
+
+  --pf-hero-max-w: 1000px;
+}
+
+/* ========================== PAGE WRAPPER / SKELETON ========================== */
+.container {
+  max-width: var(--pf-hero-max-w);
+  margin-inline: auto;
+  padding: clamp(12px, 2vw, 24px);
+  color: var(--pf-ink-1);
+  background-color: var(--pf-bg);
+  container-type: inline-size;
+  container-name: profile;
+}
+
+/* Light mode explicit overrides for container */
+:root .container,
+:root[data-theme="light"] .container {
+  color: #1a1a1a !important;
+}
+
+/* Dark mode explicit overrides for container */
+:root[data-theme="dark"] .container {
+  color: #ffffff !important;
+}
+
+/* Ensure all text elements inherit proper colors */
+:root .container *,
+:root[data-theme="light"] .container * {
+  color: inherit;
+}
+
+:root[data-theme="dark"] .container * {
+  color: inherit;
+}
+
+.skeletonHero,
+.skeletonRow {
+  --skel-a: #edf1f7;
+  --skel-b: #f5f7fb;
+  border-radius: var(--pf-radius-lg);
+  background: linear-gradient(
+    90deg,
+    var(--skel-a) 25%,
+    var(--skel-b) 37%,
+    var(--skel-a) 63%
+  );
+  background-size: 400% 100%;
+  animation: shimmer 1.1s linear infinite;
+}
+.skeletonHero { height: 260px; margin-block-end: 16px; }
+.skeletonRow  { height: 82px;  margin-block-start: 10px; border-radius: var(--pf-radius-md); }
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* =============================== HERO CARD =============================== */
+.hero {
+  position: relative;
+  width: 100%;
+  border-radius: var(--pf-radius-xl);
+  background-color: var(--pf-surface);
+  box-shadow: var(--pf-shadow-1);
+  border: 1px solid var(--pf-border);
+  display: block;
+
+  overflow: clip;
+  @supports not (overflow: clip) {
+    overflow: hidden;
+  }
+
+  padding: var(--pf-hero-pad);
+  /* Desktop: extra padding for absolutely positioned tabs */
+  padding-bottom: calc(var(--pf-hero-pad) + var(--pf-tab-rail-h) + 16px);
+}
+
+/* Optional banner background */
+.cover {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  filter: saturate(1.05) contrast(1.02);
+  opacity: 0.08;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Foreground content */
+.heroOverlay {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-hero-gap);
+  z-index: 1;
+}
+
+/* avatar + identity + actions row */
+.identityRow {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: flex-start;
+  column-gap: clamp(12px, 2vw, 20px);
+  row-gap: 12px;
+  color: var(--pf-ink-1);
+}
+
+/* avatar with presence dot */
+.avatarWrapOuter {
+  position: relative;
+  inline-size: clamp(88px, 11vw, 120px);
+  block-size: clamp(88px, 11vw, 120px);
+  border-radius: 50%;
+  background-color: var(--surface-2);
+  border: 2px solid var(--surface-1);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+}
+.presenceDot {
+  position: absolute;
+  right: 6px; bottom: 6px;
+  inline-size: 14px; block-size: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--surface-1);
+  box-shadow: var(--shadow-subtle);
+}
+.online  { background: var(--success); }
+.offline { background: var(--on-surface-muted); }
+
+/* identity stack (name, badges, meta, actions, stats) */
+.identity {
+  min-width: 0;
+  display: grid;
+  row-gap: 12px;
+}
+
+/* display name row */
+.nameRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  column-gap: 8px;
+  row-gap: 6px;
+  min-width: 0;
+}
+.name {
+  margin: 0;
+  font-size: clamp(1.1rem, 0.3vw + 1rem, 1.4rem);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--pf-ink-1);
+  word-break: break-word;
+}
+
+/* Light mode explicit overrides for name */
+:root .name,
+:root[data-theme="light"] .name {
+  color: #1a1a1a !important;
+}
+
+/* Dark mode explicit overrides for name */
+:root[data-theme="dark"] .name {
+  color: #ffffff !important;
+}
+
+/* legacy single badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 24px;
+  border: 1px solid rgba(0,0,0,.08);
+  background: #eef2ff;
+  color: #3730a3;
+}
+
+/* ====== RoleBadges (multiple role pills, e.g. ADMIN, SERVICE_PROVIDER) ====== */
+
+.roleBadges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 6px;
+  row-gap: 4px;
+  min-width: 0;
+}
+
+.roleBadge {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1.2;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 24px;
+  border: 1px solid transparent;
+  box-shadow: 0 1px 2px rgba(0,0,0,.08);
+  user-select: none;
+  white-space: nowrap;
+}
+
+/* Verified */
+.role_verified,
+.role_VERIFIED {
+  background: #eef2ff;
+  color: #3730a3;
+  border-color: rgba(55,48,163,.25);
+}
+
+/* Admin */
+.role_ADMIN {
+  background: #fee2e2;
+  color: #b91c1c;
+  border-color: rgba(185,28,28,.25);
+}
+
+/* Moderator */
+.role_MODERATOR,
+.role_MOD {
+  background: #fff7ed;
+  color: #9a3412;
+  border-color: rgba(154,52,18,.25);
+}
+
+/* Service Provider */
+.role_SERVICE_PROVIDER,
+.role_PROVIDER,
+.role_SERVICE {
+  background: #ecfdf5;
+  color: #065f46;
+  border-color: rgba(6,95,70,.25);
+}
+
+/* meta row (@handle, online status, location, joined...) */
+.metaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: .85rem;
+  line-height: 1.4;
+  color: var(--pf-ink-2);
+}
+.handle {
+  color: var(--pf-ink-1);
+  font-weight: 500;
+}
+
+/* Light mode explicit overrides for handle */
+:root .handle,
+:root[data-theme="light"] .handle {
+  color: #1a1a1a !important;
+}
+
+/* Dark mode explicit overrides for handle */
+:root[data-theme="dark"] .handle {
+  color: #ffffff !important;
+}
+
+.meta {
+  color: var(--pf-ink-2);
+}
+
+/* Light mode explicit overrides for meta */
+:root .meta,
+:root[data-theme="light"] .meta {
+  color: #666666 !important;
+}
+
+/* Dark mode explicit overrides for meta */
+:root[data-theme="dark"] .meta {
+  color: #d1d5db !important;
+}
+.metaOnline {
+  color: #22c55e;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* actions row (Add Friend / Message / Share / Edit Profile / etc.) */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+  justify-content: flex-start;
+}
+.moreMenu {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ======================= QUICK STATS BAR ======================= */
+.quickStatsBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  row-gap: 10px;
+  align-items: center;
+
+  background: var(--pf-surface-2);
+  border: 1px solid var(--pf-border);
+  border-radius: var(--pf-radius-md);
+  box-shadow: var(--pf-shadow-inner);
+  padding: 10px 12px;
+  font-size: .8rem;
+  line-height: 1.3;
+  color: var(--pf-ink-1);
+  
+  /* Desktop: bottom margin to prevent overlap with absolutely positioned tabs */
+  margin-bottom: calc(var(--pf-tab-rail-h) + 16px);
+}
+
+/* Light mode explicit overrides for stats bar */
+:root .quickStatsBar,
+:root[data-theme="light"] .quickStatsBar {
+  color: #1a1a1a !important;
+}
+
+/* Dark mode explicit overrides for stats bar */
+:root[data-theme="dark"] .quickStatsBar {
+  color: #ffffff !important;
+}
+
+.statBtn {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+
+  min-width: 48px;
+
+  color: inherit;
+  font-family: inherit;
+}
+.statBtn:focus-visible {
+  outline: none;
+  box-shadow: var(--pf-ring);
+  border-radius: var(--pf-radius-sm);
+}
+.statNum {
+  font-size: .9rem;
+  font-weight: 600;
+  color: var(--pf-ink-1);
+  line-height: 1.2;
+}
+
+/* Light mode explicit overrides for stat numbers */
+:root .statNum,
+:root[data-theme="light"] .statNum {
+  color: #1a1a1a !important;
+}
+
+/* Dark mode explicit overrides for stat numbers */
+:root[data-theme="dark"] .statNum {
+  color: #ffffff !important;
+}
+
+.statLabel {
+  font-size: .7rem;
+  font-weight: 500;
+  color: var(--pf-ink-2);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* Light mode explicit overrides for stat labels */
+:root .statLabel,
+:root[data-theme="light"] .statLabel {
+  color: #666666 !important;
+}
+
+/* Dark mode explicit overrides for stat labels */
+:root[data-theme="dark"] .statLabel {
+  color: #d1d5db !important;
+}
+
+/* =============================== TAB RAIL =============================== */
+.tabRail {
+  position: absolute;
+  right: var(--pf-hero-pad);
+  left:  var(--pf-hero-pad);
+  bottom: var(--pf-hero-pad);
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: var(--pf-tab-rail-h);
+  align-items: center;
+
+  background: #ffffff;
+  border: 1px solid var(--pf-border);
+  border-radius: var(--pf-tab-radius);
+  padding: 6px;
+  box-shadow: var(--pf-shadow-1);
+  z-index: 2;
+}
+
+/* Tab buttons */
+.tabBtn {
+  appearance: none;
+  border: 1px solid transparent;
+  border-radius: var(--pf-tab-radius);
+  background: transparent;
+  box-shadow: none;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+
+  font-size: .9rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--pf-ink-1);
+
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background-color .15s ease,
+    border-color .15s ease,
+    box-shadow .15s ease,
+    transform .12s ease;
+}
+
+/* Light mode explicit overrides for tab buttons */
+:root .tabBtn,
+:root[data-theme="light"] .tabBtn {
+  color: #1a1a1a !important;
+}
+
+/* Dark mode explicit overrides for tab buttons */
+:root[data-theme="dark"] .tabBtn {
+  color: #ffffff !important;
+}
+
+.tabBtn:hover {
+  background-color: var(--pf-surface-2);
+  border-color: var(--pf-border);
+  box-shadow: var(--pf-shadow-inner);
+}
+.tabBtn:focus-visible {
+  outline: none;
+  box-shadow: var(--pf-ring);
+}
+
+/* Active tab - Light mode: subtle emphasis without blue brand color */
+.tabActive,
+.tabBtn[data-active],
+.tabBtn[aria-current="page"] {
+  /* Light mode: subtle white background with soft border */
+  background-color: #ffffff;
+  border-color: var(--pf-border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08),
+              inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transform: translateY(-1px);
+  color: var(--pf-ink-1);
+  font-weight: 700;
+}
+
+/* Light mode explicit overrides for active tab buttons */
+:root .tabActive,
+:root .tabBtn[data-active],
+:root .tabBtn[aria-current="page"],
+:root[data-theme="light"] .tabActive,
+:root[data-theme="light"] .tabBtn[data-active],
+:root[data-theme="light"] .tabBtn[aria-current="page"] {
+  color: #1a1a1a !important;
+}
+
+/* Dark mode explicit overrides for active tab buttons */
+:root[data-theme="dark"] .tabActive,
+:root[data-theme="dark"] .tabBtn[data-active],
+:root[data-theme="dark"] .tabBtn[aria-current="page"] {
+  color: #ffffff !important;
+}
+
+.tabText {
+  color: inherit;
+  font-weight: inherit;
+}
+
+/* Count bubble - Neutral styling */
+.tabCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding-inline: 6px;
+  font-size: .7rem;
+  font-weight: 600;
+  line-height: 1;
+  border-radius: 24px;
+  
+  /* Light mode: neutral gray background */
+  background-color: var(--pf-surface-2);
+  color: var(--pf-ink-1);
+  border: 1px solid var(--pf-border);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Light mode explicit overrides for tab count */
+:root .tabCount,
+:root[data-theme="light"] .tabCount {
+  color: #1a1a1a !important;
+}
+
+/* Dark mode: white count on dark background */
+:global([data-theme="dark"]) .tabCount {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Dark mode: active tab gets glassy effect */
+:global([data-theme="dark"]) .tabActive,
+:global([data-theme="dark"]) .tabBtn[data-active],
+:global([data-theme="dark"]) .tabBtn[aria-current="page"] {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* =============================== CONTENT SECTIONS =============================== */
+.section {
+  margin-block-start: 16px;
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-border);
+  border-radius: var(--pf-radius-lg);
+  box-shadow: var(--pf-shadow-1);
+  padding: clamp(14px, 2vw, 18px);
+}
+
+.sectionHeaderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  column-gap: 8px;
+  row-gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: clamp(1rem, 0.3vw + .95rem, 1.125rem);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  
+  /* Light mode: dark text on light highlight */
+  color: var(--feed-section-title-color-light, #000000);
+  background: var(--feed-section-highlight-bg-light, rgba(14, 165, 233, 0.08));
+  border: 1px solid var(--feed-section-highlight-border-light, rgba(14, 165, 233, 0.15));
+  padding: 8px 12px;
+  border-radius: 10px;
+  width: fit-content;
+}
+
+/* Light mode explicit overrides for section title */
+:root .sectionTitle,
+:root[data-theme="light"] .sectionTitle {
+  color: #000000 !important;
+}
+
+/* Dark mode explicit overrides for section title */
+:root[data-theme="dark"] .sectionTitle {
+  color: #ffffff !important;
+}
+
+.sectionCount {
+  font-size: .8rem;
+  font-weight: 500;
+  color: inherit;
+  line-height: 1.2;
+}
+
+.bio {
+  margin: 6px 0 0;
+  font-size: .95rem;
+  line-height: 1.55;
+  color: var(--pf-ink-1);
+  word-break: break-word;
+}
+.empty {
+  color: var(--pf-ink-2);
+  font-size: .9rem;
+  line-height: 1.4;
+}
+.subtle {
+  color: var(--pf-ink-2);
+  font-size: .85rem;
+  line-height: 1.4;
+}
+.hint {
+  color: var(--pf-ink-2);
+  font-size: .8rem;
+  margin-top: 8px;
+}
+
+/* ===== Contact / Reach me card ===== */
+.contactCard {
+  margin-top: 12px;
+  background: var(--pf-surface-2);
+  border: 1px solid var(--pf-border);
+  border-radius: var(--pf-radius-md);
+  padding: 12px;
+  box-shadow: var(--pf-shadow-inner);
+  color: var(--pf-ink-1);
+  font-size: .9rem;
+  line-height: 1.4;
+}
+.contactHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  column-gap: 8px;
+  row-gap: 8px;
+  margin-bottom: 8px;
+}
+.contactTitle {
+  margin: 0;
+  font-size: .9rem;
+  font-weight: 600;
+  color: var(--pf-ink-1);
+  line-height: 1.4;
+}
+.contactList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  row-gap: 8px;
+}
+.contactItem {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 8px;
+  align-items: baseline;
+  word-break: break-word;
+}
+.contactKey {
+  font-size: .8rem;
+  color: var(--pf-ink-2);
+  line-height: 1.3;
+  font-weight: 500;
+}
+.contactVal,
+.contactValLink {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font-size: .9rem;
+  line-height: 1.4;
+  font-weight: 500;
+  color: var(--pf-ink-1);
+  text-align: left;
+  word-break: break-word;
+  cursor: pointer;
+  text-decoration: none;
+}
+.contactVal:hover,
+.contactValLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  color: var(--pf-brand);
+}
+.contactVal:focus-visible,
+.contactValLink:focus-visible {
+  outline: none;
+  box-shadow: var(--pf-ring);
+  border-radius: var(--pf-radius-sm);
+}
+
+/* ===== Mutual friends sub-card ===== */
+.subcard {
+  margin-block-start: 12px;
+  background: var(--pf-surface-2);
+  border: 1px solid var(--pf-border);
+  border-radius: var(--pf-radius-md);
+  padding: 12px;
+  box-shadow: var(--pf-shadow-inner);
+}
+.subcardHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  column-gap: 8px;
+  row-gap: 8px;
+  margin-bottom: 8px;
+}
+.subcardTitle {
+  margin: 0;
+  font-size: .9rem;
+  font-weight: 600;
+  color: var(--pf-ink-1);
+  line-height: 1.4;
+}
+
+/* MUTUAL FRIENDS GRID */
+.mutualGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(170px, 100%), 1fr));
+  gap: 10px;
+}
+.mutualItem {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  column-gap: 10px;
+  padding: 8px 10px;
+
+  background: #ffffff;
+  border-radius: 24px;
+  border: 1px solid transparent;
+  box-shadow: var(--pf-shadow-1);
+
+  cursor: pointer;
+  user-select: none;
+  transition:
+    transform .12s ease,
+    box-shadow .18s ease,
+    background-color .18s ease,
+    border-color .18s ease;
+}
+.mutualItem:hover {
+  background-color: var(--pf-surface-2);
+  border-color: var(--pf-border);
+  transform: translateY(-1px);
+  box-shadow: var(--pf-shadow-2);
+}
+.mutualItem:focus-visible {
+  outline: none;
+  box-shadow: var(--pf-ring);
+}
+.mutualName {
+  font-weight: 600;
+  font-size: .9rem;
+  line-height: 1.3;
+  color: var(--pf-ink-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ============================ LIST GRID ============================ */
+.listGrid {
+  --minW: 240px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--minW), 1fr));
+  gap: 12px;
+  margin-top: 8px;
+  list-style: none;
+  padding: 0;
+}
+.listItem {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  align-items: center;
+  column-gap: 10px;
+  padding: 10px;
+
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid var(--pf-border);
+  box-shadow: var(--pf-shadow-1);
+
+  cursor: pointer;
+  transition:
+    transform .12s ease,
+    box-shadow .18s ease,
+    background-color .18s ease,
+    border-color .18s ease;
+}
+.listItem:hover {
+  background-color: var(--pf-surface-2);
+  border-color: var(--pf-border);
+  transform: translateY(-1px);
+  box-shadow: var(--pf-shadow-2);
+}
+.listItem:focus-visible {
+  outline: none;
+  box-shadow: var(--pf-ring);
+}
+
+.listThumb {
+  inline-size: 96px;
+  block-size: 80px;
+  border-radius: 24px;
+  overflow: hidden;
+  background: #f2f4f8;
+  border: 1px solid var(--pf-border);
+  display: grid;
+  place-items: center;
+  font-size: .8rem;
+  line-height: 1.3;
+  color: var(--pf-ink-2);
+  text-align: left;
+  word-break: break-word;
+}
+.listThumb img {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  display: block;
+}
+.thumbBlank {
+  inline-size: 100%;
+  block-size: 100%;
+  background: #eef2f7;
+}
+
+.listMeta {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.itemTitle {
+  font-weight: 600;
+  color: var(--pf-ink-1);
+  font-size: .95rem;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.itemSubtle {
+  margin-top: 2px;
+  color: var(--pf-ink-2);
+  font-size: .8rem;
+  line-height: 1.3;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.price {
+  font-weight: 600;
+  color: color-mix(in oklab, #0a0a0a 80%, var(--pf-brand) 20%);
+}
+.dot {
+  opacity: .4;
+}
+
+/* ============================ PHOTOS GRID ============================ */
+.photoGrid {
+  --minP: 140px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--minP), 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+.photoGrid img {
+  inline-size: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 24px;
+  border: 1px solid var(--pf-border);
+  background: #f2f4f8;
+  box-shadow: var(--pf-shadow-1);
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .18s ease;
+}
+.photoGrid img:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--pf-shadow-2);
+}
+.photoGrid img:focus-visible {
+  outline: none;
+  box-shadow: var(--pf-ring);
+}
+
+/* ============================ REPORT MODAL ============================ */
+.reportOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0,0,0,.45);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5000;
+}
+.reportCard {
+  background-color: #ffffff;
+  border-radius: var(--pf-radius-lg);
+  box-shadow: 0 20px 60px rgba(0,0,0,.24);
+  width: min(90vw, 400px);
+  max-width: 400px;
+  padding: 20px;
+  border: 1px solid var(--pf-border);
+  display: flex;
+  flex-direction: column;
+  row-gap: 16px;
+}
+.reportTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--pf-ink-1);
+  line-height: 1.3;
+}
+.reportNote  {
+  font-size: .8rem;
+  color: var(--pf-ink-2);
+  line-height: 1.4;
+}
+.reportTextarea {
+  width: 100%;
+  min-height: 100px;
+  border-radius: var(--pf-radius-md);
+  border: 1px solid var(--pf-border);
+  padding: 10px 12px;
+  font-size: .9rem;
+  line-height: 1.4;
+  color: var(--pf-ink-1);
+  resize: vertical;
+  background-color: #fff;
+}
+.reportTextarea:focus-visible {
+  outline: none;
+  box-shadow: var(--pf-ring);
+  border-color: var(--pf-brand);
+}
+.reportFooterRow {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 12px;
+}
+.reportBtnCancel,
+.reportBtnSubmit {
+  appearance: none;
+  background-color: #ffffff;
+  border-radius: var(--pf-radius-md);
+  border: 1px solid var(--pf-border);
+  font-size: .9rem;
+  font-weight: 500;
+  line-height: 1.3;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color .15s ease, box-shadow .15s ease;
+}
+.reportBtnCancel:hover {
+  background-color: var(--pf-surface-2);
+}
+.reportBtnCancel:focus-visible,
+.reportBtnSubmit:focus-visible {
+  outline: none;
+  box-shadow: var(--pf-ring);
+}
+.reportBtnSubmit {
+  background-color: var(--pf-brand);
+  border-color: var(--pf-brand);
+  color: #fff;
+  box-shadow:
+    0 1px 2px rgba(0,0,0,.25),
+    0 4px 12px rgba(10,132,255,.3);
+}
+.reportBtnSubmit:hover {
+  filter: brightness(1.05);
+}
+.reportBtnSubmit:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+  filter: none;
+  box-shadow: none;
+}
+
+/* ============================ RESPONSIVE / CONTAINER QUERIES ============================ */
+@container profile (max-width: 820px) {
+  .hero {
+    padding-bottom: var(--pf-hero-pad);
+  }
+  .tabRail {
+    position: static;
+    order: 3;
+    width: 100%;
+    border-radius: var(--pf-radius-lg);
+    box-shadow: var(--pf-shadow-1);
+    margin-top: 4px;
+  }
+  /* Mobile: remove bottom margin from stats since tabs are now in normal flow */
+  .quickStatsBar {
+    margin-bottom: 0;
+  }
+  .identityRow {
+    grid-template-columns: auto 1fr;
+  }
+  .actions {
+    grid-column: 1 / -1;
+  }
+}
+
+/* list card layout: single-column thumb on narrow */
+@container profile (max-width: 640px) {
+  .listItem {
+    grid-template-columns: 1fr;
+  }
+  .listThumb {
+    inline-size: 100%;
+    block-size: 160px;
+  }
+  .statBtn {
+    min-width: 40px;
+  }
+}
+
+/* ============================ REDUCED MOTION ============================ */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* ============================ DARK THEME ============================ */
+/* Applies when <html> or <body> has data-theme="dark" */
+:global(:root[data-theme="dark"]) .container {
+  --pf-bg:        #0b1220;
+  --pf-surface:   #101827;
+  --pf-surface-2: #1b2538;
+  --pf-border:    #1f2937;
+
+  --pf-ink-1: #e5e7eb;
+  --pf-ink-2: #9aa4b2;
+
+  /* Dark mode: section titles get white text on glassy background */
+  .sectionTitle {
+    color: var(--feed-section-title-color-dark, #ffffff);
+    background: var(--feed-section-highlight-bg-dark, rgba(56, 189, 248, 0.12));
+    border-color: var(--feed-section-highlight-border-dark, rgba(56, 189, 248, 0.25));
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .hero {
+    background-color: var(--pf-surface);
+    border-color: var(--pf-border);
+  }
+
+  .avatarWrapOuter {
+    border-color: #1f2937;
+    background-color: #1f2937;
+  }
+
+  .badge {
+    background: rgba(255,255,255,.08);
+    color: #fff;
+    border-color: rgba(255,255,255,.25);
+  }
+
+  .roleBadge {
+    box-shadow: 0 1px 2px rgba(0,0,0,.6);
+  }
+  .role_verified,
+  .role_VERIFIED {
+    background: rgba(55,48,163,.3);
+    color: #c7d2fe;
+    border-color: rgba(55,48,163,.6);
+  }
+  .role_ADMIN {
+    background: rgba(185,28,28,.18);
+    color: #fca5a5;
+    border-color: rgba(185,28,28,.6);
+  }
+  .role_MODERATOR,
+  .role_MOD {
+    background: rgba(154,52,18,.18);
+    color: #fdba74;
+    border-color: rgba(154,52,18,.6);
+  }
+  .role_SERVICE_PROVIDER,
+  .role_PROVIDER,
+  .role_SERVICE {
+    background: rgba(6,95,70,.2);
+    color: #6ee7b7;
+    border-color: rgba(6,95,70,.6);
+  }
+
+  .tabRail {
+    background-color: var(--pf-surface);
+    border-color: var(--pf-border);
+    box-shadow: var(--pf-shadow-1);
+  }
+  .tabBtn {
+    color: var(--pf-ink-1);
+    background: transparent;
+    border-color: transparent;
+  }
+  .tabBtn:hover {
+    background-color: var(--pf-surface-2);
+    border-color: var(--pf-border);
+    box-shadow: var(--pf-shadow-inner);
+  }
+  .tabActive,
+  .tabBtn[data-active],
+  .tabBtn[aria-current="page"] {
+    background-color: var(--pf-surface-2);
+    border-color: var(--pf-border);
+    color: var(--pf-ink-1);
+    box-shadow: var(--pf-shadow-inner);
+    font-weight: 700;
+  }
+  .tabCount {
+    background-color: var(--pf-surface-2);
+    color: var(--pf-ink-1);
+    border: 1px solid var(--pf-border);
+    box-shadow: 0 1px 2px rgba(0,0,0,.4);
+  }
+
+  .quickStatsBar {
+    background: var(--pf-surface-2);
+    border-color: var(--pf-border);
+    color: var(--pf-ink-1);
+  }
+  .statLabel {
+    color: var(--pf-ink-2);
+  }
+
+  .section,
+  .subcard,
+  .contactCard,
+  .listItem {
+    background-color: var(--pf-surface);
+    border-color: var(--pf-border);
+    color: var(--pf-ink-1);
+  }
+
+  .mutualItem {
+    background-color: var(--pf-surface);
+    border-color: var(--pf-border);
+  }
+  .mutualItem:hover {
+    background-color: var(--pf-surface-2);
+  }
+
+  .listThumb {
+    background-color: #0c1425;
+    border-color: var(--pf-border);
+    color: var(--pf-ink-2);
+  }
+  .photoGrid img {
+    background-color: #0c1425;
+    border-color: var(--pf-border);
+  }
+
+  .reportCard  {
+    background-color: var(--pf-surface);
+    border-color: var(--pf-border);
+    color: var(--pf-ink-1);
+  }
+  .reportTextarea {
+    background-color: var(--pf-surface-2);
+    border-color: var(--pf-border);
+    color: var(--pf-ink-1);
+  }
+  .reportBtnCancel {
+    background-color: var(--pf-surface-2);
+    border-color: var(--pf-border);
+    color: var(--pf-ink-1);
+  }
+  .reportBtnCancel:hover {
+    background-color: var(--pf-surface);
+  }
+  .reportBtnSubmit {
+    background-color: var(--pf-brand);
+    border-color: var(--pf-brand);
+    color: #fff;
+  }
+}
+
+/* ============================ FORCED COLORS / HIGH CONTRAST ============================ */
+@media (forced-colors: active) {
+  .tabBtn,
+  .listItem,
+  .mutualItem,
+  .photoGrid img,
+  .avatarWrapOuter,
+  .contactCard {
+    border: 1px solid CanvasText !important;
+    background: Canvas !important;
+    color: CanvasText !important;
+    forced-color-adjust: none;
+  }
+  .tabActive,
+  .tabBtn[data-active],
+  .tabBtn[aria-current="page"] {
+    background: Highlight !important;
+    color: HighlightText !important;
+    border-color: Highlight !important;
+  }
+  .presenceDot {
+    box-shadow: none !important;
+    border: 1px solid CanvasText !important;
+  }
+}
+
+
+/* ========================== BLOCKED MESSAGE ========================== */
+.blockedMessage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px;
+  text-align: center;
+  min-height: 400px;
+
+  h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--pf-ink-1);
+    margin: 0 0 12px;
+  }
+
+  p {
+    font-size: 16px;
+    color: var(--pf-ink-2);
+    margin: 0 0 32px;
+    max-width: 400px;
+  }
+}
+
+.blockedActions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+/* ===================================================================
+ * COMPREHENSIVE DARK MODE SUPPORT FOR PUBLIC PROFILE - FORCE OVERRIDE ALL BLUE
+ * =================================================================== */
+:global([data-theme="dark"]) {
+  /* FORCE dark mode on the entire public profile page */
+  body,
+  html,
+  #root {
+    background: var(--surface-0) !important;
+    background-color: var(--surface-0) !important;
+    background-image: none !important;
+    color: var(--on-surface-1) !important;
+  }
+  
+  /* Main containers - force dark backgrounds */
+  .container,
+  .heroWrap,
+  .profileCard,
+  .section,
+  .tabsContainer,
+  .profileContainer,
+  .userProfile,
+  .publicProfile {
+    background: var(--surface-1) !important;
+    background-color: var(--surface-1) !important;
+    background-image: none !important;
+    color: var(--on-surface-1) !important;
+    border-color: var(--border-soft) !important;
+  }
+  
+  /* Override ALL child elements */
+  .container *,
+  .heroWrap *,
+  .profileCard *,
+  .section *,
+  .tabsContainer *,
+  .profileContainer *,
+  .userProfile *,
+  .publicProfile * {
+    background: var(--surface-1) !important;
+    background-color: var(--surface-1) !important;
+    background-image: none !important;
+    color: var(--on-surface-1) !important;
+  }
+  
+  /* Avatar and profile elements */
+  .avatarWrap,
+  .avatarWrapOuter {
+    border-color: var(--border-soft) !important;
+    background: var(--surface-2) !important;
+    background-color: var(--surface-2) !important;
+  }
+  
+  .presenceIndicator {
+    border-color: var(--surface-1) !important;
+  }
+  
+  /* Role badges - force theme colors */
+  .roleBadge,
+  .role_verified,
+  .role_VERIFIED,
+  .role_ADMIN,
+  .role_MODERATOR,
+  .role_MOD,
+  .role_PROVIDER,
+  .role_SERVICE {
+    background: var(--surface-2) !important;
+    background-color: var(--surface-2) !important;
+    color: var(--brand) !important;
+    border-color: var(--border-soft) !important;
+  }
+  
+  /* Tabs - force dark styling */
+  .tabsRail {
+    background: var(--surface-1) !important;
+    background-color: var(--surface-1) !important;
+    border-color: var(--border-soft) !important;
+  }
+  
+  .tabBtn {
+    background: var(--surface-2) !important;
+    background-color: var(--surface-2) !important;
+    color: var(--on-surface-1) !important;
+    border-color: var(--border-soft) !important;
+  }
+  
+  .tabBtn:hover {
+    background: var(--surface-elevated) !important;
+    background-color: var(--surface-elevated) !important;
+  }
+  
+  .tabBtn[aria-current="page"] {
+    background: var(--surface-elevated) !important;
+    background-color: var(--surface-elevated) !important;
+    color: var(--on-surface-1) !important;
+    border-color: var(--border-soft) !important;
+    font-weight: 700 !important;
+  }
+  
+  .tabCount {
+    background: var(--surface-2) !important;
+    background-color: var(--surface-2) !important;
+    color: var(--on-surface-1) !important;
+  }
+  
+  .tabBtn[aria-current="page"] .tabCount {
+    background: var(--surface-2) !important;
+    background-color: var(--surface-2) !important;
+    color: var(--on-surface-1) !important;
+    border-color: var(--border-soft) !important;
+  }
+  
+  /* Content sections */
+  .contentSection,
+  .listingsGrid,
+  .activityFeed,
+  .photoGrid,
+  .statsGrid {
+    background: var(--surface-1) !important;
+    background-color: var(--surface-1) !important;
+    color: var(--on-surface-1) !important;
+  }
+  
+  /* Cards and items */
+  .listingCard,
+  .activityItem,
+  .photoGrid img,
+  .statCard,
+  .infoCard {
+    background: var(--surface-1) !important;
+    background-color: var(--surface-1) !important;
+    border-color: var(--border-soft) !important;
+  }
+  
+  .listingCard:hover,
+  .activityItem:hover,
+  .photoGrid img:hover,
+  .statCard:hover,
+  .infoCard:hover {
+    background: var(--surface-elevated) !important;
+    background-color: var(--surface-elevated) !important;
+  }
+  
+  /* Text elements - force proper colors */
+  .userName,
+  .userHandle,
+  .profileTitle,
+  .sectionTitle,
+  .displayName,
+  .bio,
+  .description,
+  h1, h2, h3, h4, h5, h6,
+  p, span, div, label {
+    color: var(--on-surface-1) !important;
+  }
+  
+  /* Secondary text */
+  .userMeta,
+  .lastSeen,
+  .joinDate,
+  .description,
+  .activityTime,
+  .timestamp,
+  small {
+    color: var(--on-surface-muted) !important;
+  }
+  
+  /* Online status */
+  .metaOnline,
+  .online {
+    color: var(--success) !important;
+  }
+  
+  .offline {
+    color: var(--on-surface-muted) !important;
+  }
+  
+  /* Buttons - force dark styling */
+  .actionBtn,
+  .followBtn,
+  .messageBtn,
+  .primaryBtn,
+  .secondaryBtn,
+  button {
+    background: var(--surface-2) !important;
+    background-color: var(--surface-2) !important;
+    color: var(--on-surface-1) !important;
+    border-color: var(--border-soft) !important;
+  }
+  
+  .actionBtn:hover,
+  .followBtn:hover,
+  .messageBtn:hover,
+  .secondaryBtn:hover,
+  button:hover {
+    background: var(--surface-elevated) !important;
+    background-color: var(--surface-elevated) !important;
+  }
+  
+  /* Primary buttons */
+  .primaryBtn {
+    background: var(--brand) !important;
+    background-color: var(--brand) !important;
+    color: var(--on-primary) !important;
+    border-color: var(--brand) !important;
+  }
+  
+  .primaryBtn:hover {
+    background: var(--brand-hover) !important;
+    background-color: var(--brand-hover) !important;
+  }
+  
+  /* Override any inline styles that might be causing blue backgrounds */
+  [style*="background: #"],
+  [style*="background-color: #"],
+  [style*="background: rgb"],
+  [style*="background: rgba"],
+  [style*="linear-gradient"],
+  [style*="radial-gradient"] {
+    background: var(--surface-1) !important;
+    background-color: var(--surface-1) !important;
+    background-image: none !important;
+  }
+  
+  /* Force override any blue backgrounds */
+  [style*="blue"],
+  [class*="blue"],
+  [class*="Blue"],
+  .bg-blue,
+  .background-blue {
+    background: var(--surface-1) !important;
+    background-color: var(--surface-1) !important;
+    color: var(--on-surface-1) !important;
+  }
+  
+  /* Mutual friends section */
+  .mutualFriends,
+  .friendsList,
+  .userList {
+    background: var(--surface-1) !important;
+    background-color: var(--surface-1) !important;
+  }
+  
+  .friendItem,
+  .userItem {
+    background: var(--surface-2) !important;
+    background-color: var(--surface-2) !important;
+    color: var(--on-surface-1) !important;
+  }
+  
+  .friendItem:hover,
+  .userItem:hover {
+    background: var(--surface-elevated) !important;
+    background-color: var(--surface-elevated) !important;
+  }
+}

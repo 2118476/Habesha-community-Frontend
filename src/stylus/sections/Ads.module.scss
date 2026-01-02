@@ -1,0 +1,1314 @@
+/* ==========================================================================
+   Ads.module.scss
+   High-level social UI for Ad Details (Facebook-style post)
+   - white post surface on subtle page bg
+   - avatar + name + timestamp row
+   - hero media going edge-to-edge on mobile
+   - live social bar (likes/comments counts)
+   - action row (Like / Comment / Message Seller)
+   - mini comment preview + composer
+   - accessible focus rings, hover states
+   ========================================================================== */
+
+/* ======================== TOKENS / FALLBACKS ======================== */
+:root {
+  --ads-bg-page: var(--surface-0, #ffffff); /* page background */
+  --ads-bg-card: var(--surface-1, #ffffff); /* post surface */
+
+  /* LIGHT MODE: Use theme tokens for proper text colors - FIXED FOR VISIBILITY */
+  --ads-ink-1: var(--on-surface-1, #000000); /* main text - BLACK for light mode */
+  --ads-ink-2: var(--on-surface-muted, #444444); /* secondary text - DARK GRAY for light mode */
+  --ads-ink-3: var(--text-2, #666666); /* meta/muted text - READABLE GRAY for light mode */
+
+  --ads-line: var(--border-soft, #e5e7eb);      /* dividers, hairlines */
+  --ads-ring: var(--brand, #0ea5e9);         /* active blue / focus ring */
+
+  --ads-bg-bubble: var(--surface-1, #ffffff); /* comment bubble fill - use theme token */
+  --ads-bg-chip: var(--surface-2, #f3f4f6);                    /* category chip fill */
+  --ads-bg-hover: rgba(0, 0, 0, 0.04);       /* light hover for buttons */
+
+  --ads-radius-sm: var(--radius-xs, 8px);
+  --ads-radius-md: var(--radius-md, 12px);
+  --ads-radius-lg: var(--radius-lg, 16px);
+  --ads-radius-full: var(--radius-pill, 999px);
+
+  --ads-shadow-card: var(--shadow-soft, 0 4px 12px rgba(0, 0, 0, 0.06));
+
+  /* NEW: softer shadow for comment bubbles / replies */
+  --ads-shadow-soft: var(--shadow-subtle, 0 4px 16px rgba(0, 0, 0, 0.04));
+  
+  /* Glassmorphism - LIGHT MODE */
+  --glass-bg: rgba(255, 255, 255, 0.95);
+  --glass-border: var(--border-soft, rgba(0, 0, 0, 0.1));
+  --glass-shadow: var(--shadow-soft, 0 4px 16px rgba(0, 0, 0, 0.1));
+  --blur-amount: blur(var(--glass-blur-md, 8px));
+}
+
+/* DARK MODE: Light text on dark backgrounds */
+:global([data-theme="dark"]) {
+  --ads-ink-1: #ffffff; /* main text - WHITE for dark mode */
+  --ads-ink-2: #d1d5db; /* secondary text - LIGHT GRAY for dark mode */
+  --ads-ink-3: #9ca3af; /* meta/muted text - GRAY for dark mode */
+  
+  --glass-bg: var(--surface-1, rgba(15, 30, 50, 0.85));
+  --glass-border: var(--border-soft, rgba(255, 255, 255, 0.08));
+  --glass-shadow: var(--shadow-soft, 0 10px 30px rgba(0, 0, 0, 0.6));
+  
+  --ads-bg-bubble: var(--surface-1, rgba(15, 30, 50, 0.85)); /* use theme token */
+  --ads-bg-hover: rgba(255, 255, 255, 0.08); /* light hover for dark mode */
+}
+
+/* ======================== POST SHELL ======================== */
+
+.postShell {
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur-amount);
+  -webkit-backdrop-filter: var(--blur-amount);
+  border: 1px solid var(--glass-border);
+  color: var(--ads-ink-1) !important;
+  border-radius: var(--ads-radius-md);
+  box-shadow: var(--glass-shadow);
+
+  max-width: min(600px, 100%);
+  margin: 16px auto;
+  padding: 12px 16px 8px;
+  position: relative;
+  transition: all 0.24s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Inner highlight for glass effect */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, 
+      transparent 0%, 
+      rgba(255, 255, 255, 0.4) 50%, 
+      transparent 100%
+    );
+    opacity: 0.6;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  @container (min-width: 700px) {
+    max-width: 600px;
+  }
+
+  /* just in case parent page didn't set background */
+  &:where(body &) {
+    background: var(--glass-bg);
+  }
+  
+  /* Ensure all text in post shell is properly colored */
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--ads-ink-1) !important;
+  }
+  
+  p, span, div, label, button {
+    color: var(--ads-ink-1) !important;
+  }
+  
+  /* Override any white text */
+  [style*="color: white"],
+  [style*="color: #fff"],
+  [style*="color: #ffffff"] {
+    color: var(--ads-ink-1) !important;
+  }
+}
+
+/* Light mode specific post shell overrides */
+:root .postShell {
+  color: #1a1a1a !important;
+  
+  h1, h2, h3, h4, h5, h6 {
+    color: #1a1a1a !important;
+  }
+  
+  p, span, div, label {
+    color: #1a1a1a !important;
+  }
+  
+  /* Buttons should maintain their own colors */
+  button:not(.btn) {
+    color: #1a1a1a !important;
+  }
+}
+
+/* Dark mode specific overrides */
+:global([data-theme="dark"]) .postShell {
+  color: #ffffff !important;
+  
+  h1, h2, h3, h4, h5, h6 {
+    color: #ffffff !important;
+  }
+  
+  p, span, div, label {
+    color: #ffffff !important;
+  }
+  
+  /* Buttons should maintain their own colors */
+  button:not(.btn) {
+    color: #ffffff !important;
+  }
+}
+
+/* Fallback for browsers without backdrop-filter */
+@supports not (backdrop-filter: blur(20px)) {
+  .postShell {
+    background: rgba(255, 255, 255, 0.98);
+  }
+  
+  :global([data-theme="dark"]) .postShell {
+    background: rgba(18, 26, 43, 0.98);
+  }
+}
+
+/* Ads container and list styling */
+.container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  color: var(--ads-ink-1);
+  background: var(--ads-bg-page);
+  
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--ads-ink-1);
+  }
+  
+  p {
+    color: var(--ads-ink-2);
+  }
+  
+  small {
+    color: var(--ads-ink-3);
+  }
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.adCard {
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur-amount);
+  -webkit-backdrop-filter: var(--blur-amount);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--ads-radius-md);
+  padding: 16px;
+  box-shadow: var(--glass-shadow);
+  transition: all 0.24s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--ads-ink-1);
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-strong, 0 8px 32px rgba(0, 0, 0, 0.12));
+  }
+  
+  h3 {
+    color: var(--ads-ink-1);
+    margin: 0 0 8px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+  
+  p {
+    color: var(--ads-ink-2);
+    margin: 4px 0;
+    line-height: 1.4;
+  }
+  
+  strong {
+    color: var(--ads-ink-1);
+  }
+  
+  small {
+    color: var(--ads-ink-3);
+  }
+}
+
+.adCardFeatured {
+  border-color: var(--ads-ring);
+  box-shadow: 0 0 0 1px var(--ads-ring), var(--glass-shadow);
+}
+
+.cardFooter {
+  border-top: 1px solid var(--ads-line);
+  margin-top: 12px;
+  padding-top: 12px;
+}
+
+/* ======================== SELECTION STYLES ======================== */
+/* Ensure selection doesn't fake show hidden text - text must be visible normally */
+.container ::selection,
+.adCard ::selection,
+.postShell ::selection {
+  background: rgba(10, 132, 255, 0.2);
+  color: var(--on-surface-1); /* Use design token for proper contrast */
+}
+
+.container ::-moz-selection,
+.adCard ::-moz-selection,
+.postShell ::-moz-selection {
+  background: rgba(10, 132, 255, 0.2);
+  color: var(--on-surface-1); /* Use design token for proper contrast */
+}
+
+/* Dark mode selection */
+:global([data-theme="dark"]) .container ::selection,
+:global([data-theme="dark"]) .adCard ::selection,
+:global([data-theme="dark"]) .postShell ::selection {
+  background: rgba(10, 132, 255, 0.3);
+  color: var(--on-surface-1);
+}
+
+:global([data-theme="dark"]) .container ::-moz-selection,
+:global([data-theme="dark"]) .adCard ::-moz-selection,
+:global([data-theme="dark"]) .postShell ::-moz-selection {
+  background: rgba(10, 132, 255, 0.3);
+  color: var(--on-surface-1);
+}
+
+/* Utility for error states if ad fails to load */
+.loadError {
+  font-size: 0.9375rem;
+  line-height: 1.4;
+  color: var(--ads-ink-2);
+  text-align: center;
+  padding: 24px 0;
+}
+
+/* ======================== HEADER ======================== */
+
+.postHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  column-gap: 12px;
+  margin-bottom: 12px;
+}
+
+.postHeaderLeft {
+  display: flex;
+  align-items: flex-start;
+  column-gap: 10px;
+  min-width: 0;
+}
+
+.postAuthorAvatar {
+  cursor: pointer;
+  line-height: 0;
+  flex-shrink: 0;
+
+  img {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--ads-radius-full);
+    object-fit: cover;
+    display: block;
+    background-color: #d1d5db;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ads-ring);
+    outline-offset: 2px;
+    border-radius: var(--ads-radius-full);
+  }
+}
+
+.postAuthorMeta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.postAuthorName {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 0.9375rem; /* ~15px */
+  font-weight: 600;
+  color: var(--ads-ink-1) !important;
+  line-height: 1.3;
+  text-align: left;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ads-ring);
+    outline-offset: 2px;
+    border-radius: var(--ads-radius-sm);
+  }
+}
+
+/* Light mode author name override */
+:root .postAuthorName {
+  color: #1a1a1a !important;
+}
+
+/* Dark mode author name override */
+:global([data-theme="dark"]) .postAuthorName {
+  color: #ffffff !important;
+}
+
+.postTimestamp {
+  font-size: 0.75rem; /* 12px */
+  line-height: 1.2;
+  color: var(--ads-ink-2) !important;
+  white-space: nowrap;
+}
+
+/* Light mode timestamp override */
+:root .postTimestamp {
+  color: #6b7280 !important;
+}
+
+/* Dark mode timestamp override */
+:global([data-theme="dark"]) .postTimestamp {
+  color: #d1d5db !important;
+}
+
+/* The ⋯ button (Report / Save / Delete etc.) */
+.postMoreMenu {
+  min-width: 24px;
+  min-height: 24px;
+  color: var(--ads-ink-1);
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  padding: 4px;
+  border-radius: var(--ads-radius-sm);
+
+  &:hover {
+    background-color: var(--ads-bg-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ads-ring);
+    outline-offset: 2px;
+  }
+}
+
+/* ======================== BODY TEXT / META ======================== */
+
+.postBody {
+  font-size: 0.9375rem;
+  line-height: 1.4;
+  color: var(--ads-ink-1) !important;
+  word-wrap: break-word;
+  margin-bottom: 12px;
+}
+
+.postTitle {
+  font-size: 1rem;
+  line-height: 1.35;
+  font-weight: 600;
+  color: var(--ads-ink-1) !important;
+  margin: 0 0 4px;
+  word-break: break-word;
+}
+
+.postPrice {
+  font-size: 1rem;
+  line-height: 1.35;
+  font-weight: 600;
+  color: var(--ads-ink-1) !important;
+  margin-bottom: 4px;
+}
+
+.postText {
+  color: var(--ads-ink-1) !important;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  margin-bottom: 6px;
+  white-space: pre-line;
+  word-break: break-word;
+}
+
+/* Light mode body text overrides */
+:root .postBody {
+  color: #1a1a1a !important;
+}
+
+:root .postTitle {
+  color: #1a1a1a !important;
+}
+
+:root .postPrice {
+  color: #1a1a1a !important;
+}
+
+:root .postText {
+  color: #1a1a1a !important;
+}
+
+/* Dark mode body text overrides */
+:global([data-theme="dark"]) .postBody {
+  color: #ffffff !important;
+}
+
+:global([data-theme="dark"]) .postTitle {
+  color: #ffffff !important;
+}
+
+:global([data-theme="dark"]) .postPrice {
+  color: #ffffff !important;
+}
+
+:global([data-theme="dark"]) .postText {
+  color: #ffffff !important;
+}
+
+.postCategory {
+  font-size: 0.8125rem;
+  line-height: 1.3;
+  font-weight: 500;
+  color: var(--ads-ink-1) !important; /* Ensure category text is visible */
+  background-color: var(--ads-bg-chip);
+  border-radius: var(--ads-radius-full);
+  display: inline-block;
+  padding: 2px 8px;
+  margin-top: 4px;
+  margin-bottom: 8px;
+  width: fit-content;
+}
+
+/* Light mode category override */
+:root .postCategory {
+  color: #1a1a1a !important;
+  background-color: #f3f4f6;
+}
+
+/* Dark mode category */
+:global([data-theme="dark"]) .postCategory {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ======================== MEDIA ======================== */
+
+.postMedia {
+  margin: 8px -16px 0;
+  border-radius: 0;
+  overflow: hidden;
+  background: rgba(0,0,0,0.04); /* Subtle background for letterboxing */
+
+  @media (min-width: 480px) {
+    border-radius: var(--ads-radius-md);
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+.postMediaImg {
+  width: 100%;
+  height: auto; /* Changed from fixed height to auto */
+  /* Removed max-height: 60vh to prevent cropping */
+  object-fit: contain; /* Changed from cover to contain to prevent cropping */
+  object-position: center center;
+  display: block;
+  background-color: transparent;
+  max-height: 70vh; /* Optional: prevents extremely tall images */
+}
+
+/* ======================== SOCIAL BAR ======================== */
+/* Row that shows likes + total comments */
+
+.socialBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  font-size: 0.8125rem;
+  line-height: 1.3;
+  color: var(--ads-ink-1) !important;
+  min-height: 24px;
+}
+
+.socialLeft {
+  display: flex;
+  align-items: center;
+  column-gap: 4px;
+  min-width: 0;
+}
+
+.likesIcon {
+  font-size: 0.7rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: var(--ads-ring);
+  color: #ffffff;
+
+  border-radius: var(--ads-radius-full);
+  width: 18px;
+  height: 18px;
+  font-weight: 600;
+}
+
+.likesCount {
+  font-size: 0.8125rem;
+  line-height: 1.2;
+  color: var(--ads-ink-1) !important;
+  font-weight: 500;
+  min-width: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.socialRight {
+  font-size: 0.8125rem;
+  line-height: 1.2;
+  color: var(--ads-ink-1) !important;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ads-ring);
+    outline-offset: 2px;
+    border-radius: var(--ads-radius-sm);
+  }
+}
+
+/* ======================== DIVIDER ======================== */
+
+.postDivider {
+  border-top: 1px solid var(--ads-line);
+  margin: 0 -16px;
+  height: 0;
+}
+
+/* ======================== ACTION ROW ======================== */
+/* Like / Comment / Message Seller row with equal-width buttons */
+
+.postActionsRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin: 4px -16px 8px;
+  padding: 4px 0;
+}
+
+.postActionBtn {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+
+  flex: 1;
+  min-width: 0;
+  min-height: 36px;
+
+  padding: 8px 4px;
+  border-radius: var(--ads-radius-md);
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  column-gap: 6px;
+
+  font-size: 0.875rem;
+  line-height: 1.2;
+  font-weight: 600;
+  color: var(--ads-ink-1) !important;
+
+  &:hover {
+    background-color: var(--ads-bg-hover);
+  }
+
+  &:active {
+    background-color: rgba(0, 0, 0, 0.06);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ads-ring);
+    outline-offset: 2px;
+  }
+}
+
+/* active "Liked" state turns blue like FB */
+.postActionActive {
+  color: var(--ads-ring);
+
+  .actionIcon {
+    color: var(--ads-ring);
+  }
+}
+
+.actionIcon {
+  font-size: 1rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.actionLabel {
+  white-space: nowrap;
+}
+
+/* ======================== COMMENTS SECTION ======================== */
+
+.commentsSection {
+  padding-top: 8px;
+  padding-bottom: 4px;
+
+  display: flex;
+  flex-direction: column;
+  row-gap: 8px;
+
+  font-size: 0.875rem;
+  line-height: 1.3;
+}
+
+/* "View all X comments" link */
+.viewAllCommentsBtn {
+  appearance: none;
+  -webkit-appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+
+  font-size: 0.8125rem;
+  line-height: 1.3;
+  font-weight: 500;
+  color: var(--ads-ink-1) !important;
+  text-align: left;
+
+  width: fit-content;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ads-ring);
+    outline-offset: 2px;
+    border-radius: var(--ads-radius-sm);
+  }
+}
+
+/* One-line clickable "View replies (3)" under preview bubble */
+.viewRepliesBtn {
+  appearance: none;
+  -webkit-appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+
+  font-size: 0.75rem;
+  line-height: 1.2;
+  font-weight: 500;
+  color: var(--ads-ink-1);
+  cursor: pointer;
+  width: fit-content;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ads-ring);
+    outline-offset: 2px;
+    border-radius: var(--ads-radius-sm);
+  }
+}
+
+/* NEW: generic button style for "View more comments" (if you want to swap to className) */
+.viewMoreButton {
+  border: none;
+  background: transparent;
+  padding: 4px 0 0;
+  margin-left: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  color: color-mix(in srgb, var(--ads-ring) 90%, #2563eb);
+  font-weight: 500;
+}
+
+/* Comment preview row: avatar + bubble */
+.commentPreviewRow {
+  display: flex;
+  align-items: flex-start;
+  column-gap: 8px;
+  max-width: 100%;
+}
+
+/* ======================== COMMENT AVATAR ======================== */
+
+.commentAvatar {
+  cursor: pointer;
+  flex-shrink: 0;
+  line-height: 0;
+
+  img {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--ads-radius-full);
+    object-fit: cover;
+    background-color: #d1d5db;
+    display: block;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ads-ring);
+    outline-offset: 2px;
+    border-radius: var(--ads-radius-full);
+  }
+}
+
+/* ======================== COMMENT BUBBLE ======================== */
+
+.commentBubble {
+  /* upgraded background + micro-motions */
+  background: color-mix(
+    in srgb,
+    var(--ads-bg-bubble) 90%,
+    rgba(148, 163, 184, 0.04)
+  );
+  border-radius: var(--ads-radius-lg);
+  padding: 8px 12px;
+  max-width: 100%;
+  min-width: 0;
+
+  display: inline-flex;
+  flex-direction: column;
+  row-gap: 4px;
+  word-break: break-word;
+
+  position: relative;
+  transform-origin: left top;
+  will-change: transform, box-shadow, background-color;
+  transition:
+    transform 120ms ease-out,
+    box-shadow 150ms ease-out,
+    background-color 150ms ease-out;
+}
+
+.commentBubble:hover {
+  transform: translateY(-0.5px);
+  box-shadow: var(--ads-shadow-soft);
+  background: color-mix(
+    in srgb,
+    var(--ads-bg-bubble) 90%,
+    rgba(15, 23, 42, 0.02)
+  );
+}
+
+.commentHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 6px;
+  row-gap: 0;
+}
+
+.commentAuthorName {
+  font-size: 0.8125rem;
+  line-height: 1.2;
+  font-weight: 600;
+  color: var(--ads-ink-1) !important;
+  cursor: pointer;
+  white-space: nowrap;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ads-ring);
+    outline-offset: 2px;
+    border-radius: var(--ads-radius-sm);
+  }
+}
+
+.commentTimestamp {
+  font-size: 0.7rem;
+  line-height: 1.2;
+  color: var(--ads-ink-2) !important;
+  white-space: nowrap;
+}
+
+.commentReplyCount {
+  font-size: 0.7rem;
+  line-height: 1.2;
+  color: var(--ads-ink-1) !important;
+  white-space: nowrap;
+}
+
+.commentText {
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--ads-ink-1) !important;
+  white-space: pre-line;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+/* ======================== QUICK COMPOSER ======================== */
+/* Row with your avatar + "Write a comment…" input + Post button */
+
+.commentComposerRow {
+  display: flex;
+  align-items: flex-start;
+  column-gap: 8px;
+  margin-top: 4px;
+}
+
+.composerAvatar {
+  flex-shrink: 0;
+  line-height: 0;
+
+  img {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--ads-radius-full);
+    object-fit: cover;
+    background-color: #d1d5db;
+    display: block;
+  }
+}
+
+.commentInput {
+  flex: 1;
+  min-width: 0;
+
+  background-color: var(--ads-bg-bubble);
+  border: 1px solid var(--border-soft, rgba(0, 0, 0, 0.08));
+  border-radius: var(--ads-radius-full);
+  padding: 8px 12px;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--ads-ink-1) !important;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &::placeholder {
+    color: var(--ads-ink-2) !important;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    border-color: var(--brand, #0ea5e9);
+    box-shadow: 0 0 0 3px var(--ring, rgba(14, 165, 233, 0.25));
+    outline: none;
+  }
+
+  &:hover:not(:disabled) {
+    border-color: var(--border-strong, rgba(0, 0, 0, 0.15));
+  }
+}
+
+/* Reuse your button module but fit social sizing */
+.commentSendBtn {
+  font-size: 0.8125rem !important;
+  line-height: 1.2 !important;
+  font-weight: 600 !important;
+  padding: 6px 10px !important;
+  border-radius: var(--ads-radius-full) !important;
+  white-space: nowrap;
+  align-self: center;
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+/* ======================== REPLIES UNDER A COMMENT ========================
+   - replyList = container for replies of ONE parent comment
+   - replyRow   = single reply (avatar + bubble)
+   - replyAvatar / replyBubble   mini versions
+   - light vertical guide bar for nesting
+   ========================================================================== */
+
+.replyList {
+  margin-left: 40px;          /* indent under the parent comment avatar */
+  padding-left: 8px;
+  border-left: 2px solid var(--ads-line);
+  display: flex;
+  flex-direction: column;
+  row-gap: 8px;
+}
+
+.replyRow {
+  display: flex;
+  align-items: flex-start;
+  column-gap: 8px;
+  max-width: 100%;
+}
+
+/* reply avatars (commenter profile images) */
+.replyAvatar {
+  cursor: pointer;
+  flex-shrink: 0;
+  line-height: 0;
+
+  img {
+    width: 28px;
+    height: 28px;
+    border-radius: var(--ads-radius-full);
+    object-fit: cover;
+    background-color: #d1d5db;
+    display: block;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ads-ring);
+    outline-offset: 2px;
+    border-radius: var(--ads-radius-full);
+  }
+}
+
+/* reply bubble with same hover micro-motion as comments */
+
+.replyBubble {
+  background: color-mix(
+    in srgb,
+    var(--ads-bg-bubble) 90%,
+    rgba(148, 163, 184, 0.04)
+  );
+  border-radius: var(--ads-radius-lg);
+  padding: 6px 10px;
+  max-width: 100%;
+  min-width: 0;
+
+  display: inline-flex;
+  flex-direction: column;
+  row-gap: 4px;
+  word-break: break-word;
+
+  position: relative;
+  transform-origin: left top;
+  will-change: transform, box-shadow, background-color;
+  transition:
+    transform 120ms ease-out,
+    box-shadow 150ms ease-out,
+    background-color 150ms ease-out;
+}
+
+.replyBubble:hover {
+  transform: translateY(-0.5px);
+  box-shadow: var(--ads-shadow-soft);
+  background: color-mix(
+    in srgb,
+    var(--ads-bg-bubble) 90%,
+    rgba(15, 23, 42, 0.02)
+  );
+}
+
+.replyHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 6px;
+  row-gap: 0;
+}
+
+.replyAuthorName {
+  font-size: 0.75rem;
+  line-height: 1.2;
+  font-weight: 600;
+  color: var(--ads-ink-1) !important;
+  cursor: pointer;
+  white-space: nowrap;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ads-ring);
+    outline-offset: 2px;
+    border-radius: var(--ads-radius-sm);
+  }
+}
+
+.replyTimestamp {
+  font-size: 0.7rem;
+  line-height: 1.2;
+  color: var(--ads-ink-2) !important;
+  white-space: nowrap;
+}
+
+.replyText {
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--ads-ink-1) !important;
+  white-space: pre-line;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+/* ======================== COMMENT THREAD STATES ======================== */
+
+/* Used by CommentsThread.jsx when loading more comments under the list */
+.commentsLoadingMore {
+  padding-top: 4px;
+  font-size: 0.75rem;
+  color: var(--ads-ink-2) !important;
+}
+
+/* Optional generic empty / error / skeleton styles if you want to hook them in */
+
+.empty {
+  padding: 4px 2px 2px 2px;
+  font-size: 12px;
+  color: var(--ads-ink-2) !important;
+}
+
+.loadError {
+  font-size: 0.9375rem;
+  line-height: 1.4;
+  color: var(--ads-ink-2) !important;
+  text-align: center;
+  padding: 24px 0;
+}
+
+.error {
+  padding: 6px 8px;
+  border-radius: var(--ads-radius-md);
+  background: rgba(254, 226, 226, 0.65);
+  color: #991b1b;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.retryBtn {
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  color: #b91c1c;
+  text-decoration: underline;
+}
+
+.loading {
+  display: grid;
+  gap: 4px;
+  padding: 2px 0 6px;
+}
+
+.skeletonRow {
+  height: 26px;
+  border-radius: var(--ads-radius-full);
+  background: linear-gradient(
+    90deg,
+    rgba(148, 163, 184, 0.18),
+    rgba(148, 163, 184, 0.04),
+    rgba(148, 163, 184, 0.18)
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.1s linear infinite;
+}
+
+/* ======================== MOTION PREFS ======================== */
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .commentBubble,
+  .replyBubble,
+  .skeletonRow {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+
+/* ===== EDIT/DELETE DROPDOWN MENU ===== */
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 4px;
+  background: var(--surface, #ffffff);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 160px;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: transparent;
+  color: var(--text-1, #1a1a1a);
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background: var(--bg-2, #f5f5f5);
+  }
+
+  &:active {
+    background: var(--bg-3, #e5e5e5);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+/* ===== EDIT FORM ===== */
+.editForm {
+  padding: 16px 0;
+}
+
+.formGroup {
+  margin-bottom: 16px;
+
+  label {
+    display: block;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-1, #1a1a1a);
+    margin-bottom: 6px;
+  }
+}
+
+.formInput,
+.formTextarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--text-1, #1a1a1a);
+  background: var(--surface, #ffffff);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: var(--primary, #007bff);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+  }
+
+  &::placeholder {
+    color: var(--text-3, #9ca3af);
+  }
+}
+
+.formTextarea {
+  resize: vertical;
+  min-height: 120px;
+  font-family: inherit;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.formActions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border, #e5e7eb);
+}
+
+/* ===== DARK MODE SUPPORT ===== */
+[data-theme="dark"] {
+  .dropdownMenu {
+    background: var(--surface, #2d2d2d);
+    border-color: var(--border, #404040);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  }
+
+  .menuItem {
+    color: var(--text-1, #f5f5f5);
+
+    &:hover {
+      background: var(--bg-2, #3a3a3a);
+    }
+
+    &:active {
+      background: var(--bg-3, #4a4a4a);
+    }
+  }
+
+  .formInput,
+  .formTextarea {
+    background: var(--surface, #2d2d2d);
+    border-color: var(--border, #404040);
+    color: var(--text-1, #f5f5f5);
+
+    &:focus {
+      border-color: var(--primary, #0a84ff);
+      box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.2);
+    }
+  }
+}

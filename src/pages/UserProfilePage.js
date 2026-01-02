@@ -2,6 +2,8 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api/axiosInstance';
 import { toast } from 'react-toastify';
+import Avatar from '../components/Avatar';
+import { PageLoader } from '../components/ui/PageLoader/PageLoader';
 
 const UserProfilePage = () => {
   const { id } = useParams();
@@ -41,18 +43,19 @@ const UserProfilePage = () => {
     });
   };
 
-  if (!user) return <p>Loading profile...</p>;
+  if (!user) return <PageLoader message="Loading profile..." />;
 
   return (
     <div className="profile-container" style={{ padding: '2rem' }}>
       <h2>{user.username}'s Profile</h2>
       <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-        <img
-          src={user.profileImageUrl || '/default-avatar.png'}
+        {/* Display the user's avatar using the Avatar component which
+            automatically falls back to initials when no image is available. */}
+        <Avatar
+          user={{ id: user.id, name: user.name || user.username, avatarUrl: user.profileImageUrl }}
+          size={120}
           alt="Profile"
-          width={120}
-          height={120}
-          style={{ borderRadius: '50%' }}
+          rounded
         />
         <div>
           <p><strong>Name:</strong> {user.name}</p>

@@ -1,0 +1,570 @@
+// ═══════════════════════════════════════════════════════════════════════════════
+// NOTIFICATION BELL - SOLID BACKGROUNDS, NO TRANSPARENCY
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// Theme variables - SOLID COLORS ONLY
+:root {
+  // Light theme (default)
+  --notif-panel-bg: #ffffff;
+  --notif-panel-text: #0f172a;
+  --notif-border: rgba(15, 23, 42, 0.12);
+  --notif-group-bg: #f8fafc;
+  --notif-item-bg: #ffffff;
+  --notif-item-bg-unread: #eaf2ff; // Light blue background for unread
+  --notif-shadow: 0 20px 50px rgba(0,0,0,0.18);
+}
+
+// Dark theme override
+:global([data-theme="dark"]) {
+  --notif-panel-bg: #0b1220;
+  --notif-panel-text: #e5e7eb;
+  --notif-border: rgba(255,255,255,0.10);
+  --notif-group-bg: #0f172a;
+  --notif-item-bg: #0f172a;
+  --notif-item-bg-unread: #1a2333; // Subtle darker blue tint for unread
+  --notif-shadow: 0 20px 50px rgba(0,0,0,0.55);
+}
+
+// ───────────────── Bell Wrapper ─────────────────
+.bellWrap {
+  position: relative;
+  display: inline-block;
+  isolation: isolate;
+  
+  // FORCE NO TRANSPARENCY
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  filter: none !important;
+  mix-blend-mode: normal !important;
+  transform: translateZ(0) !important;
+}
+
+// ───────────────── Bell Button ─────────────────
+.button {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 22px;
+  
+  // FORCE NO TRANSPARENCY
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  filter: none !important;
+  mix-blend-mode: normal !important;
+  
+  background: linear-gradient(145deg, 
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(248, 250, 252, 0.9) 100%
+  ) !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+  box-shadow: 
+    0 4px 12px rgba(15, 23, 42, 0.08),
+    0 2px 6px rgba(15, 23, 42, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+  
+  cursor: pointer;
+  outline-offset: 3px;
+  transition: 
+    transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.25s ease;
+
+  &:hover { 
+    background: linear-gradient(145deg, 
+      rgba(255, 255, 255, 1) 0%,
+      rgba(241, 245, 249, 0.95) 100%
+    ) !important;
+    border-color: rgba(203, 213, 225, 0.9) !important;
+    box-shadow: 
+      0 6px 20px rgba(15, 23, 42, 0.12),
+      0 3px 10px rgba(15, 23, 42, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+    transform: translateY(-2px) scale(1.05);
+  }
+  
+  &:active { 
+    transform: translateY(-1px) scale(1.02); 
+    transition-duration: 0.1s;
+  }
+  
+  &:focus-visible { 
+    outline: 3px solid rgba(59, 130, 246, 0.4); 
+  }
+}
+
+// Dark theme button
+:global([data-theme="dark"]) .button {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+  }
+}
+
+// ───────────────── Dropdown Panel ─────────────────
+.panel {
+  width: 400px;
+  max-height: 500px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  
+  // SOLID BACKGROUND - NO TRANSPARENCY
+  background: var(--notif-panel-bg) !important;
+  background-color: var(--notif-panel-bg) !important;
+  background-image: none !important;
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  filter: none !important;
+  mix-blend-mode: normal !important;
+  
+  color: var(--notif-panel-text);
+  border: 1px solid var(--notif-border);
+  box-shadow: var(--notif-shadow);
+  
+  // Isolation from header effects
+  isolation: isolate !important;
+  contain: layout style paint !important;
+  transform: translateZ(0) !important;
+  
+  // Animation
+  animation: dropdownIn 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  
+  @media (max-width: 480px) {
+    width: calc(100vw - 24px);
+    max-width: 400px;
+  }
+}
+
+// ───────────────── Header ─────────────────
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 16px 24px;
+  border-bottom: 1px solid var(--notif-border);
+  
+  // SOLID BACKGROUND
+  background: var(--notif-panel-bg) !important;
+  background-color: var(--notif-panel-bg) !important;
+  background-image: none !important;
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  
+  border-radius: 16px 16px 0 0;
+}
+
+.headerTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--notif-panel-text);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.headerSubtitle {
+  font-size: 13px;
+  color: var(--notif-panel-text);
+  opacity: 0.7;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.closeButton {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--notif-border);
+  border: 1px solid var(--notif-border);
+  color: var(--notif-panel-text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+    transform: scale(1.05);
+  }
+}
+
+// ───────────────── Actions ─────────────────
+.headerActions {
+  display: flex;
+  gap: 12px;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--notif-border);
+  
+  // SOLID BACKGROUND
+  background: var(--notif-panel-bg) !important;
+  background-color: var(--notif-panel-bg) !important;
+  background-image: none !important;
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.action {
+  background: rgba(59, 130, 246, 0.1) !important;
+  background-color: rgba(59, 130, 246, 0.1) !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #3b82f6;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.2s ease;
+  
+  opacity: 1 !important;
+  mix-blend-mode: normal !important;
+
+  &:hover { 
+    background: rgba(59, 130, 246, 0.2) !important;
+    background-color: rgba(59, 130, 246, 0.2) !important;
+    background-image: none !important;
+    border-color: rgba(59, 130, 246, 0.5);
+    transform: translateY(-1px);
+  }
+  
+  &:focus-visible { 
+    outline: 2px solid rgba(59, 130, 246, 0.6); 
+    outline-offset: 2px; 
+  }
+}
+
+// ───────────────── List Container ─────────────────
+.list {
+  overflow: auto;
+  padding: 0;
+  margin: 0;
+  flex: 1;
+  
+  // SOLID BACKGROUND
+  background: var(--notif-panel-bg) !important;
+  background-color: var(--notif-panel-bg) !important;
+  background-image: none !important;
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  filter: none !important;
+  
+  // NO GAPS
+  gap: 0 !important;
+  
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,0,0,0.2) transparent;
+  
+  &::-webkit-scrollbar { 
+    width: 8px; 
+  }
+  
+  &::-webkit-scrollbar-track { 
+    background: transparent; 
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.2);
+    border-radius: 4px;
+  }
+}
+
+// ───────────────── Groups ─────────────────
+.group {
+  margin: 0 !important;
+  padding: 0 !important;
+  
+  // SOLID BACKGROUND
+  background: var(--notif-panel-bg) !important;
+  background-color: var(--notif-panel-bg) !important;
+  background-image: none !important;
+  
+  // NO GAPS
+  gap: 0 !important;
+  
+  &:not(:first-child) {
+    margin-top: 8px !important;
+  }
+  
+  > * {
+    margin: 0 !important;
+  }
+}
+
+.groupLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--notif-panel-text);
+  opacity: 0.6;
+  padding: 12px 24px 8px 24px;
+  margin: 0 !important;
+  
+  // SOLID BACKGROUND
+  background: var(--notif-group-bg) !important;
+  background-color: var(--notif-group-bg) !important;
+  background-image: none !important;
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+// ───────────────── AGGRESSIVE ActivityItem Override ─────────────────
+.list :global(.notification-item) {
+  // FORCE SOLID BACKGROUNDS
+  background: var(--notif-item-bg) !important;
+  background-color: var(--notif-item-bg) !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  filter: none !important;
+  mix-blend-mode: normal !important;
+  
+  // FORCE THEME COLORS
+  color: var(--notif-panel-text) !important;
+  
+  // Layout - FIX FOR TIMESTAMP CLIPPING
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 12px !important;
+  padding: 16px 24px !important;
+  margin: 0 !important;
+  border: none !important;
+  border-bottom: 1px solid var(--notif-border) !important;
+  border-radius: 0 !important;
+  text-decoration: none !important;
+  
+  // REMOVE FIXED HEIGHT - LET CONTENT DETERMINE HEIGHT
+  height: auto !important;
+  min-height: auto !important;
+  
+  width: 100% !important;
+  box-sizing: border-box !important;
+  
+  // ENSURE TEXT IS VISIBLE
+  overflow: visible !important;
+  
+  opacity: 1 !important;
+  transform: none !important;
+  
+  transition: all 0.2s ease !important;
+  
+  // Unread styling - ENHANCED VISUAL HIGHLIGHTING
+  &[data-unread="true"] {
+    background: var(--notif-item-bg-unread) !important;
+    background-color: var(--notif-item-bg-unread) !important;
+    background-image: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    
+    // Enhanced unread indicators
+    border-left: 3px solid #3b82f6 !important;
+    position: relative !important;
+    
+    // Subtle glow effect for unread items
+    box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.1) !important;
+    
+    // Slightly different background for better contrast
+    &:hover {
+      background: color-mix(in oklab, var(--notif-item-bg-unread) 85%, #3b82f6 15%) !important;
+      background-color: color-mix(in oklab, var(--notif-item-bg-unread) 85%, #3b82f6 15%) !important;
+      box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.2) !important;
+    }
+  }
+  
+  &:hover {
+    background: var(--notif-group-bg) !important;
+    background-color: var(--notif-group-bg) !important;
+    background-image: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    transform: none !important;
+  }
+  
+  &:last-child {
+    border-bottom: none !important;
+  }
+  
+  // FORCE override all nested elements
+  * {
+    color: var(--notif-panel-text) !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  
+  // Notification content styling - FIX TEXT LAYOUT
+  :global(.notification-title) {
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    color: var(--notif-panel-text) !important;
+    line-height: 1.4 !important; // Better line height
+    margin: 0 !important;
+    padding: 0 !important;
+    
+    // ENSURE TEXT WRAPS PROPERLY
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow: visible !important;
+    
+    strong {
+      font-weight: 600 !important;
+      color: var(--notif-panel-text) !important;
+    }
+  }
+  
+  :global(.notification-subtitle) {
+    opacity: 0.7 !important;
+    color: var(--notif-panel-text) !important;
+  }
+  
+  :global(.notification-time) {
+    font-size: 12px !important;
+    color: var(--notif-panel-text) !important;
+    opacity: 0.6 !important;
+    font-weight: 400 !important;
+    
+    // FIX TIMESTAMP CLIPPING
+    line-height: 1.4 !important; // Better line height for readability
+    margin: 0 !important;
+    padding: 2px 0 0 0 !important; // Small top padding to prevent baseline clipping
+    
+    // ENSURE TIMESTAMP IS FULLY VISIBLE
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow: visible !important;
+    
+    // PREVENT NEGATIVE MARGINS
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+  
+  :global(.notification-dot) {
+    width: 8px !important;
+    height: 8px !important;
+    border-radius: 50% !important;
+    background: #3b82f6 !important;
+    flex-shrink: 0 !important;
+    margin-top: 4px !important;
+  }
+}
+
+// ───────────────── Empty & Loading States ─────────────────
+.empty {
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--notif-panel-text);
+  opacity: 0.7;
+  
+  // SOLID BACKGROUND
+  background: var(--notif-panel-bg) !important;
+  background-color: var(--notif-panel-bg) !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  
+  div:first-child {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  
+  div:last-child {
+    font-size: 14px;
+    opacity: 0.8;
+  }
+}
+
+.loading {
+  padding: 24px;
+  text-align: center;
+  
+  // SOLID BACKGROUND
+  background: var(--notif-panel-bg) !important;
+  background-color: var(--notif-panel-bg) !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+// ───────────────── NUCLEAR: Force solid everywhere ─────────────────
+.panel,
+.panel *,
+.header,
+.header *,
+.list,
+.list *,
+.group,
+.group *,
+.groupLabel,
+.empty,
+.loading {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  filter: none !important;
+  mix-blend-mode: normal !important;
+  background-image: none !important;
+}
+
+// ───────────────── Animations ─────────────────
+@keyframes dropdownIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(-8px) scale(0.98); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0) scale(1); 
+  }
+}
+
+// ───────────────── Reduced Motion ─────────────────
+@media (prefers-reduced-motion: reduce) {
+  .button,
+  .panel,
+  .action { 
+    transition: none; 
+    animation: none;
+  }
+}
+
+// ───────────────── High Contrast ─────────────────
+@media (forced-colors: active) {
+  .panel, 
+  .action, 
+  .list :global(.notification-item) { 
+    border: 1px solid CanvasText; 
+  }
+  
+  .button:focus-visible,
+  .list :global(.notification-item):focus-visible { 
+    outline: 2px solid Highlight; 
+  }
+}

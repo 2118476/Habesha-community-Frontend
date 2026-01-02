@@ -1,0 +1,42 @@
+/* Styles for the travel details page. Use cards to group itinerary
+   information and keep action buttons together. */
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: var(--s-8) var(--s-4);
+  color: var(--on-surface-0);
+}
+
+h2 {
+  margin-bottom: var(--s-4);
+  font-size: var(--text-2xl);
+}
+
+.detailCard {
+  background: var(--surface-1);
+  padding: var(--s-6);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-1);
+  margin-bottom: var(--s-6);
+  line-height: 1.6;
+  p {
+    margin-bottom: var(--s-3);
+  }
+}
+
+.posterLink {
+  color: var(--primary);
+  cursor: pointer;
+  &:hover,
+  &:focus-visible {
+    text-decoration: underline;
+  }
+}
+
+.actions {
+  display: flex;
+  gap: var(--s-4);
+  flex-wrap: wrap;
+  margin-top: var(--s-4);
+}

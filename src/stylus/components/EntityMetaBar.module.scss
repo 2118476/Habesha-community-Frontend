@@ -1,0 +1,32 @@
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--on-surface-1);
+}
+.spacer { flex: 1; }
+.btn {
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--accent-600, #2563eb);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-1);
+}
+.btn:hover { filter: brightness(0.95); }
+
+/* Light mode specific overrides */
+:root:not([data-theme="dark"]) .bar,
+:global([data-theme="light"]) .bar {
+  color: #000000 !important;
+  border-bottom-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Dark mode specific overrides */
+:global([data-theme="dark"]) .bar {
+  color: var(--on-surface-1) !important;
+  border-bottom-color: var(--border-soft) !important;
+}

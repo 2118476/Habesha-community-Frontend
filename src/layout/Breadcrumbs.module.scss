@@ -1,0 +1,10 @@
+.breadcrumbs {
+  font-size: var(--fs-14);
+  color: var(--color-muted);
+}
+.breadcrumbs ol {
+  display: flex; gap: 8px; padding: 0; margin: 0; list-style: none;
+}
+.breadcrumbs li::after { content: "/"; margin-left: 8px; color: var(--color-muted); }
+.breadcrumbs li:last-child::after { content: ""; }
+.breadcrumbs a { color: inherit; text-decoration: none; }

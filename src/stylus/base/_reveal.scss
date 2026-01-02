@@ -1,0 +1,134 @@
+/*! Enterprise Scroll-Reveal v4 - Modern, smooth animations on scroll
+ *  
+ *  USAGE:
+ *  - Single:  [data-reveal="up|down|left|right|scale|scale-down|scale-up|blur|zoom|fade"]
+ *  - List:    [data-reveal="list-up|list-down|list-left|list-right|list-scale"]  (staggered)
+ *  - Speed:   [data-reveal~="snappy|slow|smooth|instant"]
+ *  - Options: [data-reveal~="no-fade"] (motion only, no opacity change)
+ *  
+ *  CUSTOM VARIABLES (per element):
+ *  --reveal-dx, --reveal-dy, --reveal-scale, --reveal-rotate, --reveal-delay, --reveal-blur
+ *  
+ *  LIST VARIABLES:
+ *  --reveal-stagger (ms), --list-dx, --list-dy, --list-scale
+ */
+
+:root {
+  /* Timing & Easing */
+  --reveal-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --reveal-ease-soft: cubic-bezier(0.16, 0.84, 0.44, 1);
+  --reveal-ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --reveal-dur: 0.6s;
+  --reveal-stagger: 60ms;
+  
+  /* Movement */
+  --reveal-distance: 24px;
+  --reveal-distance-large: 40px;
+  --reveal-blur-amount: 6px;
+  
+  /* Thresholds */
+  --reveal-threshold: 0.1;
+}
+
+/* ========== Single element ========== */
+[data-reveal] {
+  /* initial offsets (customizable per element) */
+  --_dx: var(--reveal-dx, 0);
+  --_dy: var(--reveal-dy, 24px);
+  --_scale: var(--reveal-scale, 1);
+  --_rotate: var(--reveal-rotate, 0deg);
+  --_blur: var(--reveal-blur, 0px);
+
+  opacity: var(--reveal-opacity, 0); /* set to 1 via [no-fade] */
+  transform:
+    translate3d(var(--_dx), var(--_dy), 0)
+    scale(var(--_scale))
+    rotate(var(--_rotate));
+  filter: blur(var(--_blur));
+  will-change: transform, opacity, filter;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+[data-reveal][data-inview="true"] {
+  opacity: 1;
+  transform: none;
+  filter: blur(0);
+  transition:
+    transform var(--reveal-dur) var(--reveal-ease),
+    opacity   var(--reveal-dur) var(--reveal-ease),
+    filter    var(--reveal-dur) var(--reveal-ease);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+/* Direction shorthands (set initial offsets) */
+[data-reveal="up"]    { --reveal-dy:  var(--reveal-distance); }
+[data-reveal="down"]  { --reveal-dy:  calc(var(--reveal-distance) * -1); }
+[data-reveal="left"]  { --reveal-dx:  var(--reveal-distance); }
+[data-reveal="right"] { --reveal-dx:  calc(var(--reveal-distance) * -1); }
+
+/* Scale variants */
+[data-reveal="scale"],
+[data-reveal="scale-up"]   { --reveal-scale: 1.08; }
+[data-reveal="scale-down"] { --reveal-scale: 0.92; }
+[data-reveal="zoom"]       { --reveal-scale: 0.85; --reveal-dy: 0; }
+
+/* Blur variant - adds blur effect on entry */
+[data-reveal="blur"]       { --reveal-blur: var(--reveal-blur-amount); --reveal-dy: 16px; }
+
+/* Speed/ease presets */
+[data-reveal~="instant"] { --reveal-dur: 0.2s; --reveal-ease: cubic-bezier(0.2, 0.8, 0.2, 1); }
+[data-reveal~="snappy"]  { --reveal-dur: 0.4s; --reveal-ease: cubic-bezier(0.2, 0.8, 0.2, 1); }
+[data-reveal~="slow"]    { --reveal-dur: 0.9s; --reveal-ease: var(--reveal-ease-soft); }
+[data-reveal~="smooth"]  { --reveal-dur: 0.8s; --reveal-ease: var(--reveal-ease-soft); }
+[data-reveal~="bounce"]  { --reveal-dur: 0.7s; --reveal-ease: var(--reveal-ease-bounce); }
+
+/* Turn off the fade while keeping motion */
+[data-reveal~="no-fade"] { --reveal-opacity: 1; }
+
+/* Fade only (no movement) */
+[data-reveal="fade"] { --reveal-dy: 0; --reveal-dx: 0; --reveal-scale: 1; }
+
+/* ========== List (stagger children) ========== */
+[data-reveal^="list"] > * {
+  opacity: var(--reveal-opacity, 0);
+  transform: translate3d(var(--list-dx, 0), var(--list-dy, 24px), 0) scale(var(--list-scale, 1));
+  filter: blur(var(--list-blur, 0px));
+  will-change: transform, opacity, filter;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+[data-reveal^="list"][data-inview="true"] > * {
+  opacity: 1;
+  transform: none;
+  filter: blur(0);
+  transition:
+    transform var(--reveal-dur) var(--reveal-ease),
+    opacity   var(--reveal-dur) var(--reveal-ease),
+    filter    var(--reveal-dur) var(--reveal-ease);
+}
+
+/* List direction shorthands */
+[data-reveal="list-up"]    { --list-dy:  var(--reveal-distance); }
+[data-reveal="list-down"]  { --list-dy:  calc(var(--reveal-distance) * -1); }
+[data-reveal="list-left"]  { --list-dx:  var(--reveal-distance); }
+[data-reveal="list-right"] { --list-dx:  calc(var(--reveal-distance) * -1); }
+[data-reveal="list-scale"] { --list-scale: 1.04; }
+
+/* Generate delays for first 120 children (increase if you like) */
+@for $i from 1 through 120 {
+  [data-reveal^="list"] > :nth-child(#{$i}) {
+    --reveal-delay: calc(var(--reveal-stagger) * (#{$i - 1}));
+  }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal],
+  [data-reveal^="list"] > * {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}

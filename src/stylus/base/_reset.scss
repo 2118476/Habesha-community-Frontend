@@ -1,0 +1,31 @@
+/*!
+ * A minimal modern CSS reset for the Habesha Community UI.
+ *
+ * This reset normalises margin and padding, sets a consistent
+ * box‑model and establishes a smooth scrolling behaviour. It also
+ * removes default list styles to allow custom styling within
+ * components. Keep this file succinct—component styles belong in
+ * their own modules.
+ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  height: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100%;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+ul, ol {
+  list-style: none;
+}

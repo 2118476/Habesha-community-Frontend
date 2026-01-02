@@ -1,0 +1,94 @@
+/*
+ * Styles for the ImageCarousel component.
+ * The carousel maintains a consistent aspect ratio for all images and
+ * positions navigation arrows on top of the image. Dots below the
+ * carousel indicate the active image. Colours are kept neutral so they
+ * work on both light and dark backgrounds. Theme CSS variables are used
+ * when available to better integrate with the existing design.
+ */
+
+.carousel {
+  position: relative;
+  width: 100%;
+  /* Removed fixed aspect ratio to prevent cropping */
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: rgba(0,0,0,0.04); /* Subtle background for letterboxing */
+  border: 1px solid var(--border-1);
+}
+
+/* Container for the image and nav buttons */
+.inner {
+  position: relative;
+  width: 100%;
+  height: auto; /* Changed from 100% to auto for responsive height */
+}
+
+/* Main image fills the carousel area without cropping */
+.img {
+  width: 100%;
+  height: auto; /* Changed from 100% to auto for responsive height */
+  object-fit: contain; /* Changed from cover to contain to prevent cropping */
+  display: block;
+  border-radius: inherit;
+  background: transparent;
+  max-height: 70vh; /* Optional: prevents extremely tall images */
+}
+
+/* Shared styles for navigation buttons */
+.nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  font-size: 24px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1;
+  transition: background 0.15s ease;
+}
+
+.nav:hover {
+  background: rgba(0, 0, 0, 0.55);
+}
+
+/* Position nav buttons left/right */
+.prev {
+  left: 12px;
+}
+
+.next {
+  right: 12px;
+}
+
+/* Dots container */
+.dots {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+  gap: 6px;
+}
+
+/* Individual dot */
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: var(--border, #d1d5db);
+  cursor: pointer;
+  padding: 0;
+}
+
+/* Active dot highlighted */
+.dot.active {
+  background: var(--brand, #4f46e5);
+}

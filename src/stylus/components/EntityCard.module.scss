@@ -1,0 +1,410 @@
+/*
+ * EntityCard styles.
+ *
+ * Custom styling for marketplace cards used across events, services,
+ * rentals and ads listings. The card is clickable and utilises
+ * the design system tokens. The image area maintains a 16:9 aspect
+ * ratio. Content is spaced generously with clear typography and
+ * muted meta information.
+ */
+
+.card {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  background: var(--surface-1);
+  color: var(--on-surface-1);
+  border: 1px solid var(--border-1);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-1);
+  overflow: hidden;
+  transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+
+  &:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: var(--shadow-1);
+  }
+}
+
+.image {
+  width: 100%;
+  padding-top: 62.5%; /* 16:10 aspect ratio for more height */
+  background-size: cover;
+  background-position: center;
+}
+
+.content {
+  padding: var(--s-4) var(--s-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.title {
+  font-size: var(--text-xl);
+  font-weight: 600;
+}
+
+.meta {
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
+/* Emphasise the price of rentals and services with a larger font and brand colour */
+.price {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.description {
+  font-size: var(--text-sm);
+  color: var(--on-surface-2);
+}
+
+/* Enforced baseline for card-like elements */
+.card, .box, .panel, .tile {
+  background: var(--surface-0);
+  border: 1px solid var(--border-1);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1);
+  padding: clamp(12px, 2.4vw, 20px);
+}
+
+/* ======================== LIGHT MODE TEXT VISIBILITY ======================== */
+/* Ensure text is visible in light mode */
+.card {
+  color: var(--on-surface-1) !important;
+}
+
+.title {
+  color: var(--on-surface-1) !important;
+}
+
+.meta {
+  color: var(--on-surface-muted) !important;
+}
+
+.description {
+  color: var(--on-surface-2) !important;
+}
+
+.price {
+  color: var(--primary) !important;
+}
+
+/* Light mode specific overrides */
+:root:not([data-theme="dark"]) .card,
+:global([data-theme="light"]) .card {
+  background: var(--surface-1) !important;
+  color: #000000 !important;
+  border-color: var(--border-1) !important;
+}
+
+:root:not([data-theme="dark"]) .title,
+:global([data-theme="light"]) .title {
+  color: #000000 !important;
+}
+
+:root:not([data-theme="dark"]) .meta,
+:global([data-theme="light"]) .meta {
+  color: #666666 !important;
+}
+
+:root:not([data-theme="dark"]) .description,
+:global([data-theme="light"]) .description {
+  color: #333333 !important;
+}
+
+:root:not([data-theme="dark"]) .price,
+:global([data-theme="light"]) .price {
+  color: var(--primary) !important;
+}
+
+/* Nuclear option - force all text in cards to be black in light mode */
+:root:not([data-theme="dark"]) .card {
+  * {
+    color: #000000 !important;
+  }
+  
+  .meta, .description {
+    color: #666666 !important;
+  }
+  
+  .price {
+    color: #0ea5e9 !important;
+  }
+  
+  a {
+    color: #0ea5e9 !important;
+  }
+}
+
+/* ======================== ENHANCED SERVICE CARD STYLES ======================== */
+
+/* Service-specific card styling */
+.serviceCard {
+  position: relative;
+}
+
+.serviceCard .image {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Category badge overlay on image */
+.categoryBadge {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: linear-gradient(135deg, var(--brand) 0%, var(--accent, #9333ea) 100%);
+  color: white;
+  padding: 0.375rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.categoryIcon {
+  font-size: 0.875rem;
+}
+
+/* Rating badge overlay on image */
+.ratingBadge {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 0.375rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.ratingIcon {
+  font-size: 0.875rem;
+}
+
+.ratingCount {
+  font-size: 0.625rem;
+  opacity: 0.9;
+}
+
+/* Service info section */
+.serviceInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.servicePriceRow {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: var(--surface-0);
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-1);
+}
+
+.priceLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--on-surface-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.priceValue {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--brand);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Service details grid */
+.serviceDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.serviceDetail {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--surface-0);
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-1);
+  font-size: 0.875rem;
+}
+
+.detailIcon {
+  font-size: 1rem;
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.detailText {
+  font-weight: 500;
+  color: var(--on-surface-1);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Enhanced description for services */
+.serviceCard .description {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--on-surface-muted);
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background: var(--surface-0);
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-1);
+}
+
+/* Dark mode adjustments for service cards */
+:global([data-theme="dark"]) {
+  .categoryBadge {
+    background: linear-gradient(135deg, var(--brand) 0%, var(--accent, #c084fc) 100%);
+  }
+  
+  .ratingBadge {
+    background: rgba(0, 0, 0, 0.9);
+  }
+  
+  .servicePriceRow,
+  .serviceDetail,
+  .serviceCard .description {
+    background: var(--surface-2);
+    border-color: var(--border-1);
+  }
+  
+  .priceLabel {
+    color: var(--on-surface-muted);
+  }
+  
+  .priceValue {
+    color: var(--brand);
+  }
+  
+  .detailText {
+    color: var(--on-surface-1);
+  }
+  
+  .serviceCard .description {
+    color: var(--on-surface-muted);
+  }
+}
+
+/* Responsive adjustments for service cards */
+@media (max-width: 600px) {
+  .categoryBadge,
+  .ratingBadge {
+    font-size: 0.625rem;
+    padding: 0.25rem 0.5rem;
+  }
+  
+  .categoryIcon,
+  .ratingIcon {
+    font-size: 0.75rem;
+  }
+  
+  .servicePriceRow {
+    padding: 0.5rem;
+  }
+  
+  .priceValue {
+    font-size: 1.125rem;
+  }
+  
+  .serviceDetail {
+    padding: 0.375rem 0.5rem;
+    font-size: 0.8125rem;
+  }
+  
+  .serviceCard .description {
+    padding: 0.5rem;
+    font-size: 0.8125rem;
+  }
+}
+
+/* Hover effects for service cards */
+.serviceCard:hover .categoryBadge {
+  transform: scale(1.05);
+  transition: transform 0.2s ease;
+}
+
+.serviceCard:hover .ratingBadge {
+  transform: scale(1.05);
+  transition: transform 0.2s ease;
+}
+
+.serviceCard:hover .servicePriceRow {
+  background: var(--surface-elevated);
+  border-color: var(--border-2);
+  transition: all 0.2s ease;
+}
+
+.serviceCard:hover .serviceDetail {
+  background: var(--surface-elevated);
+  border-color: var(--border-2);
+  transition: all 0.2s ease;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .serviceCard:hover .categoryBadge,
+  .serviceCard:hover .ratingBadge {
+    transform: none;
+    transition: none;
+  }
+  
+  .serviceCard:hover .servicePriceRow,
+  .serviceCard:hover .serviceDetail {
+    transition: none;
+  }
+}
+
+/* ======================== SELECTION STYLES ======================== */
+/* Ensure proper text selection visibility in entity cards */
+.card ::selection,
+.content ::selection {
+  background: rgba(10, 132, 255, 0.2);
+  color: var(--on-surface-1) !important;
+}
+
+.card ::-moz-selection,
+.content ::-moz-selection {
+  background: rgba(10, 132, 255, 0.2);
+  color: var(--on-surface-1) !important;
+}
+
+/* Dark mode selection */
+:global([data-theme="dark"]) .card ::selection,
+:global([data-theme="dark"]) .content ::selection {
+  background: rgba(10, 132, 255, 0.3);
+  color: var(--on-surface-1) !important;
+}
+
+:global([data-theme="dark"]) .card ::-moz-selection,
+:global([data-theme="dark"]) .content ::-moz-selection {
+  background: rgba(10, 132, 255, 0.3);
+  color: var(--on-surface-1) !important;
+}

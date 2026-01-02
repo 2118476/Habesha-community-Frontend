@@ -1,0 +1,254 @@
+/*
+ * UNIFIED THEME SYSTEM - Design Tokens
+ * 
+ * Clean, centralized color system for the entire application.
+ * 
+ * LIGHT MODE (DEFAULT):
+ * - Pure white backgrounds (#ffffff or very close)
+ * - Black/very dark text for maximum readability
+ * - Subtle borders and shadows
+ * 
+ * DARK MODE:
+ * - Black + blue gradient background
+ * - White/very light text
+ * - Glassy dark surfaces with white text
+ * 
+ * All components MUST use these tokens - no hard-coded colors!
+ */
+
+:root {
+  /* ===================================================================
+   * LIGHT MODE (DEFAULT)
+   * Pure white backgrounds + black text for maximum readability
+   * =================================================================== */
+  
+  /* Page Background - Pure white */
+  --bg-app:        #ffffff;
+  --bg-app-solid:  #ffffff;
+
+  /* Surfaces - Pure white with minimal transparency */
+  --surface-0:     #ffffff;
+  --surface-1:     #ffffff;
+  --surface-2:     #fafafa;
+  --surface-elevated: #ffffff;
+
+  /* Text - Black/very dark for maximum readability */
+  --on-surface-0:  #0a0a0a;
+  --on-surface-1:  #000000;
+  --on-surface-2:  #000000;
+  --on-surface-muted: #666666;
+
+  /* Brand Colors - Vibrant for actions and links */
+  --brand:       #0ea5e9;
+  --brand-hover: #0284c7;
+  --brand-soft:  rgba(14, 165, 233, 0.1);
+  --brand-ink:   #000000;
+
+  --accent:      #9333ea;
+  --accent-hover: #7e22ce;
+  --accent-soft: rgba(147, 51, 234, 0.1);
+
+  /* Status Colors */
+  --danger:      #ef4444;
+  --danger-soft: rgba(239, 68, 68, 0.1);
+  --success:     #22c55e;
+  --success-soft: rgba(34, 197, 94, 0.1);
+  --info:        #3b82f6;
+  --info-soft:   rgba(59, 130, 246, 0.1);
+  --warning:     #f59e0b;
+  --warning-soft: rgba(245, 158, 11, 0.1);
+
+  /* Borders - Subtle gray borders for light mode */
+  --border-soft:   rgba(0, 0, 0, 0.08);
+  --border-strong: rgba(0, 0, 0, 0.15);
+  --ring:          rgba(14, 165, 233, 0.25);
+
+  /* Radii.  Use these to round corners consistently across the app. */
+  --radius-xs:   6px;
+  --radius-sm:   10px;
+  --radius-md:   14px;
+  --radius-lg:   18px;
+  --radius-xl:   24px;
+  --radius-pill: 9999px;
+
+  /* Shadows - Subtle for light mode */
+  --shadow-soft:   0 4px 12px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0, 0, 0, 0.03);
+  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.02);
+  --shadow-strong: 0 10px 30px rgba(0, 0, 0, 0.10), 0 4px 8px rgba(0, 0, 0, 0.06);
+
+  /* Glass blur - Minimal for light mode (mostly for consistency) */
+  --glass-blur-sm:  4px;
+  --glass-blur-md:  8px;
+  --glass-blur-lg:  12px;
+
+  /* Motion timings and easings.  Smooth, professional animations. */
+  --motion-fast:    200ms;
+  --motion-med:     300ms;
+  --motion-slow:    500ms;
+  --motion-ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --motion-ease-soft: cubic-bezier(0.16, 0.84, 0.44, 1);
+  --motion-ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Typography.  Provide a scale of font sizes and weights. */
+  --font-sans:   Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Ethiopic", Arial, sans-serif;
+  --fs-12:       0.75rem;
+  --fs-14:       0.875rem;
+  --fs-16:       1rem;
+  --fs-18:       1.125rem;
+  --fs-20:       1.25rem;
+  --fs-24:       1.5rem;
+  --fs-28:       1.75rem;
+  --fs-32:       2rem;
+  --fw-400:      400;
+  --fw-500:      500;
+  --fw-600:      600;
+  --fw-700:      700;
+  --lh-normal:   1.55;
+
+  /* Spacing scale.  Use integer steps to build margin and padding. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+
+  /* Layout constraints.  These values control the shell widths and
+   * gutters used in `AppShell.module.scss`. */
+  --app-max-width:  1200px;
+  --app-gutter:     clamp(16px, 4vw, 24px);
+  --app-header-height: 64px;
+
+  /* Legacy aliases ------------------------------------------------------
+   * The following variables alias older names used throughout the
+   * codebase to their modern equivalents.  They should be removed once
+   * all modules have been migrated to the new tokens above.
+   */
+  /* Primary brand colour used throughout the UI. */
+  --primary: var(--brand);
+  /* Text colour on brand backgrounds – white for good contrast. */
+  --on-primary: #ffffff;
+  /* Muted text colour used on secondary elements. */
+  --muted-1: var(--on-surface-muted);
+  /* Backwards compat for original border tokens. */
+  --border-1: var(--border-soft);
+  --border-2: var(--border-strong);
+  /* Alias for surfaces used on cards/panels. */
+  --surface-card: var(--surface-1);
+  /* Fallback for on‑surface references without numeric index. */
+  --on-surface: var(--on-surface-1);
+  /* Legacy text tokens used by some modules. */
+  --text-1: var(--on-surface-1);
+  --text-2: var(--on-surface-muted);
+  --on-surface-3: var(--on-surface-muted);
+  /* Legacy colour tokens used by SCSS utilities. */
+  --color-bg:    var(--bg-app-solid);
+  --color-surface: var(--surface-1);
+  --color-text: var(--on-surface-1);
+  --color-muted: var(--on-surface-muted);
+  --color-border: var(--border-soft);
+  --shadow-sm:   var(--shadow-subtle);
+  --shadow-md:   var(--shadow-soft);
+  --shadow-lg:   0 20px 50px rgba(15, 23, 42, 0.18);
+  /* Radius aliases */
+  --radius-4:  var(--radius-xs);
+  --radius-8:  var(--radius-sm);
+  --radius-12: var(--radius-md);
+  --radius-16: var(--radius-lg);
+  --radius-20: var(--radius-xl);
+  /* Focus ring used by global focus styles */
+  --focus-ring: 0 0 0 3px var(--ring);
+
+  /* Section title tokens - Light mode (used globally for ALL section headings) */
+  --section-title-color-light: #000000;
+  --section-highlight-bg-light: rgba(14, 165, 233, 0.08);
+  --section-highlight-border-light: rgba(14, 165, 233, 0.15);
+  
+  /* Feed section title tokens - Light mode (alias for backwards compatibility) */
+  --feed-section-title-color-light: var(--section-title-color-light);
+  --feed-section-highlight-bg-light: var(--section-highlight-bg-light);
+  --feed-section-highlight-border-light: var(--section-highlight-border-light);
+}
+
+/* ===================================================================
+ * DARK MODE - Gray-Black Theme (VS Code Style)
+ * Dark gray to black gradient + white text for readability
+ * =================================================================== */
+:root[data-theme="dark"] {
+  /* Page Background - Dark Gray to Black Gradient (VS Code style) */
+  --bg-app:        linear-gradient(135deg, #1e1e1e 0%, #252526 40%, #2d2d30 100%);
+  --bg-app-solid:  #1e1e1e;
+
+  /* Surfaces - Dark gray panels with subtle transparency */
+  --surface-0:     rgba(30, 30, 30, 0.95);
+  --surface-1:     rgba(37, 37, 38, 0.95);
+  --surface-2:     rgba(45, 45, 48, 0.95);
+  --surface-elevated: rgba(51, 51, 51, 0.98);
+
+  /* Text - White/light gray for maximum readability on dark */
+  --on-surface-0:  #cccccc;
+  --on-surface-1:  #d4d4d4;
+  --on-surface-2:  #ffffff;
+  --on-surface-muted: #969696;
+
+  /* Brand Colors - Adjusted for gray-black theme */
+  --brand:       #007acc;
+  --brand-hover: #1177bb;
+  --brand-soft:  rgba(0, 122, 204, 0.15);
+  --brand-ink:   #ffffff;
+
+  --accent:      #c586c0;
+  --accent-hover: #b871bd;
+  --accent-soft: rgba(197, 134, 192, 0.15);
+
+  /* Status Colors - VS Code inspired */
+  --danger:      #f14c4c;
+  --danger-soft: rgba(241, 76, 76, 0.15);
+  --success:     #89d185;
+  --success-soft: rgba(137, 209, 133, 0.15);
+  --info:        #75beff;
+  --info-soft:   rgba(117, 190, 255, 0.15);
+  --warning:     #ffcc02;
+  --warning-soft: rgba(255, 204, 2, 0.15);
+
+  /* Borders - Subtle gray borders for dark mode */
+  --border-soft:   rgba(255, 255, 255, 0.06);
+  --border-strong: rgba(255, 255, 255, 0.12);
+  --ring:          rgba(0, 122, 204, 0.35);
+
+  /* Shadows - Subtle black shadows for gray theme */
+  --shadow-soft:   0 8px 24px rgba(0, 0, 0, 0.4), 0 4px 8px rgba(0, 0, 0, 0.2);
+  --shadow-subtle: 0 2px 8px rgba(0, 0, 0, 0.3), 0 1px 4px rgba(0, 0, 0, 0.2);
+  --shadow-strong: 0 16px 40px rgba(0, 0, 0, 0.5), 0 8px 16px rgba(0, 0, 0, 0.3);
+
+  /* Glass blur - Moderate for gray theme */
+  --glass-blur-sm:  8px;
+  --glass-blur-md:  12px;
+  --glass-blur-lg:  16px;
+
+  /* Section title tokens - Dark mode (VS Code style) */
+  --section-title-color-dark: #ffffff;
+  --section-highlight-bg-dark: rgba(0, 122, 204, 0.12);
+  --section-highlight-border-dark: rgba(0, 122, 204, 0.25);
+  
+  /* Feed section title tokens - Dark mode (alias for backwards compatibility) */
+  --feed-section-title-color-dark: var(--section-title-color-dark);
+  --feed-section-highlight-bg-dark: var(--section-highlight-bg-dark);
+  --feed-section-highlight-border-dark: var(--section-highlight-border-dark);
+}
+
+/* -----------------------------------------------------------------------
+ * Reduced motion support.  When the user requests less motion, we
+ * shorten all durations to 1ms.  Actual animations should check
+ * `prefers-reduced-motion` media query, but tokenising the durations
+ * avoids hard‑coding values throughout the stylesheets.
+ */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-fast:  1ms;
+    --motion-med:   1ms;
+    --motion-slow:  1ms;
+  }
+}

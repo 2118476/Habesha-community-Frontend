@@ -1,0 +1,288 @@
+/*!
+ * Modern Utility Classes
+ * High-quality, reusable utility classes for modern UI patterns
+ */
+
+/* ===== Glass Morphism Utilities ===== */
+.glass {
+  background: var(--surface-1);
+  backdrop-filter: saturate(180%) blur(var(--glass-blur-sm));
+  -webkit-backdrop-filter: saturate(180%) blur(var(--glass-blur-sm));
+  border: 1px solid var(--border-soft);
+}
+
+.glass-strong {
+  background: var(--surface-2);
+  backdrop-filter: saturate(200%) blur(var(--glass-blur-md));
+  -webkit-backdrop-filter: saturate(200%) blur(var(--glass-blur-md));
+  border: 1px solid var(--border-strong);
+}
+
+/* ===== Card Utilities ===== */
+.card {
+  background: var(--surface-1);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-subtle);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.card-hover:hover {
+  box-shadow: var(--shadow-soft);
+  transform: translateY(-4px);
+}
+
+.card-interactive {
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.card-interactive:hover {
+  box-shadow: var(--shadow-soft);
+  transform: translateY(-2px) scale(1.01);
+  border-color: var(--brand);
+}
+
+.card-interactive:active {
+  transform: translateY(0) scale(0.99);
+}
+
+/* ===== Gradient Utilities ===== */
+.gradient-brand {
+  background: linear-gradient(135deg, var(--brand) 0%, var(--accent) 100%);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--brand) 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-border {
+  position: relative;
+  background: var(--surface-1);
+  border-radius: var(--radius-md);
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px;
+  background: linear-gradient(135deg, var(--brand), var(--accent));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+/* ===== Spacing Utilities ===== */
+.stack-xs > * + * { margin-top: var(--space-2); }
+.stack-sm > * + * { margin-top: var(--space-3); }
+.stack-md > * + * { margin-top: var(--space-4); }
+.stack-lg > * + * { margin-top: var(--space-6); }
+.stack-xl > * + * { margin-top: var(--space-8); }
+
+.cluster-xs { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+.cluster-sm { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
+.cluster-md { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: center; }
+.cluster-lg { display: flex; flex-wrap: wrap; gap: var(--space-6); align-items: center; }
+
+/* ===== Layout Utilities ===== */
+.container {
+  max-width: var(--app-max-width, 1200px);
+  margin-inline: auto;
+  padding-inline: var(--app-gutter, clamp(16px, 4vw, 24px));
+}
+
+.container-narrow {
+  max-width: 800px;
+  margin-inline: auto;
+  padding-inline: var(--app-gutter, clamp(16px, 4vw, 24px));
+}
+
+.grid-auto {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+  gap: var(--space-4);
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+}
+
+@media (max-width: 768px) {
+  .grid-2, .grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== Text Utilities ===== */
+.text-balance {
+  text-wrap: balance;
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--brand), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-shadow {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== Interactive States ===== */
+.clickable {
+  cursor: pointer;
+  user-select: none;
+  transition: opacity 0.2s ease;
+}
+
+.clickable:active {
+  opacity: 0.7;
+}
+
+.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+/* ===== Badge & Pill Utilities ===== */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-12);
+  font-weight: var(--fw-600);
+  background: var(--brand-soft);
+  color: var(--brand);
+  border: 1px solid color-mix(in oklab, var(--brand) 20%, transparent);
+}
+
+.badge-success {
+  background: var(--success-soft);
+  color: var(--success);
+  border-color: color-mix(in oklab, var(--success) 20%, transparent);
+}
+
+.badge-danger {
+  background: var(--danger-soft);
+  color: var(--danger);
+  border-color: color-mix(in oklab, var(--danger) 20%, transparent);
+}
+
+.badge-info {
+  background: var(--info-soft);
+  color: var(--info);
+  border-color: color-mix(in oklab, var(--info) 20%, transparent);
+}
+
+/* ===== Loading States ===== */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--surface-1) 0%,
+    var(--surface-2) 50%,
+    var(--surface-1) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+.pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ===== Elevation Utilities ===== */
+.elevation-0 { box-shadow: none; }
+.elevation-1 { box-shadow: var(--shadow-subtle); }
+.elevation-2 { box-shadow: var(--shadow-soft); }
+.elevation-3 { box-shadow: var(--shadow-strong); }
+
+/* ===== Border Utilities ===== */
+.border-soft { border: 1px solid var(--border-soft); }
+.border-strong { border: 1px solid var(--border-strong); }
+.border-brand { border: 1px solid var(--brand); }
+
+.border-top { border-top: 1px solid var(--border-soft); }
+.border-bottom { border-bottom: 1px solid var(--border-soft); }
+.border-left { border-left: 1px solid var(--border-soft); }
+.border-right { border-right: 1px solid var(--border-soft); }
+
+/* ===== Overflow Utilities ===== */
+.overflow-hidden { overflow: hidden; }
+.overflow-auto { overflow: auto; }
+.overflow-scroll { overflow: scroll; }
+
+/* ===== Position Utilities ===== */
+.relative { position: relative; }
+.absolute { position: absolute; }
+.fixed { position: fixed; }
+.sticky { position: sticky; }
+
+/* ===== Display Utilities ===== */
+.block { display: block; }
+.inline-block { display: inline-block; }
+.inline { display: inline; }
+.flex { display: flex; }
+.inline-flex { display: inline-flex; }
+.grid { display: grid; }
+.hidden { display: none; }
+
+/* ===== Flex Utilities ===== */
+.flex-row { flex-direction: row; }
+.flex-col { flex-direction: column; }
+.flex-wrap { flex-wrap: wrap; }
+.flex-nowrap { flex-wrap: nowrap; }
+
+.items-start { align-items: flex-start; }
+.items-center { align-items: center; }
+.items-end { align-items: flex-end; }
+.items-stretch { align-items: stretch; }
+
+.justify-start { justify-content: flex-start; }
+.justify-center { justify-content: center; }
+.justify-end { justify-content: flex-end; }
+.justify-between { justify-content: space-between; }
+.justify-around { justify-content: space-around; }
+
+.flex-1 { flex: 1 1 0%; }
+.flex-auto { flex: 1 1 auto; }
+.flex-none { flex: none; }
+
+/* ===== Responsive Utilities ===== */
+@media (max-width: 640px) {
+  .sm\:hidden { display: none; }
+  .sm\:block { display: block; }
+}
+
+@media (max-width: 768px) {
+  .md\:hidden { display: none; }
+  .md\:block { display: block; }
+}
+
+@media (max-width: 1024px) {
+  .lg\:hidden { display: none; }
+  .lg\:block { display: block; }
+}

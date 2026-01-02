@@ -1,0 +1,185 @@
+/*!
+ * Dark Theme Enhancements - VS Code Style
+ * 
+ * Additional styling for gray-black dark mode beyond the token overrides.
+ * The main color tokens are defined in _tokens.scss.
+ * This file adds polish and refinements for VS Code-style dark mode.
+ */
+
+:root[data-theme="dark"] {
+  /* ===================================================================
+   * Enhanced Glass Surfaces for Gray-Black Dark Mode
+   * Dark gray panels with white text over gradient background
+   * =================================================================== */
+  
+  .surface,
+  .card,
+  .panel {
+    background: var(--surface-1);
+    color: var(--on-surface-1);
+    border: 1px solid var(--border-soft);
+    backdrop-filter: blur(var(--glass-blur-md)) saturate(120%);
+    -webkit-backdrop-filter: blur(var(--glass-blur-md)) saturate(120%);
+    box-shadow: var(--shadow-subtle),
+                inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  }
+  
+  .surface:hover,
+  .card:hover {
+    background: var(--surface-elevated);
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-soft),
+                inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+  
+  /* ===================================================================
+   * Scrollbar Styling - VS Code Style
+   * =================================================================== */
+  
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: var(--surface-0);
+    border-radius: 6px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, 
+                  rgba(204, 204, 204, 0.2) 0%, 
+                  rgba(204, 204, 204, 0.1) 100%);
+    border-radius: 6px;
+    border: 2px solid var(--surface-0);
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, 
+                  rgba(204, 204, 204, 0.3) 0%, 
+                  rgba(204, 204, 204, 0.2) 100%);
+  }
+  
+  /* ===================================================================
+   * Selection Styling - VS Code Style
+   * =================================================================== */
+  
+  ::selection {
+    background: var(--brand-soft);
+    color: var(--on-surface-1);
+  }
+  
+  ::-moz-selection {
+    background: var(--brand-soft);
+    color: var(--on-surface-1);
+  }
+  
+  /* Comprehensive selection overrides for dark mode */
+  * ::selection {
+    background: rgba(10, 132, 255, 0.3) !important;
+    color: var(--on-surface-1) !important;
+  }
+
+  * ::-moz-selection {
+    background: rgba(10, 132, 255, 0.3) !important;
+    color: var(--on-surface-1) !important;
+  }
+  
+  /* Specific overrides for common problematic elements in dark mode */
+  p ::selection,
+  span ::selection,
+  div ::selection,
+  h1 ::selection,
+  h2 ::selection,
+  h3 ::selection,
+  h4 ::selection,
+  h5 ::selection,
+  h6 ::selection,
+  li ::selection,
+  td ::selection,
+  th ::selection,
+  a ::selection {
+    background: rgba(10, 132, 255, 0.3) !important;
+    color: var(--on-surface-1) !important;
+  }
+
+  p ::-moz-selection,
+  span ::-moz-selection,
+  div ::-moz-selection,
+  h1 ::-moz-selection,
+  h2 ::-moz-selection,
+  h3 ::-moz-selection,
+  h4 ::-moz-selection,
+  h5 ::-moz-selection,
+  h6 ::-moz-selection,
+  li ::-moz-selection,
+  td ::-moz-selection,
+  th ::-moz-selection,
+  a ::-moz-selection {
+    background: rgba(10, 132, 255, 0.3) !important;
+    color: var(--on-surface-1) !important;
+  }
+  
+  /* ===================================================================
+   * Link Enhancements
+   * =================================================================== */
+  
+  a {
+    color: var(--brand);
+  }
+  
+  a:hover {
+    color: var(--brand-hover);
+  }
+  
+  /* ===================================================================
+   * Input Enhancements for Gray-Black Dark Mode
+   * =================================================================== */
+  
+  input,
+  textarea,
+  select {
+    background: var(--surface-0);
+    color: var(--on-surface-1);
+    border: 1px solid var(--border-soft);
+    backdrop-filter: blur(var(--glass-blur-sm));
+    -webkit-backdrop-filter: blur(var(--glass-blur-sm));
+  }
+  
+  input:hover,
+  textarea:hover,
+  select:hover {
+    border-color: var(--border-strong);
+    background: var(--surface-1);
+  }
+  
+  input:focus,
+  textarea:focus,
+  select:focus {
+    background: var(--surface-1);
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px var(--ring);
+  }
+  
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--on-surface-muted);
+    opacity: 0.65;
+  }
+  
+  /* Ensure buttons have proper contrast */
+  button {
+    color: var(--on-surface-1);
+  }
+  
+  /* ===================================================================
+   * Modal/Backdrop Overlay - Dark Gray Style
+   * =================================================================== */
+  
+  .backdrop,
+  .overlay {
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+}

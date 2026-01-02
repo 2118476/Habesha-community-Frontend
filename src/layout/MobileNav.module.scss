@@ -1,0 +1,125 @@
+// FILE: src/layout/MobileNav.module.scss
+:root {
+  /* Text colour for drawer items */
+  --mn-text: var(--on-surface-0);
+  /* Muted text colour */
+  --mn-muted: var(--on-surface-muted);
+  /* Active item colour uses the brand token */
+  --mn-active: var(--brand);
+  /* Surface background for the drawer (a tinted glass of the surface) */
+  --mn-surface: color-mix(in oklab, var(--surface-0) 86%, transparent);
+  /* Border colour matches the soft border token */
+  --mn-border: var(--border-soft);
+  /* Drawer shadow uses predefined soft shadow */
+  --mn-shadow: var(--shadow-soft);
+}
+
+.wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  border: 0;
+}
+
+.drawer {
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  width: min(84vw, 300px);
+  background: var(--mn-surface);
+  border-right: 1px solid var(--mn-border);
+  box-shadow: var(--mn-shadow);
+  display: grid;
+  grid-template-rows: auto 1fr;
+  animation: slideIn .28s ease both;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-100%); opacity: .98; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+
+.topRow {
+  position: sticky; top: 0;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 12px;
+  border-bottom: 1px solid var(--mn-border);
+  background: inherit;
+  z-index: 1;
+}
+
+.brand { font-weight: 700; letter-spacing: .2px; }
+
+.closeBtn {
+  appearance: none;
+  border: 1px solid var(--border-soft);
+  background: transparent;
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--mn-text);
+}
+
+.nav { padding: 10px 10px 16px; overflow: auto; color: var(--mn-text); }
+
+.group { margin: 12px 0 6px; display: grid; gap: 6px; }
+
+.label {
+  margin: 6px 6px 2px;
+  font-size: 12.5px;
+  text-transform: uppercase;
+  letter-spacing: .28px;
+  color: var(--mn-muted);
+}
+
+.item {
+  display: block;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid var(--border-soft);
+  font-weight: 500;
+
+  &:hover {
+    /* Lighten the background slightly on hover */
+    background: color-mix(in oklab, var(--surface-0) 6%, transparent);
+    border-color: var(--mn-border);
+  }
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--shadow-1);
+  }
+}
+
+.active {
+  color: var(--mn-active);
+  position: relative;
+}
+.active::after {
+  content: "";
+  position: absolute;
+  left: 12px; right: 52%;
+  bottom: 6px; height: 2px;
+  border-radius: 2px;
+  background: var(--mn-active);
+  opacity: .95;
+}
+/* Make the sheet’s sticky top row translucent/glassy */
+.topRow {
+  /* Top row inherits the drawer surface with additional tint */
+  background: color-mix(in oklab, var(--surface-0) 70%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}

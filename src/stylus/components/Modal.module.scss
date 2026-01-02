@@ -1,0 +1,52 @@
+/*
+ * Modal and backdrop styles used for the authentication overlay.
+ * The backdrop darkens the underlying content and centres the
+ * modal on the screen. Animations are kept subtle and motion
+ * reduced when the user prefers.
+ */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  animation: fadeIn var(--dur) var(--ease) forwards;
+}
+
+.modal {
+  background: var(--surface-1);
+  color: var(--on-surface-1);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-1);
+  padding: var(--s-8);
+  width: 100%;
+  max-width: 420px;
+  max-height: 90vh;
+  overflow-y: auto;
+  transform: translateY(-20px);
+  animation: slideUp var(--dur) var(--ease) forwards;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  to { transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop {
+    animation: none;
+    opacity: 1;
+  }
+  .modal {
+    animation: none;
+    transform: none;
+  }
+}

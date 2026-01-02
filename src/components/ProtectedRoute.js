@@ -7,13 +7,11 @@ import useAuth from '../hooks/useAuth';
 // login page. If a roles array is provided, the user must have
 // at least one of the required roles to proceed.
 const ProtectedRoute = ({ roles: requiredRoles }) => {
-  const { isAuthenticated, roles, loading } = useAuth();
-  if (loading) {
-    // Show nothing or a loading spinner while authentication state
-    // is being resolved. This prevents flicker during initial load.
-    return <div>Loading...</div>;
+  const { user, roles, authReady } = useAuth();
+  if (!authReady) {
+    return null;
   }
-  if (!isAuthenticated) {
+  if (!user) {
     return <Navigate to="/login" replace />;
   }
   if (requiredRoles && requiredRoles.length > 0) {

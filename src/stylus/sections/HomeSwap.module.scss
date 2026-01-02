@@ -1,0 +1,540 @@
+/* ==========================================================================
+   src/stylus/sections/HomeSwap.module.scss
+   White, modern, de-duplicated Home Swap detail layout.
+   - Solid white page + sticky actions (no blue tint)
+   - Media hero with optional photo-count badge
+   - Two-column content grid
+   - Lean owner card (single primary action)
+   - Quick actions (chips) row
+   ========================================================================== */
+
+/* ---------- Page shell + scoped tokens ---------- */
+.page {
+  /* Scoped tokens (don’t leak globally) */
+  --hs-bg:        #ffffff;
+  --hs-surface:   #ffffff;
+  --hs-surface-1: #f7f8fa;
+  --hs-ink-1:     #0b1220;
+  --hs-ink-2:     #5a6b84;
+  --hs-brand:     var(--brand, #0a84ff);
+  --hs-line:      #e5e7eb;
+
+  --hs-radius-sm: 10px;
+  --hs-radius-md: 14px;
+  --hs-shadow-1:  0 1px 2px rgba(16,24,40,.04), 0 8px 24px rgba(16,24,40,.06);
+
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: clamp(12px, 2vw, 24px);
+  color: var(--hs-ink-1);
+  /* Remove background to use body background instead */
+}
+
+/* Dark mode tokens */
+:global([data-theme="dark"]) .page {
+  /* Remove background overrides - use body background */
+  --hs-surface:   rgba(37, 37, 38, 0.95);
+  --hs-surface-1: rgba(45, 45, 48, 0.95);
+  --hs-ink-1:     #ffffff;
+  --hs-ink-2:     rgba(255, 255, 255, 0.8);
+  --hs-line:      rgba(255, 255, 255, 0.1);
+  --hs-shadow-1:  0 1px 2px rgba(0,0,0,.2), 0 8px 24px rgba(0,0,0,.3);
+}
+
+.pageLoading {
+  padding: clamp(16px, 2vw, 24px);
+  color: var(--hs-ink-2);
+}
+
+/* ---------- Sticky top actions (de-duplicated) ---------- */
+.topBar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+
+  background: var(--hs-surface);               /* use CSS variable instead of hardcoded white */
+  border-bottom: 1px solid var(--hs-line);  /* subtle divider */
+  box-shadow: 0 1px 0 rgba(15,23,42,.04);   /* light edge */
+}
+
+.backLink {
+  font-size: .95rem;
+  color: var(--hs-brand); /* Blue color for back link */
+  text-decoration: none;
+  padding: 4px 0;
+  border-radius: var(--hs-radius-sm);
+  font-weight: 600;
+
+  &:hover { 
+    color: var(--hs-brand);
+    opacity: 0.8;
+  }
+  &:focus-visible {
+    outline: 3px solid rgba(10,132,255,.35);
+    outline-offset: 2px;
+  }
+}
+
+.stickyBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Button skins (paired with global .btn) */
+.primaryBtn {
+  background: var(--hs-brand) !important;
+  color: #fff !important;
+  border: 1px solid rgba(10,132,255,.35) !important;
+  border-radius: 24px !important;
+  padding: 8px 16px !important;
+}
+
+.neutralBtn {
+  background: var(--hs-surface) !important;
+  color: var(--hs-ink-1) !important;
+  border: 1px solid var(--hs-line) !important;
+  border-radius: 24px !important;
+  padding: 8px 16px !important;
+
+  &:hover { background: var(--hs-surface-1) !important; }
+}
+
+.blockBtn { width: 100%; }
+
+/* ---------- Bottom action bar ---------- */
+.bottomActions {
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  margin-top: 24px;
+  padding: 16px 0;
+  background: var(--hs-surface);
+  border-top: 1px solid var(--hs-line);
+  box-shadow: 0 -1px 0 rgba(15,23,42,.04);
+  
+  .chips {
+    justify-content: center;
+    gap: 12px;
+  }
+}
+
+/* ---------- Header (media + title/meta) ---------- */
+.header {
+  display: grid;
+  grid-template-columns: 1.2fr .8fr;
+  gap: 18px;
+  margin-top: 8px;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mediaWrap {
+  position: relative;
+  border-radius: var(--hs-radius-md);
+  overflow: hidden;
+  box-shadow: var(--hs-shadow-1);
+  background: var(--hs-surface);
+}
+
+.mediaFallback {
+  aspect-ratio: 16/9;
+  width: 100%;
+  background: linear-gradient(135deg, var(--hs-surface-1), var(--hs-surface));
+}
+
+/* New: small photo-count badge; harmless if photos < 1 */
+.mediaBadge {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  padding: 6px 10px;
+  font-size: .85rem;
+  line-height: 1;
+  color: #ffffff;
+  background: var(--hs-brand); /* Blue background for photo count */
+  border: 1px solid rgba(10,132,255,.2);
+  border-radius: 24px;
+  box-shadow: 0 1px 2px rgba(16,24,40,.06);
+  font-weight: 600;
+}
+
+.titleWrap {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(1.25rem, 1.6vw, 1.8rem);
+  line-height: 1.25;
+  color: var(--hs-brand); /* Blue color for main title */
+}
+
+/* ---------- Content grid ---------- */
+.contentGrid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 18px;
+  margin-top: 18px;
+
+  @media (max-width: 980px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.body {
+  display: grid;
+  gap: 16px;
+}
+
+/* Sections & cards */
+.section,
+.card {
+  background: var(--hs-surface);
+  border: 1px solid var(--hs-line);
+  border-radius: var(--hs-radius-md);
+  padding: clamp(12px, 1.8vw, 16px);
+  box-shadow: var(--hs-shadow-1);
+}
+
+.sectionTitle {
+  margin: 0 0 8px 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--hs-brand); /* Blue color for section titles */
+}
+
+.sectionText {
+  color: var(--hs-ink-1) !important;
+  line-height: 1.6;
+}
+
+/* Facts grid */
+.factsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+
+  @media (max-width: 520px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.fact,
+.factWide {
+  padding: 10px;
+  border: 1px solid var(--hs-line);
+  border-radius: var(--hs-radius-sm);
+  background: var(--hs-surface-1);
+
+  span {
+    display: block;
+    color: var(--hs-brand); /* Blue color for fact labels */
+    font-size: .85rem;
+    margin-bottom: 2px;
+    font-weight: 600;
+  }
+  strong {
+    color: var(--hs-ink-1);
+    font-weight: 600;
+    word-break: break-word;
+  }
+}
+
+.factWide { grid-column: 1 / -1; }
+
+/* ---------- Quick actions (chips row) ---------- */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Works for <button> and <a> */
+.chip {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+
+  background: var(--hs-surface);
+  color: var(--hs-brand); /* Blue text for chips */
+  border: 1px solid var(--hs-brand); /* Blue border for chips */
+  border-radius: 24px;
+  font-weight: 500;
+
+  &:hover { 
+    background: var(--hs-brand);
+    color: #ffffff;
+  }
+  &:focus-visible {
+    outline: 3px solid rgba(10,132,255,.28);
+    outline-offset: 2px;
+  }
+}
+
+/* ---------- Owner card (lean, no duplicate actions) ---------- */
+.ownerCard {
+  background: var(--hs-surface);
+  border: 1px solid var(--hs-line);
+  border-radius: var(--hs-radius-md);
+  padding: 14px;
+  box-shadow: var(--hs-shadow-1);
+  height: fit-content;
+}
+
+.ownerHeader {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.ownerHeaderAvatarBtn {
+  display: inline-grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  border-radius: 50%;
+
+  &:disabled { opacity: .7; cursor: default; }
+  &:focus-visible {
+    outline: 3px solid rgba(10,132,255,.35);
+    outline-offset: 2px;
+  }
+}
+
+.ownerHeaderAvatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  border: 1px solid var(--hs-line);
+  background: var(--hs-surface-1);
+}
+
+.ownerLabel {
+  font-size: .85rem;
+  color: var(--hs-ink-2);
+}
+
+.ownerName {
+  font-weight: 700;
+  color: var(--hs-brand); /* Blue color for owner name */
+  word-break: break-word;
+
+  &:hover { 
+    text-decoration: underline;
+    color: var(--hs-brand);
+  }
+}
+
+.ownerActions {
+  display: grid;
+  gap: 8px;
+}
+
+/* ---------- A11y niceties ---------- */
+:global(:focus-visible) {
+  outline-offset: 2px;
+}
+
+/* ---------- Override global adaptive text for HomeSwap page ---------- */
+.page {
+  /* Force dark text on white background to override global adaptive-text.css */
+  p, span, div, label, li, h1, h2, h3, h4, h5, h6 {
+    color: var(--hs-ink-1) !important;
+  }
+  
+  /* Ensure section text is visible */
+  .sectionText {
+    color: var(--hs-ink-1) !important;
+  }
+}
+
+/* ======================== LIGHT MODE TEXT VISIBILITY ======================== */
+/* Comprehensive light mode overrides for HomeSwap components */
+:root:not([data-theme="dark"]) {
+  .wrap,
+  .page {
+    color: #000000 !important;
+    
+    h1, h2, h3, h4, h5, h6 {
+      color: #000000 !important;
+    }
+    
+    p, span, div, label, li {
+      color: #000000 !important;
+    }
+    
+    .title {
+      color: #000000 !important;
+    }
+    
+    .hint {
+      color: #666666 !important;
+    }
+  }
+  
+  .field {
+    color: #000000 !important;
+    
+    > div {
+      color: #000000 !important;
+    }
+  }
+  
+  .actions {
+    color: #000000 !important;
+    
+    span {
+      color: #666666 !important;
+    }
+  }
+  
+  .thumbGrid {
+    .thumb {
+      color: #000000 !important;
+    }
+  }
+  
+  /* Nuclear option - force ALL text in HomeSwap components to be black */
+  .wrap *,
+  .page * {
+    color: #000000 !important;
+  }
+  
+  /* Override for specific elements that should remain colored */
+  .wrap .hint,
+  .page .hint,
+  .wrap .muted,
+  .page .muted,
+  .wrap [class*="hint"],
+  .page [class*="hint"],
+  .wrap [class*="muted"],
+  .page [class*="muted"] {
+    color: #666666 !important;
+  }
+  
+  /* Links should remain blue */
+  .wrap a,
+  .page a,
+  .wrap .link,
+  .page .link {
+    color: #0ea5e9 !important;
+  }
+  
+  /* Primary buttons should keep white text */
+  .wrap .primary,
+  .page .primary,
+  .wrap [class*="primary"],
+  .page [class*="primary"] {
+    color: #ffffff !important;
+  }
+  
+  /* Button overrides - ensure buttons maintain proper colors */
+  .wrap button,
+  .page button,
+  .wrap .btn,
+  .page .btn,
+  .wrap [class*="btn"],
+  .page [class*="btn"] {
+    color: inherit !important;
+  }
+  
+  /* Primary button text should be white */
+  .wrap button.primary,
+  .page button.primary,
+  .wrap .btn.primary,
+  .page .btn.primary,
+  .wrap .primary button,
+  .page .primary button,
+  .wrap .primary .btn,
+  .page .primary .btn,
+  .wrap [class*="primary"] button,
+  .page [class*="primary"] button,
+  .wrap [class*="primary"] .btn,
+  .page [class*="primary"] .btn {
+    color: #ffffff !important;
+  }
+  
+  /* Success button text should be white */
+  .wrap button.success,
+  .page button.success,
+  .wrap .btn.success,
+  .page .btn.success,
+  .wrap .success button,
+  .page .success button,
+  .wrap .success .btn,
+  .page .success .btn {
+    color: #ffffff !important;
+  }
+  
+  /* Danger button text should be white */
+  .wrap button.danger,
+  .page button.danger,
+  .wrap .btn.danger,
+  .page .btn.danger,
+  .wrap .danger button,
+  .page .danger button,
+  .wrap .danger .btn,
+  .page .danger .btn {
+    color: #ffffff !important;
+  }
+}
+
+/* Dark mode overrides */
+:global([data-theme="dark"]) {
+  .wrap,
+  .page {
+    color: var(--on-surface-1) !important;
+    
+    h1, h2, h3, h4, h5, h6 {
+      color: var(--on-surface-1) !important;
+    }
+    
+    p, span, div, label, li {
+      color: var(--on-surface-1) !important;
+    }
+    
+    .title {
+      color: var(--on-surface-1) !important;
+    }
+    
+    .hint {
+      color: var(--on-surface-muted) !important;
+    }
+  }
+  
+  .field {
+    color: var(--on-surface-1) !important;
+    
+    > div {
+      color: var(--on-surface-1) !important;
+    }
+  }
+  
+  .actions {
+    color: var(--on-surface-1) !important;
+    
+    span {
+      color: var(--on-surface-muted) !important;
+    }
+  }
+}

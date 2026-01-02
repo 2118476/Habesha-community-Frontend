@@ -1,0 +1,11 @@
+/* Canonical global entry — import once in src/index.js */
+@use './stylus/base/reset';
+@use './stylus/base/tokens';
+@use './stylus/base/globals';
+@use './stylus/base/utilities';
+@use './stylus/base/modern-utilities';
+@use './stylus/base/animations';
+@use './stylus/base/backgrounds';
+@use './stylus/theme/light';
+@use './stylus/theme/dark';
+@use './stylus/base/reveal';

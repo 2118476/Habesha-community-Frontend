@@ -1,0 +1,683 @@
+/* ===========================================================================
+   Friends.module.scss — Theme-aware (v5)
+   - Inherits app tokens (light & dark)
+   - No forced white or color-scheme overrides
+   - Pill tabs/buttons; flat rows; responsive cards
+   - Search dock: fixed 4-column grid (icon | input | clear | submit)
+   =========================================================================== */
+
+/* =========================
+   1) Map to your global tokens
+   ========================= */
+:global(:root) {
+  /* spacing / radii */
+  --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 20px; --s-6: 24px; --s-8: 32px;
+  --r-sm: 8px; --r-md: 12px; --r-lg: 16px; --r-pill: 9999px;
+
+  /* theme surfaces (inherit from app) */
+  --c-bg:        var(--surface-0, #ffffff);
+  --c-surface:   var(--surface-1, #f7f7f8);
+  --c-surface-2: var(--surface-0, #ffffff);
+
+  /* ink & borders (inherit from app) - Enhanced contrast */
+  --c-ink:    var(--text-1, #0b1324);
+  --c-ink-strong: #000000;
+  --c-muted:  var(--text-2, #5a6b84);
+  --c-border: var(--border-1, #e6e8ee);
+
+  /* brand (inherit from app) - Enhanced visibility */
+  --c-brand:       var(--brand, #0a84ff);
+  --c-brand-strong: #0066cc;
+  --c-brand-weak:  color-mix(in oklab, var(--c-brand), #fff 85%);
+  --c-brand-contrast: #ffffff;
+
+  /* status */
+  --c-success: var(--success, #16a34a);
+  --c-danger:  var(--danger,  #dc2626);
+
+  /* motion / shape */
+  --shadow-0: 0 0 0 rgba(0,0,0,0);
+  --shadow-1: 0 6px 18px rgba(0,0,0,.06);
+  --ease-emph: cubic-bezier(.22,.61,.36,1);
+  --reveal-dur: .45s;
+
+  /* responsive search height */
+  --search-h: clamp(38px, 6vw + 32px, 46px);
+  --tab-underline-h: 3px;
+}
+
+/* Light theme for all modes - Clean white backgrounds */
+:global([data-theme="dark"]),
+:global([data-theme="light"]) {
+  --c-ink: #0b1324;
+  --c-ink-strong: #000000;
+  --c-muted: #5a6b84;
+  --c-border: #e6e8ee;
+  --c-brand: #0a84ff;
+  --c-brand-strong: #0066cc;
+  --c-brand-contrast: #ffffff;
+  --c-surface-2: #ffffff;
+  --c-bg: #ffffff;
+  --c-surface: #f7f7f8;
+}
+
+/* =========================
+   2) Page container
+   ========================= */
+/* Let the surrounding page/card control the background */
+.container {
+  min-height: 100%;
+  padding: var(--s-8);
+  background: transparent; /* <- critical to fit the parent card in light/dark */
+  color: var(--c-ink);
+  display: grid;
+  gap: var(--s-6);
+}
+
+/* =========================
+   3) Sticky header + tabs
+   ========================= */
+.headerRow {
+  display: grid; gap: var(--s-4);
+  padding: 18px 12px;
+  position: sticky; top: 0; z-index: 3;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06),
+              0 2px 6px rgba(0, 0, 0, 0.04);
+  backdrop-filter: saturate(1.08) blur(8px);
+  border-bottom: 1.5px solid #e6e8ee;
+  transition: box-shadow 0.3s ease;
+  
+  &:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08),
+                0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+}
+.title {
+  margin: 0;
+  font: 700 clamp(18px, 2vw, 22px)/1.2 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  display: inline-flex; align-items: center; gap: 10px;
+  color: var(--c-ink);
+}
+
+/* Tab rail — swipeable, scrollbar hidden */
+:global(.friends-tabs) {
+  display: flex; align-items: center; gap: 6px;
+  overflow-x: auto; padding-bottom: 2px;
+  -ms-overflow-style: none; scrollbar-width: none;
+}
+:global(.friends-tabs::-webkit-scrollbar){ display: none; }
+
+/* Tabs — Premium white design with refined interactions */
+.tabBtn,
+:global(.friends-tab){
+  padding: 11px 18px;
+  border: 1.5px solid #e6e8ee;
+  background: #ffffff;
+  color: #0b1324;
+  border-radius: var(--r-pill);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  display: inline-flex; 
+  align-items: center; 
+  gap: 8px; 
+  line-height: 1.2;
+  position: relative;
+  overflow: visible;
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04), 
+              0 1px 2px rgba(0, 0, 0, 0.02);
+  
+  /* Smooth background transition */
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, 
+      rgba(10, 132, 255, 0.03),
+      rgba(10, 132, 255, 0.01)
+    );
+    border-radius: var(--r-pill);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  /* Animated underline on hover */
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 50%;
+    width: 0;
+    height: 2.5px;
+    background: linear-gradient(90deg, 
+      #0066cc, 
+      #0a84ff, 
+      #4fc3f7,
+      #0a84ff,
+      #0066cc
+    );
+    background-size: 200% 100%;
+    transform: translateX(-50%);
+    transition: width 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border-radius: 2.5px;
+    box-shadow: 0 0 12px rgba(10, 132, 255, 0.4);
+    animation: shimmer 3s linear infinite;
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.tabBtn:hover, :global(.friends-tab:hover){
+  color: #0a84ff;
+  transform: translateY(-3px) scale(1.02);
+  background: #ffffff;
+  border-color: #0a84ff;
+  
+  &::after {
+    opacity: 1;
+  }
+  
+  &::before {
+    width: 85%;
+  }
+  
+  box-shadow: 0 6px 20px rgba(10, 132, 255, 0.18),
+              0 2px 8px rgba(10, 132, 255, 0.12);
+}
+.tabBtn:active, :global(.friends-tab:active){ transform: translateY(1px); }
+.tabBtn:focus-visible, :global(.friends-tab:focus-visible){
+  outline: 2px solid transparent;
+  box-shadow: var(--shadow-1);
+}
+:global(.friends-tab--active){ 
+  position: relative;
+  color: #ffffff;
+  font-weight: 700;
+  
+  /* Premium gradient background with animation */
+  background: linear-gradient(135deg, 
+    #0a84ff 0%, 
+    #0066cc 50%,
+    #0052a3 100%
+  );
+  background-size: 200% 200%;
+  border-color: #0a84ff;
+  border-width: 1.5px;
+  box-shadow: 0 6px 20px rgba(10, 132, 255, 0.35),
+              0 2px 8px rgba(10, 132, 255, 0.25),
+              inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  animation: gradient-shift 4s ease infinite;
+  
+  /* Enhanced glow effect */
+  &::after {
+    opacity: 0;
+  }
+  
+  /* Glowing underline */
+  &::before {
+    width: 90%;
+    height: 3px;
+    background: linear-gradient(90deg, 
+      rgba(255, 255, 255, 0.8),
+      rgba(255, 255, 255, 1),
+      rgba(255, 255, 255, 0.8)
+    );
+    box-shadow: 0 0 16px rgba(255, 255, 255, 0.6),
+                0 2px 8px rgba(10, 132, 255, 0.5);
+    animation: pulse-glow 2.5s ease-in-out infinite, shimmer 3s linear infinite;
+  }
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; transform: scaleX(1); }
+  50% { opacity: 0.8; transform: scaleX(0.95); }
+}
+:global(.friends-tab__badge){
+  min-width: 22px; height: 22px; border-radius: 11px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 11px; 
+  font-weight: 700;
+  padding: 0 7px;
+  background: linear-gradient(135deg, 
+    rgba(10, 132, 255, 0.12),
+    rgba(10, 132, 255, 0.08)
+  );
+  color: #0a84ff;
+  border: 1.5px solid rgba(10, 132, 255, 0.2);
+  box-shadow: 0 2px 4px rgba(10, 132, 255, 0.1),
+              inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  
+  /* Subtle pulse animation */
+  animation: badge-pulse 3s ease-in-out infinite;
+}
+
+@keyframes badge-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+:global(.friends-tab:hover .friends-tab__badge),
+:global(.friends-tab--active .friends-tab__badge) {
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.95),
+    rgba(255, 255, 255, 0.85)
+  );
+  color: #0a84ff;
+  border-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15),
+              inset 0 1px 0 rgba(255, 255, 255, 1);
+  transform: scale(1.08);
+}
+
+/* =========================
+   4) Search dock — fixed 4-column grid
+   ========================= */
+.searchBar{ display:flex; flex-wrap:wrap; gap:var(--s-2); align-items:center; }
+
+:global(.friends-searchDock){ display:block; }
+
+:global(.friends-search){
+  --h: var(--search-h);
+  display: grid;
+  grid-template-columns: 28px 1fr max-content max-content; /* icon | input | clear | submit */
+  align-items: center; gap: 12px;
+
+  box-sizing: border-box; max-width: 100%; overflow: hidden;
+
+  background: #ffffff; 
+  color: #0b1324;
+  border: 1.5px solid #e6e8ee;
+  border-radius: var(--r-pill);
+  padding: 8px 14px;
+  position: relative;
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06),
+              0 1px 3px rgba(0, 0, 0, 0.04);
+  
+  /* Subtle inner glow on focus */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--r-pill);
+    background: linear-gradient(135deg, 
+      rgba(10, 132, 255, 0.02),
+      transparent
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+}
+
+:global(.friends-search:focus-within){
+  border-color: #0a84ff;
+  border-width: 1.5px;
+  box-shadow: 0 6px 24px rgba(10, 132, 255, 0.18),
+              0 2px 8px rgba(10, 132, 255, 0.12),
+              inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transform: translateY(-2px) scale(1.005);
+  background: #ffffff;
+  
+  &::before {
+    opacity: 1;
+  }
+}
+
+/* Input */
+:global(.friends-search__input){
+  min-height: var(--h);
+  background: transparent !important;
+  border: none !important; outline: none !important;
+  min-width: 0; width: 100%;
+  line-height: 1.2;
+  font-size: 16px; color: var(--c-ink);
+}
+:global(.friends-search__input::placeholder){
+  color: color-mix(in oklab, var(--c-muted) 65%, transparent);
+}
+
+/* Clear + Submit */
+:global(.friends-search .friends-search__clear),
+:global(.friends-search .friends-search__submit){
+  -webkit-appearance:none; appearance:none;
+  background: transparent !important; border: 0 !important; box-shadow: var(--shadow-1);
+  height: var(--h); min-height: var(--h); white-space: nowrap;
+  padding: 0 12px !important; border-radius: var(--r-pill) !important;
+  display:inline-flex; align-items:center; justify-content:center;
+  color: var(--c-ink) !important; line-height:1; font: inherit;
+}
+:global(.friends-search__clear:hover){ background: color-mix(in oklab, var(--c-brand-weak) 24%, transparent); }
+:global(.friends-search__submit){
+  background: var(--c-brand) !important; color: #fff !important; font-weight: 700;
+}
+
+/* =========================
+   5) Blocks / Lists (flat, theme surfaces)
+   ========================= */
+.block{ display:grid; gap:var(--s-4); }
+.blockHeader{ display:flex; align-items:center; justify-content:space-between; }
+.blockTitle{
+  margin:0; color:var(--c-ink);
+  font:700 1.05rem/1.2 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+
+/* Keep rows transparent to let the parent “card” show through */
+.list{ list-style:none; padding:0; margin:0; }
+.listItem{
+  display:flex; align-items:center; gap:12px;
+  background: transparent;
+  color: var(--c-ink);
+  padding: var(--s-4) var(--s-6);
+  border-bottom: 1px solid var(--c-border);
+}
+.rowLink{ flex:1 1 auto; min-width:160px; text-decoration:none; color:inherit; }
+.rowLink:hover{ text-decoration: underline; }
+
+/* Row actions - Always visible for mobile accessibility */
+.rowActions, :global(.friends-row__actions){
+  display:inline-flex; gap:8px; flex-wrap:wrap;
+  opacity:1; transform: none;
+  transition: opacity .18s var(--ease-emph), transform .18s var(--ease-emph);
+}
+.listItem:hover .rowActions,
+.listItem:focus-within .rowActions,
+.listItem:hover :global(.friends-row__actions),
+.listItem:focus-within :global(.friends-row__actions){ opacity:1; transform:none; }
+
+.empty{ color:var(--c-muted); font-size:.95rem; }
+.muted{ color:var(--c-muted); }
+
+/* =========================
+   6) Pills & Buttons — pill shape
+   ========================= */
+:global(.friends-pill){
+  border: 1px solid var(--border-1);
+  border-radius: var(--r-pill);
+  padding: 6px 12px;
+  background: var(--c-surface-2);
+  color: var(--c-ink); font-weight:600;
+  transition: border-color .18s var(--ease-emph), background-color .18s var(--ease-emph);
+}
+:global(.friends-pill:hover){
+  border-color: color-mix(in oklab, var(--c-border), var(--c-ink) 12%);
+  background: color-mix(in oklab, var(--c-surface-2), var(--c-ink) 2%);
+}
+:global(.friends-pill--on){ border-color: color-mix(in oklab, var(--c-brand) 35%, var(--c-border)); }
+
+/* Make every button on this page pill-shaped */
+:global(.friends-page) button { border-radius: var(--r-pill) !important; }
+
+/* Row buttons */
+:global(.friends-btn){
+  display:inline-flex; 
+  align-items:center; 
+  gap:7px; 
+  font-weight:600;
+  font-size: 14px;
+  border: 1.5px solid #e6e8ee;
+  background: #ffffff;
+  color: #0b1324;
+  padding:9px 16px; 
+  border-radius: var(--r-pill);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04),
+              0 1px 2px rgba(0, 0, 0, 0.02);
+  
+  /* Hover gradient overlay */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, 
+      rgba(10, 132, 255, 0.04),
+      rgba(10, 132, 255, 0.01)
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+}
+
+:global(.friends-btn:hover){
+  border-color: #0a84ff;
+  color: #0a84ff;
+  background: #ffffff;
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 6px 18px rgba(10, 132, 255, 0.18),
+              0 2px 8px rgba(10, 132, 255, 0.12);
+  
+  &::before {
+    opacity: 1;
+  }
+}
+
+:global(.friends-btn:active){ 
+  transform: translateY(-1px) scale(1); 
+  transition-duration: 0.1s;
+}
+
+:global(.friends-btn--primary){
+  background: linear-gradient(135deg, 
+    #0a84ff 0%, 
+    #0066cc 50%,
+    #0052a3 100%
+  );
+  background-size: 200% 200%;
+  color: #ffffff;
+  border-color: #0a84ff;
+  border-width: 1.5px;
+  box-shadow: 0 6px 20px rgba(10, 132, 255, 0.35),
+              0 2px 8px rgba(10, 132, 255, 0.25),
+              inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  animation: gradient-shift 4s ease infinite;
+  
+  &::before {
+    background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.1),
+      transparent
+    );
+  }
+  
+  &:hover {
+    background: linear-gradient(135deg, 
+      #0066cc 0%,
+      #0052a3 50%,
+      #003d7a 100%
+    );
+    background-size: 200% 200%;
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 8px 28px rgba(10, 132, 255, 0.45),
+                0 4px 12px rgba(10, 132, 255, 0.35),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    
+    &::before {
+      opacity: 1;
+    }
+  }
+  
+  &:active {
+    transform: translateY(-2px) scale(1.01);
+  }
+}
+
+/* =========================
+   7) Error + reveal
+   ========================= */
+:global(.friends-error){
+  border: 1px solid var(--border-1);
+  background: color-mix(in oklab, var(--c-surface-2), var(--c-danger) 2%);
+  color: var(--c-danger);
+  border-radius: var(--r-md);
+}
+
+@keyframes friendsRevealUp{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:none;} }
+[data-reveal="up"]{ opacity:0; transform:translateY(10px); animation: friendsRevealUp var(--reveal-dur) var(--ease-emph) both; animation-delay: var(--reveal-delay, 0ms); }
+@media (prefers-reduced-motion: reduce){ [data-reveal="up"]{ animation:none; opacity:1; transform:none; } }
+
+/* =========================
+   8) Chip tweaks (hide emails + online dot)
+   ========================= */
+:global(.friends-chip [data-part="email"]),
+:global(.friends-chip .chip-email),
+:global(.friends-chip [class*="email"]),
+:global(.friends-chip [data-email]){ display:none !important; }
+:global(.friends-chip a[href^="mailto:"]){ pointer-events:none !important; color:inherit !important; text-decoration:none !important; }
+:global(.friends-chip[data-online="true"]){ position:relative; }
+:global(.friends-chip[data-online="true"]::after){
+  content:""; position:absolute; right:2px; bottom:2px; width:10px; height:10px; border-radius:50%;
+  background:#16a34a; outline: 2px solid var(--c-surface-2);
+}
+
+/* =========================
+   9) Suggestions as cards (theme surfaces)
+   ========================= */
+:global(.friends-block--suggestions) .list{
+  display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--s-4);
+}
+:global(.friends-block--suggestions) .friends-list__item,
+:global(.friends-block--suggestions) .listItem{
+  background: var(--c-surface-2);
+  border: 1px solid var(--border-1);
+  border-radius: var(--r-lg);
+  padding: var(--s-4) var(--s-4);
+  box-shadow: var(--shadow-1);
+  transition: transform .16s var(--ease-emph), box-shadow .18s var(--ease-emph), border-color .18s var(--ease-emph), background-color .18s var(--ease-emph);
+}
+:global(.friends-block--suggestions) .friends-list__item:hover,
+:global(.friends-block--suggestions) .listItem:hover{
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-1);
+  border-color: color-mix(in oklab, var(--c-brand) 22%, var(--c-border));
+}
+
+/* =========================
+   10) Responsive
+   ========================= */
+@media (max-width: 900px){
+  .container{ padding: var(--s-6) var(--s-4); }
+}
+@media (max-width: 640px){
+  :global(.friends-search){
+    grid-template-columns: 22px 1fr max-content max-content;
+    gap: 8px; padding: 4px 8px;
+  }
+  :global(.friends-search__submit),
+  :global(.friends-search__clear){
+    padding: 0 10px !important;
+    font-size: 14px;
+  }
+  .tabBtn, :global(.friends-tab), :global(.friends-pill){ padding: 8px 12px; }
+}
+@media (max-width: 420px){
+  :global(.friends-block--suggestions) .list{ grid-template-columns: 1fr; }
+  :global(.friends-search){ grid-template-columns: 20px 1fr max-content max-content; gap: 6px; }
+}
+
+/* =========================
+   11) Forced colors
+   ========================= */
+@media (forced-colors: active){
+  .tabBtn, :global(.friends-tab), :global(.friends-pill), :global(.friends-btn){ border: 1px solid var(--border-1); }
+  .tabBtn:focus-visible, :global(.friends-btn:focus-visible){ outline: 2px solid CanvasText; box-shadow: var(--shadow-1); }
+}
+/* ========================================================================
+   FRIENDS — PATCH: no cards + auto-contrast ink for search (v5.1)
+   ======================================================================== */
+
+/* ----------------------------- 1) NO CARDS ------------------------------ */
+/* Header/sections inherit the host page/card; remove any inner panel look */
+.headerRow { background: transparent !important; box-shadow: var(--shadow-1); }
+
+/* Lists/blocks stay flat; let only the row divider show */
+.block { background: transparent !important; box-shadow: var(--shadow-1); }
+
+/* Suggestions: revert to normal list (no card grid, no card fills) */
+:global(.friends-block--suggestions) .list {
+  display: block !important;
+  grid-template-columns: none !important;
+  gap: 0 !important;
+}
+:global(.friends-block--suggestions) .friends-list__item,
+:global(.friends-block--suggestions) .listItem {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: var(--shadow-1);
+  padding: var(--s-4) var(--s-6) !important;
+  border-bottom: 1px solid var(--c-border) !important;
+  transform: none !important;
+}
+
+/* --------------------- 2) SEARCH — ALWAYS READABLE INK ------------------ */
+/* Compute a contrasting ink color vs the search background if the browser
+   supports it; fall back to light/dark heuristics otherwise. */
+.friends-page {
+  --friends-ink-contrast: var(--c-ink); /* fallback */
+
+  /* If supported, pick black/white that contrasts the search surface */
+  /* (safari 17+, chromium 126+) */
+  @supports (color: color-contrast(#000 vs #fff)) {
+    --friends-ink-contrast: color-contrast(var(--c-surface-2) vs #000, #fff);
+  }
+}
+
+/* Heuristic fallback for older browsers */
+@media (prefers-color-scheme: dark) {
+  .friends-page { --friends-ink-contrast: #fff; }
+}
+@media (prefers-color-scheme: light) {
+  .friends-page { --friends-ink-contrast: #0b1324; }
+}
+
+/* Apply the contrast color everywhere inside the search dock */
+:global(.friends-search),
+:global(.friends-search__input),
+:global(.friends-search__clear),
+:global(.friends-search__submit) {
+  color: var(--friends-ink-contrast) !important;
+}
+
+/* Placeholder also gets readable contrast */
+:global(.friends-search__input::placeholder) {
+  color: color-mix(in oklab, var(--friends-ink-contrast) 45%, transparent) !important;
+}
+
+/* Keep the 4-column layout so the submit never wraps (icon | input | clear | submit) */
+:global(.friends-search) {
+  grid-template-columns: 28px 1fr max-content max-content !important;
+}
+@media (max-width: 640px) {
+  :global(.friends-search) {
+    grid-template-columns: 22px 1fr max-content max-content !important;
+  }
+}
+@media (max-width: 420px) {
+  :global(.friends-search) {
+    grid-template-columns: 20px 1fr max-content max-content !important;
+  }
+}
+
+/* Make sure the input can shrink so buttons stay on the same row */
+:global(.friends-search__input) { min-width: 0 !important; }
+
+/* Buttons keep a single line and match pill height */
+:global(.friends-search__clear),
+:global(.friends-search__submit) {
+  white-space: nowrap !important;
+  height: var(--search-h) !important;
+  min-height: var(--search-h) !important;
+  line-height: 1 !important;
+}

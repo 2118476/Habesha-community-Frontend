@@ -1,0 +1,300 @@
+/*
+ * Enterprise Form Controls (v2)
+ * - Clear focus rings & strong contrast in light/dark
+ * - Balanced spacing; 44px min hit area
+ * - Error/help text hooks
+ * - No unintended backgrounds inside custom shells (e.g., search dock)
+ */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4, 16px);
+}
+
+/* Form wrapper and title */
+.wrap {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: clamp(16px, 4vw, 32px);
+  color: var(--on-surface-1);
+}
+
+.title {
+  font-size: clamp(1.5rem, 2vw, 2rem);
+  font-weight: 700;
+  margin: 0 0 24px 0;
+  color: var(--on-surface-1);
+}
+
+/* Form field container */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Form actions container */
+.actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 24px;
+}
+
+/* Labels */
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 500;
+  color: var(--on-surface-1);
+}
+
+/* Base controls */
+.input,
+.select,
+.textarea,
+input,
+select,
+textarea {
+  width: 100%;
+  min-height: 44px;
+  border-radius: var(--r-md, 24px);
+  padding: var(--s-3, 12px) var(--s-4, 16px);
+  font-size: var(--text-md, 15px);
+
+  background: var(--surface-2, #f6f7f9);
+  color: var(--on-surface-1, #000000);
+  border: 1px solid var(--border-1);
+  transition:
+    border-color var(--dur, .18s) var(--ease, cubic-bezier(.2,.7,.2,1)),
+    box-shadow var(--dur, .18s) var(--ease, cubic-bezier(.2,.7,.2,1)),
+    background-color var(--dur, .18s) var(--ease, cubic-bezier(.2,.7,.2,1));
+}
+
+.input::placeholder,
+.textarea::placeholder,
+input::placeholder,
+textarea::placeholder {
+  color: var(--on-surface-muted, #666666);
+}
+
+/* Focus */
+.input:focus,
+.select:focus,
+.textarea:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--primary, #2563eb);
+  box-shadow: var(--shadow-1);
+}
+
+/* Textarea sizing */
+.textarea,
+textarea {
+  min-height: 88px;
+  resize: vertical;
+}
+
+/* Checkbox label */
+.checkboxLabel {
+  display: flex; align-items: center; gap: var(--s-2, 8px);
+  font-size: var(--text-md, 15px);
+  color: var(--on-surface-1, #000000);
+  cursor: pointer;
+}
+.checkboxLabel input {
+  width: 20px; height: 20px;
+  accent-color: var(--primary, #2563eb);
+}
+
+/* Inline help / error */
+.helpText {
+  margin-top: 6px;
+  font-size: .875rem;
+  color: var(--on-surface-muted, #666666);
+}
+.errorText {
+  margin-top: 6px;
+  font-size: .875rem;
+  color: var(--danger, #e11d48);
+}
+
+/* Remove inner background when wrapped by a custom shell (e.g., friends search) */
+:global(.friends-search) .input {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: var(--shadow-1);
+  padding-left: 0 !important;
+}
+
+/* ======================== LIGHT MODE TEXT VISIBILITY ======================== */
+/* Ensure all form elements are visible in light mode */
+:root:not([data-theme="dark"]) {
+  .wrap,
+  .form,
+  .field,
+  .actions {
+    color: #000000 !important;
+  }
+  
+  .title {
+    color: #000000 !important;
+  }
+  
+  label {
+    color: #000000 !important;
+  }
+  
+  .input,
+  .select,
+  .textarea,
+  input,
+  select,
+  textarea {
+    background: #ffffff !important;
+    color: #000000 !important;
+    border-color: rgba(0, 0, 0, 0.15) !important;
+  }
+  
+  .input::placeholder,
+  .textarea::placeholder,
+  input::placeholder,
+  textarea::placeholder {
+    color: #666666 !important;
+  }
+  
+  .checkboxLabel {
+    color: #000000 !important;
+  }
+  
+  .helpText {
+    color: #666666 !important;
+  }
+  
+  .errorText {
+    color: #e11d48 !important;
+  }
+  
+  /* Nuclear option - force ALL text to be black in light mode */
+  * {
+    color: #000000 !important;
+  }
+  
+  /* Override for specific elements that should remain colored */
+  .errorText,
+  .error,
+  [class*="error"] {
+    color: #e11d48 !important;
+  }
+  
+  .helpText,
+  .hint,
+  .muted,
+  [class*="hint"],
+  [class*="muted"] {
+    color: #666666 !important;
+  }
+  
+  /* Links should remain blue */
+  a,
+  .link,
+  [class*="link"] {
+    color: #0ea5e9 !important;
+  }
+  
+  /* Primary buttons should keep white text */
+  .primary,
+  [class*="primary"] {
+    color: #ffffff !important;
+  }
+  
+  /* Button overrides - ensure buttons maintain proper colors */
+  button,
+  .btn,
+  [class*="btn"] {
+    color: inherit !important;
+  }
+  
+  /* Primary button text should be white */
+  button.primary,
+  .btn.primary,
+  .primary button,
+  .primary .btn,
+  [class*="primary"] button,
+  [class*="primary"] .btn {
+    color: #ffffff !important;
+  }
+  
+  /* Success button text should be white */
+  button.success,
+  .btn.success,
+  .success button,
+  .success .btn,
+  [class*="success"] button,
+  [class*="success"] .btn {
+    color: #ffffff !important;
+  }
+  
+  /* Danger button text should be white */
+  button.danger,
+  .btn.danger,
+  .danger button,
+  .danger .btn,
+  [class*="danger"] button,
+  [class*="danger"] .btn {
+    color: #ffffff !important;
+  }
+}
+
+/* Dark mode overrides */
+:global([data-theme="dark"]) {
+  .wrap,
+  .form,
+  .field,
+  .actions {
+    color: var(--on-surface-1) !important;
+  }
+  
+  .title {
+    color: var(--on-surface-1) !important;
+  }
+  
+  label {
+    color: var(--on-surface-1) !important;
+  }
+  
+  .input,
+  .select,
+  .textarea,
+  input,
+  select,
+  textarea {
+    background: var(--surface-2) !important;
+    color: var(--on-surface-1) !important;
+    border-color: var(--border-1) !important;
+  }
+  
+  .input::placeholder,
+  .textarea::placeholder,
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--on-surface-muted) !important;
+  }
+  
+  .checkboxLabel {
+    color: var(--on-surface-1) !important;
+  }
+  
+  .helpText {
+    color: var(--on-surface-muted) !important;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .input, .select, .textarea, input, select, textarea { transition: none; }
+}

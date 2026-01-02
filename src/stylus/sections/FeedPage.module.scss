@@ -1,0 +1,159 @@
+// /*
+//  * src/stylus/sections/FeedPage.module.scss
+//  *
+//  * Scroll-driven, transform-only motion for the Feed/Homepage sections.
+//  *
+//  * How it works
+//  * ------------
+//  * - Every major slice of the feed uses `.feedSection` plus a `data-motion`
+//  *   attribute (see src/pages/Feed/FeedPage.jsx).
+//  * - `mountSectionReveals()` (src/utils/scrollMotion.js) toggles `data-visible`
+//  *   and `.is-in` when a section enters the viewport.
+//  * - This file defines the actual transforms & timings and also adds
+//  *   progressive-enhancement CSS Scroll-Driven Animations via `animation-timeline: view()`
+//  *   where supported.
+//  *
+//  *   data-motion="parallax"   → handled by hero parallax util (no offset here)
+//  *   data-motion="lift"       → translateY entrance
+//  *   data-motion="slide-right"→ translateX from left
+//  *   data-motion="tilt-up"    → translateY + rotateX from bottom
+//  *   data-motion="scale-pop"  → mild scale-up
+//  */
+
+// :root {
+//   --motion-ease: cubic-bezier(.22, .8, .32, 1);
+//   --motion-dur: 640ms;
+//   --motion-distance: 28px;
+//   --motion-tilt: 6deg;
+// }
+
+// /* Base section behaviour --------------------------------------------------- */
+
+// :global(.feedSection) {
+//   position: relative;
+//   transform-origin: center top;
+//   will-change: transform;
+//   /* JS can override these via --reveal-* custom properties */
+//   transition-property: transform;
+//   transition-timing-function: var(--reveal-ease, var(--motion-ease));
+//   transition-duration: var(--reveal-dur, var(--motion-dur));
+//   transition-delay: var(--reveal-delay, 0ms);
+//   /* amplitude scaler (set by JS as --reveal-amp) */
+//   --motion-distance-effective: calc(var(--motion-distance) * var(--reveal-amp, 1));
+// }
+
+// /* Initial states *before* the reveal flag is applied ----------------------- */
+
+// :global(.feedSection[data-motion="lift"]:not(.is-in):not([data-visible="true"])) {
+//   transform: translateY(var(--motion-distance-effective));
+// }
+
+// :global(.feedSection[data-motion="slide-right"]:not(.is-in):not([data-visible="true"])) {
+//   transform: translateX(calc(-1 * var(--motion-distance-effective)));
+// }
+
+// :global(.feedSection[data-motion="tilt-up"]:not(.is-in):not([data-visible="true"])) {
+//   transform: translateY(var(--motion-distance-effective)) rotateX(var(--motion-tilt));
+//   transform-origin: center bottom;
+// }
+
+// :global(.feedSection[data-motion="scale-pop"]:not(.is-in):not([data-visible="true"])) {
+//   transform: scale(.96);
+// }
+
+// /* Parallax hero wrapper: transform is entirely driven by CSS variables
+//    updated in mountHeroParallax(). We *do not* apply an entrance offset here
+//    to avoid double transforms. */
+// :global(.section--hero) {
+//   transform: translateY(var(--hero-parallax-y, 0px))
+//              scale(var(--hero-parallax-scale, 1));
+//   transform-origin: center top;
+//   will-change: transform;
+// }
+
+// /* Final state once revealed ------------------------------------------------ */
+
+// :global(.feedSection.is-in),
+// :global(.feedSection[data-visible="true"]) {
+//   transform: none;
+// }
+
+// /* ========================================================================== */
+// /*  Progressive enhancement: CSS Scroll-Driven Animations (View Timelines)    */
+// /* ========================================================================== */
+
+// @supports (animation-timeline: view()) {
+//   /* When view-timeline is available we let keyframes drive transforms and
+//      keep JS’ IntersectionObserver mostly as a semantic hook. */
+//   :global(.feedSection) {
+//     transition: none;
+//   }
+
+//   :global(.feedSection[data-motion="lift"]) {
+//     animation: feed-lift var(--motion-dur) var(--motion-ease) both;
+//     animation-timeline: view();
+//     animation-range: entry 0% cover 40%;
+//   }
+
+//   :global(.feedSection[data-motion="slide-right"]) {
+//     animation: feed-slide-right var(--motion-dur) var(--motion-ease) both;
+//     animation-timeline: view();
+//     animation-range: entry 0% cover 40%;
+//   }
+
+//   :global(.feedSection[data-motion="tilt-up"]) {
+//     animation: feed-tilt-up var(--motion-dur) var(--motion-ease) both;
+//     animation-timeline: view();
+//     animation-range: entry 0% cover 45%;
+//   }
+
+//   :global(.feedSection[data-motion="scale-pop"]) {
+//     animation: feed-scale-pop var(--motion-dur) var(--motion-ease) both;
+//     animation-timeline: view();
+//     animation-range: entry 0% cover 35%;
+//   }
+
+//   /* Hero parallax is JS-driven; we keep its transform based on variables.
+//      You *can* add a tiny scroll-driven scale here if desired, but the video
+//      already has its own view-timeline animation in FeedPage.module.scss. */
+
+//   @keyframes feed-lift {
+//     from { transform: translateY(var(--motion-distance-effective)); }
+//     to   { transform: none; }
+//   }
+
+//   @keyframes feed-slide-right {
+//     from { transform: translateX(calc(-1 * var(--motion-distance-effective))); }
+//     to   { transform: none; }
+//   }
+
+//   @keyframes feed-tilt-up {
+//     from {
+//       transform:
+//         translateY(var(--motion-distance-effective))
+//         rotateX(var(--motion-tilt));
+//       transform-origin: center bottom;
+//     }
+//     to {
+//       transform: none;
+//       transform-origin: center top;
+//     }
+//   }
+
+//   @keyframes feed-scale-pop {
+//     from { transform: scale(.94); }
+//     60%  { transform: scale(1.02); }
+//     to   { transform: scale(1); }
+//   }
+// }
+
+// /* Reduced motion: completely disable transforms & animations ---------------- */
+
+// @media (prefers-reduced-motion: reduce) {
+//   :global(.feedSection),
+//   :global(.section--hero) {
+//     transition: none !important;
+//     transform: none !important;
+//     animation: none !important;
+//   }
+// }

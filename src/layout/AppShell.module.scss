@@ -1,0 +1,104 @@
+// FILE: src/layout/AppShell.module.scss
+/* src/layout/AppShell.module.scss */
+
+/* ===== Modern App Shell Layout ===== */
+.shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--bg-app);
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ----- Main area layout ----- */
+.main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  flex: 1 1 auto;
+  gap: 0;
+  position: relative;
+  z-index: 0;
+}
+
+/* ----- Sidebar (desktop overlay) with glassmorphism ----- */
+.sidebarArea {
+  position: fixed;
+  top: var(--header-h, 64px);
+  left: 0;
+  bottom: 0;
+  width: var(--sidebar-w, 260px);
+  background: var(--surface-0);
+  border-right: 1px solid var(--border-soft);
+  backdrop-filter: saturate(180%) blur(var(--glass-blur-md));
+  -webkit-backdrop-filter: saturate(180%) blur(var(--glass-blur-md));
+  transform: translateX(-100%);
+  transition: 
+    transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1), 
+    box-shadow 0.4s ease;
+  z-index: 40;
+  box-shadow: var(--shadow-subtle);
+}
+
+/* Show sidebar with smooth animation */
+.sidebarShown .sidebarArea {
+  transform: translateX(0);
+  box-shadow: var(--shadow-soft);
+}
+
+/* Scrim overlay for sidebar */
+.scrim {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 35;
+  cursor: pointer;
+  animation: fade-in 0.3s ease forwards;
+  border: none;
+  padding: 0;
+}
+
+/* ----- Content area with smooth transitions ----- */
+.content {
+  min-width: 0;
+  padding-top: var(--header-h, 64px);
+  min-height: calc(100vh - var(--header-h, 64px));
+  padding-inline: clamp(16px, 3vw, 32px);
+  position: relative;
+  z-index: 1;
+}
+
+/* Route transition animation */
+.routeStage {
+  animation: fade-in-up 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+
+/* ----- Responsive adjustments ----- */
+@media (max-width: 900px) {
+  .sidebarArea {
+    display: none; /* hidden on mobile; MobileNav handles it */
+  }
+
+  .content {
+    padding-top: var(--header-h, 56px);
+    padding-inline: clamp(8px, 3vw, 16px);
+  }
+}
+
+
+/* Clean header: solid on light, subtle shadow */
+/* Header inherits the top surface colour and uses a stronger border */
+.header {
+  background: var(--surface-0);
+  border-bottom: 1px solid var(--border-strong);
+  box-shadow: var(--shadow-1);
+}
+.nav, .toolbar {
+  gap: var(--space-3);
+}
+/* Content area matches the app background */
+.content {
+  background: var(--bg-app);
+}

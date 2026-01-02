@@ -1,0 +1,12 @@
+.badge {
+  display: inline-block;
+  font-size: var(--fs-12);
+  padding: 2px 8px;
+  border-radius: 24px;
+  border: 1px solid var(--border-1);
+  background: color-mix(in oklab, var(--color-bg) 85%, var(--color-surface));
+}
+.default {}
+.success { color: #0a7e2e; border-color: #0a7e2e40; }
+.warn { color: #a16207; border-color: #a1620740; }
+.danger { color: #b42318; border-color: #b4231840; }

@@ -1,0 +1,60 @@
+/* Minimal section styles for the travel pages */
+.container {
+  padding: var(--s-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-6);
+}
+
+/* Wrapper for the travel post form limiting its width */
+.formWrapper {
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* List container for travel posts */
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+/* Ensure button text is visible - fix for button text color issue */
+.container :global(.btn.primary),
+.container :global(.btn):global(.primary),
+.formWrapper :global(.btn.primary),
+.formWrapper :global(.btn):global(.primary) {
+  color: #ffffff !important;
+  background-color: var(--btn-brand, #2563eb) !important;
+}
+
+/* More specific targeting for Link elements with button classes */
+.container a:global(.btn.primary),
+.container a:global(.btn):global(.primary),
+.formWrapper a:global(.btn.primary),
+.formWrapper a:global(.btn):global(.primary) {
+  color: #ffffff !important;
+  background-color: var(--btn-brand, #2563eb) !important;
+  text-decoration: none !important;
+}
+
+/* Dark theme button text fix */
+:global([data-theme="dark"]) .container :global(.btn.primary),
+:global([data-theme="dark"]) .container :global(.btn):global(.primary),
+:global([data-theme="dark"]) .formWrapper :global(.btn.primary),
+:global([data-theme="dark"]) .formWrapper :global(.btn):global(.primary) {
+  color: #ffffff !important;
+  background-color: var(--btn-brand, #2563eb) !important;
+}
+
+:global([data-theme="dark"]) .container a:global(.btn.primary),
+:global([data-theme="dark"]) .container a:global(.btn):global(.primary),
+:global([data-theme="dark"]) .formWrapper a:global(.btn.primary),
+:global([data-theme="dark"]) .formWrapper a:global(.btn):global(.primary) {
+  color: #ffffff !important;
+  background-color: var(--btn-brand, #2563eb) !important;
+}

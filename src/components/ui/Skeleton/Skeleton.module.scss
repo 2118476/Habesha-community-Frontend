@@ -1,0 +1,44 @@
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--surface-2) 25%,
+    var(--surface-elevated) 50%,
+    var(--surface-2) 75%
+  );
+  background-size: 200px 100%;
+  border-radius: var(--radius-sm);
+  animation: shimmer 1.5s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Fallback for reduced motion - use gentle pulse instead of shimmer */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    background: var(--surface-2);
+    animation: pulse 2s ease-in-out infinite;
+  }
+}
+
+.stack { 
+  display: grid; 
+  gap: var(--space-2); 
+}

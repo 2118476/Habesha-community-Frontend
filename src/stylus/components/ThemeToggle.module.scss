@@ -1,0 +1,39 @@
+// FILE: src/stylus/components/ThemeToggle.module.scss
+/*
+ * A simple icon button used to toggle between light and dark themes.
+ * The button uses no background and inherits the surrounding text
+ * colour.  On focus, a clear brand-coloured outline appears for
+ * keyboard users.  Hit area meets the recommended minimum size.
+ */
+
+.toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: none;
+  border: none;
+  color: var(--on-surface-0);
+  cursor: pointer;
+  font-size: 22px;
+  line-height: 1;
+  border-radius: var(--r-sm);
+  transition: background-color var(--dur) var(--ease),
+              transform var(--dur) var(--ease);
+
+  &:hover {
+    /* Lightly tint the button using the brand colour on hover */
+    background-color: color-mix(in oklab, var(--brand) 10%, transparent);
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+
+  &:focus-visible {
+    /* Focus ring uses the brand colour rather than an undefined accent */
+    outline: 2px solid color-mix(in oklab, var(--brand) 60%, transparent);
+    outline-offset: 2px;
+  }
+}

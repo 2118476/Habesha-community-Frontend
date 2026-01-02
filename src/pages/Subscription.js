@@ -1,6 +1,9 @@
 import React from 'react';
 import api from '../api/axiosInstance';
 import { toast } from 'react-toastify';
+// Import design system styles
+import styles from '../stylus/sections/Subscription.module.scss';
+import buttonStyles from '../stylus/components/Button.module.scss';
 
 // Page offering subscription plans. When clicked, a request is
 // sent to the backend to create a Stripe checkout session. The
@@ -27,16 +30,30 @@ const SubscriptionPage = () => {
   };
 
   return (
-    <div>
-      <h2>Habesha Pro Subscription</h2>
+    <div className={styles.container}>
+      <h2 style={{ marginTop: 0 }}>Habesha Pro Subscription</h2>
       <p>Choose a plan to unlock advanced features.</p>
-      <div className="subscription-plans">
-        <button onClick={() => subscribe('monthly')} className="btn-primary">
-          Monthly Plan
-        </button>
-        <button onClick={() => subscribe('yearly')} className="btn-primary">
-          Yearly Plan
-        </button>
+      <div className={styles.plans}>
+        <div className="section" style={{ padding: '1rem' }}>
+          <h3 style={{ marginTop: 0 }}>Monthly Plan</h3>
+          <p style={{ marginBottom: '0.75rem' }}>Pay monthly and enjoy premium features.</p>
+          <button
+            onClick={() => subscribe('monthly')}
+            className={`${buttonStyles.btn} ${buttonStyles.primary}`}
+          >
+            Subscribe for £x/month
+          </button>
+        </div>
+        <div className="section" style={{ padding: '1rem' }}>
+          <h3 style={{ marginTop: 0 }}>Yearly Plan</h3>
+          <p style={{ marginBottom: '0.75rem' }}>Save more with an annual subscription.</p>
+          <button
+            onClick={() => subscribe('yearly')}
+            className={`${buttonStyles.btn} ${buttonStyles.primary}`}
+          >
+            Subscribe for £y/year
+          </button>
+        </div>
       </div>
     </div>
   );

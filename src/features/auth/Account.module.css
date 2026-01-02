@@ -1,0 +1,658 @@
+/*
+ * This CSS module contains the styling for the animated login and
+ * registration forms originally from the Code4ALL project.  To avoid
+ * leaking global styles into the rest of the Habesha app, the entire
+ * stylesheet is wrapped in a `:global { … }` block.  This preserves
+ * the existing class names while still scoping the file to the module
+ * loader.  If you need to modify colours to align with the Habesha
+ * design system, search for hex values and replace them with the
+ * corresponding design tokens (see `src/styles/tokens/_colors.scss`).
+ */
+
+:global {
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap");
+
+/* Font styling for account files */
+.body {
+  font-family: "Poppins", sans-serif;
+}
+
+.account-container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  isolation: isolate;
+}
+
+/* Styling for both forms in the account file - signup and signin */
+
+.forms-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+.signin-signup {
+  position: absolute;
+  top: 55%;
+  transform: translate(-50%, -50%);
+  left: 75%;
+  width: 50%;
+  transition: 1s 0.7s ease-in-out;
+  display: grid;
+  grid-template-columns: 1fr;
+  z-index: 5;
+}
+
+form.sign-up-form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 0rem 5rem;
+  transition: all 0.2s 0.7s;
+  overflow: hidden;
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+  opacity: 0;
+  z-index: 1;
+}
+
+.sign-up-form p {
+  color: var(--on-surface);
+  padding: 3px;
+  margin-bottom: 7px;
+  background-color: rgb(218, 189, 189);
+  border: 1px solid red;
+  width: 50%;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 0.6rem;
+}
+
+form.sign-in-form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 0rem 5rem;
+  transition: all 0.2s 0.7s;
+  overflow: hidden;
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+  z-index: 2;
+}
+
+.sign-in-form .loginSuccess {
+  color: var(--on-surface);
+  padding: 3px;
+  margin-bottom: 7px;
+  background-color: rgb(195, 218, 189);
+  border: 1px solid green;
+  width: 50%;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 0.7rem;
+}
+
+.sign-in-form p {
+  color: var(--on-surface);
+  padding: 3px;
+  margin-bottom: 7px;
+  background-color: rgb(218, 189, 189);
+  border: 1px solid red;
+  width: 50%;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 0.7rem;
+}
+
+.form-title {
+  font-family: "Poppins", sans-serif;
+  font-size: 2.2rem;
+  color: #444;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.input-field {
+  max-width: 380px;
+  width: 100%;
+  background-color: #f0f0f0;
+  margin: 5px 0;
+  height: 35px;
+  border-radius: 50px;
+  display: grid;
+  grid-template-columns: 15% 85%;
+  padding: 0 0.4rem;
+  position: relative;
+}
+
+.input-field i {
+  text-align: center;
+  line-height: 36px;
+  color: #acacac;
+  transition: 0.5s;
+  font-size: 1.2rem;
+}
+
+.input-field input {
+  background: none;
+  outline: none;
+  border: none;
+  line-height: 1.3;
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #333;
+}
+
+/* Styling for Date picker input field in the signup form */
+
+::-webkit-datetime-edit-text,
+::-webkit-datetime-edit-month-field,
+::-webkit-datetime-edit-day-field,
+::-webkit-datetime-edit-year-field,
+::-webkit-calendar-picker-indicator {
+  color: #aaa;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  color: #aaa;
+}
+
+.input-field input::placeholder {
+  color: #aaa;
+}
+
+/* Styling for password indicator */
+
+.show-pass {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--on-surface);
+  display: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.pass-indicator {
+  width: 50%;
+  height: 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  display: none;
+}
+
+.pass-indicator .weak::before {
+  content: "";
+  position: absolute;
+  left: 29.55%;
+  width: 13%;
+  height: 1.35%;
+  border-radius: 10px;
+  background-color: red;
+}
+
+.pass-indicator .medium::before {
+  content: "";
+  position: absolute;
+  left: 43.2%;
+  width: 13%;
+  height: 1.35%;
+  border-radius: 10px;
+  background-color: red;
+}
+
+.pass-indicator .strong::before {
+  content: "";
+  position: absolute;
+  left: 56.7%;
+  width: 13%;
+  height: 1.35%;
+  border-radius: 10px;
+  background-color: red;
+}
+
+.pass-indicator .weak.active::before {
+  background: #ff4757;
+}
+
+.pass-indicator .medium.active::before {
+  background: orange;
+}
+
+.pass-indicator .strong.active::before {
+  background: #23ad5c;
+}
+
+.pass-text .weak .medium .strong {
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: none;
+  color: var(--on-surface);
+}
+
+/* Styling for the buttons in the account files */
+
+.account-btn {
+  width: 200px;
+  background-color: #5995fd;
+  border: none;
+  outline: none;
+  height: 49px;
+  border-radius: 49px;
+  color: var(--surface-card);
+  text-transform: uppercase;
+  font-weight: 600;
+  margin: 10px 0;
+  cursor: pointer;
+  transition: 0.5s;
+}
+
+.account-btn:hover {
+  background-color: #4d84e2;
+  color: var(--surface-card);
+}
+
+.account-btn:disabled {
+  background-color: #7692c1;
+  cursor: auto;
+}
+
+/* Styling for forgot password link the signin form */
+
+.forgot {
+  font-family: "Poppins", sans-serif;
+  font-size: 15px;
+  color: #333;
+}
+
+.forgot:hover {
+  color: #666;
+  font-weight: 500;
+}
+
+/* Styling for the panel containers used for the sliding animation */
+
+.panels-container {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.account-container:before {
+  content: "";
+  position: absolute;
+  height: 2000px;
+  width: 2000px;
+  top: -10%;
+  right: 48%;
+  transform: translateY(-50%);
+  background-image: linear-gradient(-45deg, #4481eb 0%, #04befe 100%);
+  transition: 1.8s ease-in-out;
+  border-radius: 50%;
+  z-index: 6;
+}
+
+.image {
+  width: 100%;
+  transition: transform 1.1s ease-in-out;
+  transition-delay: 0.4s;
+}
+
+/* Styling for panel containers which include the content and the image */
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-around;
+  text-align: center;
+  z-index: 6;
+}
+
+.left-panel {
+  pointer-events: all;
+  padding: 6rem 17% 2rem 12%;
+}
+
+.right-panel {
+  pointer-events: none;
+  padding: 6rem 12% 2rem 17%;
+}
+
+.panel .panel-content {
+  color: var(--surface-card);
+  transition: transform 0.9s ease-in-out;
+  transition-delay: 0.6s;
+}
+
+.panel h3 {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  line-height: 1;
+  font-size: 1.5rem;
+}
+
+.panel p {
+  font-family: "Poppins", sans-serif;
+  font-size: 0.95rem;
+  padding: 0.7rem 0;
+}
+
+/* Styling for the buttons in the panel containers called signup and signin */
+
+.account-btn.transparent {
+  background: none;
+  border: 2px solid var(--surface-card);
+  width: 130px;
+  height: 41px;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.account-btn.transparent:hover {
+  color: var(--surface-card);
+}
+
+.right-panel .image,
+.right-panel .panel-content {
+  transform: translateX(800px);
+}
+
+/* Styling for sliding animation when clicking signup/signin buttons in the panel containers */
+
+.account-container.sign-up-mode:before {
+  transform: translate(100%, -50%);
+  right: 52%;
+}
+
+/* move the left panel to the right side of the screen */
+
+.account-container.sign-up-mode .left-panel .image,
+.account-container.sign-up-mode .left-panel .panel-content {
+  transform: translateX(-800px);
+}
+
+.account-container.sign-up-mode .signin-signup {
+  left: 25%;
+}
+
+/* Sliding animation - when clicking on the sign up button, the signup form appears */
+
+.account-container.sign-up-mode form.sign-up-form {
+  opacity: 1;
+  z-index: 2;
+}
+
+/* and the signin form disappears */
+
+.account-container.sign-up-mode form.sign-in-form {
+  opacity: 0;
+  z-index: 1;
+}
+
+/* move the right panel to the left and place it on the right side of the screen */
+
+.account-container.sign-up-mode .right-panel .image,
+.account-container.sign-up-mode .right-panel .panel-content {
+  transform: translateX(0%);
+}
+
+.account-container.sign-up-mode .left-panel {
+  pointer-events: none;
+}
+
+.account-container.sign-up-mode .right-panel {
+  pointer-events: all;
+}
+
+/* Signup/login styling - tablet version */
+
+@media (max-width: 870px) {
+  .account-container {
+    min-height: 800px;
+    height: 100vh;
+  }
+  .signin-signup {
+    width: 100%;
+    top: 95%;
+    transform: translate(-50%, -87%);
+    transition: 1s 0.8s ease-in-out;
+  }
+
+  .signin-signup,
+  .container.sign-up-mode .signin-signup {
+    left: 50%;
+  }
+
+  .panels-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 2fr 1fr;
+  }
+
+  .panel {
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding: 2.5rem 8%;
+    grid-column: 1 / 2;
+  }
+
+  .right-panel {
+    grid-row: 3 / 4;
+  }
+
+  .left-panel {
+    grid-row: 1 / 2;
+  }
+
+  .image {
+    width: 200px;
+    transition: transform 0.9s ease-in-out;
+    transition-delay: 0.6s;
+  }
+
+  .panel .panel-content {
+    padding-right: 15%;
+    transition: transform 0.9s ease-in-out;
+    transition-delay: 0.8s;
+  }
+
+  .panel h3 {
+    font-size: 1.2rem;
+  }
+
+  .panel p {
+    font-size: 0.7rem;
+    padding: 0.5rem 0;
+  }
+
+  .btn.transparent {
+    width: 110px;
+    height: 35px;
+    font-size: 0.7rem;
+  }
+
+  .account-container:before {
+    width: 1500px;
+    height: 1500px;
+    transform: translateX(-50%);
+    left: 30%;
+    bottom: 68%;
+    right: initial;
+    top: initial;
+    transition: 2s ease-in-out;
+  }
+
+  .account-container.sign-up-mode:before {
+    transform: translate(-50%, 100%);
+    bottom: 32%;
+    right: initial;
+    z-index: 1;
+  }
+
+  .account-container.sign-up-mode .left-panel .image,
+  .account-container.sign-up-mode .left-panel .panel-content {
+    transform: translateY(-300px);
+  }
+
+  .account-container.sign-up-mode .right-panel .image,
+  .account-container.sign-up-mode .right-panel .panel-content {
+    transform: translateY(0px);
+  }
+
+  .right-panel .image,
+  .right-panel .panel-content {
+    transform: translateY(300px);
+  }
+
+  .account-container.sign-up-mode .signin-signup {
+    top: 5%;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* Signup/login styling - mobile version */
+
+@media (max-width: 570px) {
+  form {
+    padding: 0 1.5rem;
+  }
+
+  .image {
+    display: none;
+  }
+
+  .panel .panel-content {
+    padding: 0.5rem 1rem;
+  }
+
+  .container {
+    padding: 1.5rem;
+  }
+
+  .panel p {
+    padding: 0.8rem 0 0 0;
+  }
+
+  .btn.transparent {
+    font-size: 0.8rem;
+  }
+
+  .left-panel {
+    padding-top: 15.5%;
+  }
+
+  .right-panel {
+    padding: 2%;
+  }
+
+  .account-container:before {
+    bottom: 70%;
+    left: 50%;
+  }
+
+  .account-container.sign-up-mode:before {
+    bottom: 23%;
+    left: 50%;
+  }
+
+  .account-container.sign-up-mode .signin-signup {
+    top: 9.5%;
+    transform: translate(-25%, 0);
+  }
+}
+}
+
+
+/* Consolidated account buttons with design tokens */
+.account-btn {
+  --btn-bg: var(--primary);
+  --btn-fg: var(--on-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  height: 44px;
+  padding: 0 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border-1);
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font-weight: 600;
+  letter-spacing: .2px;
+  transition: transform .12s ease, box-shadow .2s ease, background-color .2s ease, color .2s ease;
+  box-shadow: 0 1px 0 rgba(0,0,0,.05), 0 6px 16px rgba(0,0,0,.06);
+}
+.account-btn:hover:not(:disabled) {
+  background: color-mix(in oklab, var(--btn-bg), white 8%);
+  transform: translateY(-1px);
+}
+.account-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+.account-btn:disabled,
+.account-btn[aria-disabled="true"] {
+  cursor: not-allowed;
+  background: color-mix(in oklab, var(--surface-card), var(--muted-1) 16%);
+  color: var(--muted-1);
+  border-color: var(--border-1);
+  box-shadow: none;
+}
+.account-btn--ghost {
+  --btn-bg: transparent;
+  --btn-fg: var(--primary);
+  background: transparent;
+  color: var(--btn-fg);
+  border: 1px solid color-mix(in oklab, var(--primary), var(--border-1) 70%);
+}
+.account-btn--ghost:hover {
+  background: color-mix(in oklab, var(--primary), transparent 90%);
+}
+.account-btn--danger {
+  --btn-bg: var(--accent);
+  --btn-fg: var(--on-primary);
+}
+
+
+
+.form-title {
+  color: var(--on-surface);
+}
+.input-field,
+.input-field input,
+.input-field textarea {
+  background: var(--surface-card);
+  color: var(--on-surface);
+  border: 1px solid var(--border-1);
+}
+.input-field svg,
+.input-icon {
+  color: var(--muted-1);
+}
+.forgot,
+.forgot a {
+  color: var(--primary);
+}
+.forgot a:hover {
+  color: color-mix(in oklab, var(--primary), black 8%);
+}

@@ -1,0 +1,26 @@
+.loadingButton {
+  position: relative;
+  transition: all var(--motion-fast) var(--motion-ease-out);
+}
+
+.loadingButton.loading {
+  cursor: not-allowed;
+}
+
+.content {
+  display: inline-flex;
+  align-items: center;
+  transition: opacity var(--motion-fast) var(--motion-ease-out);
+}
+
+.contentLoading {
+  opacity: 0.7;
+}
+
+.spinner {
+  position: absolute;
+  right: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 0;
+}

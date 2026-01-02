@@ -1,0 +1,580 @@
+/* src/components/ads/CommentsThread.module.scss
+   High-end FB-style comments UI
+   - pill bubbles
+   - nested replies
+   - inline reply composer
+   - transform-only micro-motions
+*/
+
+/* ---------------- TOKENS ---------------- */
+
+:root,
+:global([data-theme="dark"]),
+:global(body) {
+  /* UI8 Style - Adaptive to background */
+  --ads-bg-card: rgba(20, 10, 40, 0.95);
+  --ads-bg-bubble: rgba(28, 28, 36, 0.9);
+  --ads-bg-reply-bubble: rgba(24, 24, 32, 0.9);
+
+  /* White text for dark backgrounds */
+  --ads-ink-1: #ffffff;
+  --ads-ink-2: rgba(255, 255, 255, 0.8);
+  --ads-ink-3: rgba(255, 255, 255, 0.6);
+
+  --ads-line: rgba(255, 255, 255, 0.1);
+  --ads-ring: rgba(255, 255, 255, 0.3);
+
+  --ads-radius-sm: 8px;
+  --ads-radius-md: 12px;
+  --ads-radius-lg: 16px;
+  --ads-radius-full: 999px;
+
+  --ads-shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* ---------------- ROOT THREAD ---------------- */
+
+.thread {
+  display: grid;
+  gap: 10px;
+  padding: 12px 0 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--ads-ink-1);
+}
+
+/* fallback used by CommentsThread.jsx when it applies inline styles */
+.threadRoot {
+  display: flex;
+  flex-direction: column;
+  row-gap: 12px;
+}
+
+/* ---------------- PRIMARY COMPOSER (if used) ---------------- */
+
+.composer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0 6px;
+}
+
+.composerAvatar {
+  flex: 0 0 auto;
+}
+
+.composerAvatar :global(img),
+.composerAvatar :global(.avatar-img) {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  object-fit: cover;
+  background: radial-gradient(circle at 30% 20%, #e5e7eb, #cbd5f5);
+}
+
+.composerInputWrap {
+  flex: 1 1 auto;
+  position: relative;
+}
+
+.composerInputWrap input {
+  width: 100%;
+  border-radius: var(--ads-radius-full);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 10px 14px;
+  font-size: 14px;
+  background: rgba(24, 24, 32, 0.9);
+  color: var(--ads-ink-1);
+  outline: none;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease,
+    transform 120ms ease;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+.composerInputWrap input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.composerInputWrap input:focus-visible {
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
+  background: rgba(28, 28, 36, 0.95);
+  transform: translateY(-0.5px);
+}
+
+/* ---------------- LIST (top-level comments) ---------------- */
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 4px;
+}
+
+/* match CommentsThread.jsx: each top-level row */
+.commentPreviewRow,
+.comment {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+/* ---------------- AVATARS ---------------- */
+
+.commentAvatar,
+.replyAvatar {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.commentAvatar :global(img),
+.commentAvatar :global(.avatar-img),
+.replyAvatar :global(img),
+.replyAvatar :global(.avatar-img) {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  object-fit: cover;
+  background: radial-gradient(circle at 30% 20%, #e5e7eb, #cbd5f5);
+}
+
+.replyAvatar :global(img),
+.replyAvatar :global(.avatar-img) {
+  width: 28px;
+  height: 28px;
+}
+
+/* ---------------- COMMENT MAIN ---------------- */
+
+.commentMain {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* bubble for both top-level comments and replies */
+
+.commentBubble,
+.replyBubble {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: min(100%, 640px);
+  padding: 10px 14px;
+  border-radius: var(--ads-radius-lg);
+  background: rgba(28, 28, 36, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  transform-origin: left top;
+  will-change: transform, box-shadow;
+  transition:
+    transform 120ms ease-out,
+    box-shadow 150ms ease-out,
+    background-color 150ms ease-out,
+    border-color 150ms ease-out;
+}
+
+.commentBubble:hover,
+.replyBubble:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  background: rgba(32, 32, 40, 0.95);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* header line inside bubble */
+
+.commentHeader,
+.replyHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.commentAuthorName,
+.replyAuthorName,
+.commentName {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--ads-ink-1);
+  cursor: pointer;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+.commentTimestamp,
+.replyTimestamp,
+.metaTime {
+  font-size: 11px;
+  color: var(--ads-ink-3);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+.commentReplyCount {
+  font-size: 11px;
+  color: var(--ads-ink-2);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* text inside bubble */
+
+.commentText,
+.replyText {
+  margin-top: 2px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ads-ink-1);
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-weight: 400;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* little like pill on bubble (optional) */
+
+.commentLikesPill {
+  position: absolute;
+  right: 6px;
+  bottom: -10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--ads-radius-full);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--ads-ink-1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  font-size: 11px;
+  font-weight: 600;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+.likeIcon {
+  font-size: 11px;
+}
+
+.likeCount {
+  font-weight: 600;
+}
+
+/* ---------------- META LINE (under bubble) ---------------- */
+
+.commentMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+  margin-left: 4px;
+  font-size: 11px;
+  color: var(--ads-ink-3);
+}
+
+.metaButton {
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  color: var(--ads-ink-2);
+  position: relative;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+.metaButton::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.5);
+  transition: width 140ms ease-out;
+}
+
+.metaButton:hover {
+  color: var(--ads-ink-1);
+}
+
+.metaButton:hover::after {
+  width: 100%;
+}
+
+.metaDot {
+  opacity: 0.65;
+}
+
+/* ---------------- REPLIES ---------------- */
+
+/* container used by CommentsThread.jsx */
+.replyList {
+  list-style: none;
+  padding: 0;
+  margin: 4px 0 0;
+  display: grid;
+  gap: 4px;
+  padding-left: 24px;
+  position: relative;
+}
+
+.replyList::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 0;
+  bottom: 6px;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* each reply row */
+.replyRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+/* extra indentation helpers (if needed) */
+.comment[data-depth="1"] {
+  margin-left: 34px;
+}
+.comment[data-depth="2"] {
+  margin-left: 52px;
+}
+.comment[data-depth="3"] {
+  margin-left: 70px;
+}
+
+.repliesBlock {
+  margin-top: 4px;
+  padding-left: 24px;
+  position: relative;
+}
+
+.repliesBlock::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 0;
+  bottom: 6px;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.repliesList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.viewRepliesButton {
+  border: none;
+  background: transparent;
+  padding: 2px 0;
+  margin-left: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 600;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  transition: color 150ms ease;
+}
+
+.viewRepliesButton:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* used for top-level "View more comments" */
+.viewMoreButton {
+  border: none;
+  background: transparent;
+  padding: 4px 0 0;
+  margin-left: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 600;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  transition: color 150ms ease;
+}
+
+.viewMoreButton:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* ---------------- INLINE REPLY FORM (used by CommentsThread.jsx) ---------------- */
+
+.commentComposerRow,
+.inlineForm {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.inlineAvatar,
+.composerAvatar {
+  flex: 0 0 auto;
+}
+
+.inlineAvatar :global(img),
+.inlineAvatar :global(.avatar-img),
+.commentComposerRow :global(img),
+.commentComposerRow :global(.avatar-img) {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  object-fit: cover;
+  background: radial-gradient(circle at 30% 20%, #e5e7eb, #cbd5f5);
+}
+
+.inlineInputWrap {
+  flex: 1 1 auto;
+}
+
+.commentInput,
+.inlineInputWrap input {
+  width: 100%;
+  border-radius: var(--ads-radius-full);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 8px 12px;
+  font-size: 13px;
+  background: rgba(24, 24, 32, 0.9);
+  color: var(--ads-ink-1);
+  outline: none;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    background-color 150ms ease;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+.commentInput::placeholder,
+.inlineInputWrap input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.commentInput:focus-visible,
+.inlineInputWrap input:focus-visible {
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
+  background: rgba(28, 28, 36, 0.95);
+}
+
+/* send button next to inline input */
+.commentSendBtn {
+  flex: 0 0 auto;
+  font-size: 12px;
+  border-radius: var(--ads-radius-full);
+  min-height: 28px;
+}
+
+/* ---------------- STATES ---------------- */
+
+.empty {
+  padding: 4px 2px 2px 2px;
+  font-size: 12px;
+  color: var(--ads-ink-3);
+}
+
+.error {
+  padding: 8px 12px;
+  border-radius: var(--ads-radius-md);
+  background: rgba(220, 38, 38, 0.2);
+  border: 1px solid rgba(220, 38, 38, 0.5);
+  color: #ffffff;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+.retryBtn {
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+/* loading skeleton */
+
+.loading {
+  display: grid;
+  gap: 4px;
+  padding: 2px 0 6px;
+}
+
+.skeletonRow {
+  height: 26px;
+  border-radius: var(--ads-radius-full);
+  background: linear-gradient(
+    90deg,
+    rgba(148, 163, 184, 0.18),
+    rgba(148, 163, 184, 0.04),
+    rgba(148, 163, 184, 0.18)
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.1s linear infinite;
+}
+
+/* used by CommentsThread.jsx for "Updating…" under list */
+.commentsLoadingMore {
+  padding-top: 4px;
+  font-size: 12px;
+  color: var(--ads-ink-3);
+}
+
+/* ---------------- MOTION ---------------- */
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .commentBubble,
+  .replyBubble,
+  .composerInputWrap input,
+  .commentInput,
+  .skeletonRow {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+

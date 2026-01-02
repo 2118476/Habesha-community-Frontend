@@ -1,0 +1,553 @@
+/* ==========================================================================
+   PublicExplore.module.scss — Polished v2
+   - Ken Burns hero with soft vignette + subtle texture
+   - Transparent→solid navbar w/ dynamic blur & shadow
+   - Glassy category cards w/ hover lift + sheen
+   - Prefers-reduced-motion friendly, dark-mode tuned
+   - NO literal url() — images come via CSS vars (e.g., --hero-bg, --card-bg)
+   ========================================================================== */
+
+/* ---- Global fallbacks ---- */
+:global(html, body) { margin: 0; padding: 0; }
+:global(body) {
+  overflow-x: hidden;
+  background: var(--surface-0, #ffffff);
+  color: var(--on-surface-0, #0f172a);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* safer full-bleed on all browsers */
+.wrapper { overflow-x: clip; }
+@supports not (overflow: clip) { .wrapper { overflow-x: hidden; } }
+
+/* ---- Tokens ---- */
+:root {
+  --header-h: 64px;
+
+  /* Easing + durations */
+  --dur-1: .18s;
+  --dur-2: .28s;
+  --dur-3: .6s;
+  --dur-4: 1s;
+  --ease-std: cubic-bezier(.2,.6,.2,1);
+  --ease-emph: cubic-bezier(.2,.8,.2,1);
+
+  /* Palette */
+  --surface-0: #ffffff;
+  --surface-1: #0b1220;
+  --surface-2: #e5e7eb;
+  --on-surface-0: #0f172a;
+  --on-surface-1: #e5e7eb;
+
+  --primary: #2563eb;
+  --primary-700: #1e40af;
+  --accent: #22c55e;
+
+  /* Depth */
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 18px;
+  --shadow-1: 0 6px 20px rgba(2,6,23,.08);
+  --shadow-2: 0 12px 32px rgba(2,6,23,.16);
+  --shadow-3: 0 18px 48px rgba(2,6,23,.24);
+
+  /* Glass/blur */
+  --glass-bg: color-mix(in srgb, var(--surface-0) 70%, transparent);
+  --glass-brd: color-mix(in srgb, var(--surface-2) 65%, transparent);
+  --blur-sm: 8px;
+  --blur-md: 12px;
+
+  /* Hero */
+  --hero-min-h: clamp(420px, 58vh, 760px);
+
+  /* Spacing */
+  --s-2: .5rem;
+  --s-3: .75rem;
+  --s-4: 1rem;
+  --s-6: 1.5rem;
+  --s-8: 2rem;
+  --s-10: 2.5rem;
+}
+
+/* Dark theme */
+:global([data-theme="dark"]) {
+  --surface-0: #0b1220;
+  --surface-1: #0e1526;
+  --surface-2: #1f2937;
+  --on-surface-0: #e5e7eb;
+  --on-surface-1: #cbd5e1;
+  --glass-bg: color-mix(in srgb, #0f172a 60%, transparent);
+  --glass-brd: color-mix(in srgb, #1f2937 70%, transparent);
+  --shadow-1: 0 6px 20px rgba(0,0,0,.35);
+  --shadow-2: 0 12px 36px rgba(0,0,0,.45);
+  --shadow-3: 0 18px 56px rgba(0,0,0,.55);
+}
+
+/* ---- Page wrapper ---- */
+.wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-0);
+  color: var(--on-surface-0);
+}
+
+/* ---- Navbar (fixed; overlays hero) ---- */
+.navbar {
+  position: fixed; inset: 0 0 auto 0;
+  z-index: 1000;
+  height: var(--header-h);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 clamp(16px, 3.6vw, 40px);
+  border-bottom: 1px solid transparent;
+  transition:
+    background-color var(--dur-2) var(--ease-std),
+    border-color var(--dur-2) var(--ease-std),
+    color var(--dur-2) var(--ease-std),
+    box-shadow var(--dur-2) var(--ease-std),
+    backdrop-filter var(--dur-2) var(--ease-std);
+  will-change: backdrop-filter, background-color, box-shadow;
+}
+
+.navbarTransparent {
+  background:
+    linear-gradient(to bottom, rgba(0,0,0,.42), rgba(0,0,0,.18) 30%, transparent 65%);
+  color: #fff;
+  border-bottom-color: transparent;
+
+  a, button, .brand { color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,.45); }
+}
+
+.navbarSolid {
+  background: color-mix(in srgb, var(--surface-0) 88%, transparent);
+  color: var(--on-surface-0);
+  border-bottom-color: color-mix(in srgb, var(--surface-2) 70%, transparent);
+  backdrop-filter: saturate(140%) blur(var(--blur-md));
+  box-shadow: var(--shadow-1);
+
+  a, button, .brand { color: inherit; text-shadow: none; }
+}
+
+.brand {
+  font-size: clamp(1.1rem, 1vw + 1rem, 1.5rem);
+  font-weight: 800;
+  letter-spacing: .2px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  cursor: pointer;
+}
+
+.navLinks {
+  display: flex; gap: clamp(.8rem, 1.6vw, 1.5rem);
+  font-size: .98rem;
+
+  a {
+    color: currentColor;
+    text-decoration: none;
+    font-weight: 600;
+    opacity: .9;
+    transition: opacity var(--dur-1) var(--ease-std), transform var(--dur-1) var(--ease-std);
+
+    &:hover { opacity: 1; transform: translateY(-1px); }
+    &:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; border-radius: var(--radius-sm); }
+  }
+}
+
+.authLinks { display: flex; gap: .75rem; }
+
+.signInBtn,
+.registerBtn {
+  padding: .48rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-1);
+  font-size: .95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform var(--dur-1) var(--ease-emph),
+              box-shadow var(--dur-1) var(--ease-std),
+              background var(--dur-1) var(--ease-std),
+              color var(--dur-1) var(--ease-std),
+              border-color var(--dur-1) var(--ease-std);
+  will-change: transform;
+}
+
+.signInBtn {
+  background: transparent;
+  color: var(--primary);
+  border-color: color-mix(in srgb, var(--primary) 50%, transparent);
+
+  &:hover { background: var(--primary); color: #fff; box-shadow: var(--shadow-1); transform: translateY(-1px); }
+  &:active { transform: translateY(0); }
+}
+
+.registerBtn {
+  background: linear-gradient(135deg, var(--primary), var(--primary-700));
+  color: #fff;
+  box-shadow: var(--shadow-1);
+
+  &:hover { filter: brightness(1.05); transform: translateY(-1px); }
+  &:active { transform: translateY(0); }
+}
+
+/* ---- Main content container ---- */
+.container {
+  flex: 1;
+  padding: clamp(16px, 3.5vw, 32px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2rem, 5vw, 4rem);
+}
+
+/* ==========================================================================
+   HERO (full-bleed background + overlay, under fixed header)
+   --hero-bg should be a string like "url(/images/hero.webp)" injected by React
+   ========================================================================== */
+.hero {
+  position: relative;
+  isolation: isolate;
+
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+
+  margin-top: calc(-1 * var(--header-h));
+  padding-top: calc(var(--header-h) + env(safe-area-inset-top, 0px));
+
+  min-height: var(--hero-min-h);
+
+  padding-left: clamp(16px, 4vw, 48px);
+  padding-right: clamp(16px, 4vw, 48px);
+  padding-bottom: clamp(40px, 6vw, 64px);
+
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: #fff;
+  overflow: clip;
+
+  > * { max-width: 920px; margin-inline: auto; }
+
+  h1 {
+    font-size: clamp(2rem, 2.2vw + 1.2rem, 3rem);
+    margin: 0 0 .9rem;
+    font-weight: 800;
+    letter-spacing: .2px;
+    line-height: 1.1;
+    text-shadow: 0 3px 14px rgba(0,0,0,.45);
+    animation: fadeUp var(--dur-3) var(--ease-emph) both .05s;
+  }
+
+  p {
+    font-size: clamp(1rem, .6vw + .85rem, 1.15rem);
+    margin: 0 auto 1.6rem;
+    line-height: 1.65;
+    max-width: 680px;
+    opacity: .95;
+    animation: fadeUp var(--dur-3) var(--ease-emph) both .12s;
+  }
+
+  .ctaGroup {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: .8rem;
+    animation: fadeUp var(--dur-3) var(--ease-emph) both .18s;
+
+    button {
+      padding: .66rem 1.4rem;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: .2px;
+      transition: transform var(--dur-1) var(--ease-emph), filter var(--dur-1) var(--ease-std), box-shadow var(--dur-1) var(--ease-std);
+      will-change: transform;
+    }
+
+    .primaryCta {
+      background: linear-gradient(135deg, var(--primary), var(--primary-700));
+      color: #fff;
+      box-shadow: var(--shadow-1);
+
+      &:hover { transform: translateY(-2px); filter: brightness(1.05); }
+      &:active { transform: translateY(0); }
+    }
+
+    .secondaryCta {
+      background: rgba(255,255,255,.06);
+      color: #fff;
+      border: 1px solid var(--border-1);
+      backdrop-filter: blur(6px);
+
+      &:hover { transform: translateY(-2px); }
+      &:active { transform: translateY(0); }
+    }
+  }
+}
+
+/* Hero background (Ken Burns, softened) */
+.hero::before {
+  content: "";
+  position: absolute; inset: 0;
+  z-index: 0;
+  background-image: var(--hero-bg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transform: scale(1.02);
+  animation: kenBurns 18s ease-in-out both;
+  filter: saturate(1.02) contrast(1.02);
+}
+
+/* Hero overlays: vignette + depth */
+.hero::after {
+  content: "";
+  position: absolute; inset: 0;
+  z-index: 1;
+  background:
+    radial-gradient(1200px 420px at 50% -10%, rgba(0,0,0,.55), transparent 70%),
+    linear-gradient(180deg, rgba(0,0,0,.52) 0%, rgba(0,0,0,.22) 38%, rgba(0,0,0,.58) 100%);
+}
+
+/* Keep hero content above overlays */
+.hero > * { position: relative; z-index: 2; }
+
+/* Optional: subtle scroll hint */
+.scrollHint {
+  position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%);
+  width: 28px; height: 48px; border-radius: var(--radius-lg);
+  border: 2px solid rgba(255,255,255,.7);
+  opacity: .7;
+  &:after {
+    content: ""; position: absolute; left: 50%; top: 8px; transform: translateX(-50%);
+    width: 4px; height: 10px; border-radius: 2px; background: var(--surface-0);
+    animation: hintDrop 1.8s var(--ease-std) infinite;
+  }
+}
+
+/* ==========================================================================
+   Explore categories (glassy cards with image via --card-bg)
+   ========================================================================== */
+.categories {
+  --grid-min: 260px;
+
+  .sectionTitle {
+    text-align: center;
+    font-size: clamp(1.2rem, .8vw + 1rem, 1.6rem);
+    font-weight: 800;
+    margin: 0 0 .4rem;
+    letter-spacing: .2px;
+  }
+
+  .sectionSub {
+    text-align: center;
+    max-width: 760px;
+    margin: 0 auto var(--s-8);
+    opacity: .76;
+    font-size: .98rem;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(var(--grid-min), 1fr));
+    gap: clamp(.9rem, 2.2vw, 1.4rem);
+  }
+
+  .card {
+    position: relative;
+    overflow: clip;
+    border-radius: var(--r-lg);
+    background: var(--glass-bg);
+    color: var(--on-surface-0);
+    min-height: 220px;
+    box-shadow: var(--shadow-1);
+    transform: translateZ(0);
+    transition:
+      transform var(--dur-2) var(--ease-emph),
+      box-shadow var(--dur-2) var(--ease-std),
+      outline-color var(--dur-2) var(--ease-std),
+      border-color var(--dur-2) var(--ease-std);
+    will-change: transform;
+    cursor: pointer;
+    outline: 1px solid var(--glass-brd);
+
+    /* Background image via CSS var (e.g., "url(/images/cat.webp)") */
+    &::before {
+      content: "";
+      position: absolute; inset: 0;
+      z-index: 0;
+      background-image: var(--card-bg);
+      background-size: cover;
+      background-position: center;
+      filter: saturate(1.05) contrast(1.03);
+      transform: scale(1.02);
+      transition: transform var(--dur-3) var(--ease-emph), filter var(--dur-2) var(--ease-std);
+    }
+
+    /* Gradient scrim for text contrast */
+    &::after {
+      content: "";
+      position: absolute; inset: 0;
+      z-index: 1;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.02) 0%, rgba(0,0,0,.22) 40%, rgba(0,0,0,.6) 100%),
+        radial-gradient(500px 220px at 50% -10%, rgba(0,0,0,.45), transparent 65%);
+      transition: opacity var(--dur-2) var(--ease-std);
+    }
+
+    /* Content */
+    .inner {
+      position: relative;
+      z-index: 2;
+      padding: clamp(16px, 2.6vw, 22px);
+      display: grid; gap: .55rem;
+      align-content: end;
+      min-height: 220px;
+      color: #fff;
+      text-shadow: 0 2px 10px rgba(0,0,0,.45);
+
+      /* Sheen sweep (uses the extra pseudo of inner) */
+      &::after {
+        content: "";
+        position: absolute; inset: 0;
+        pointer-events: none;
+        background: linear-gradient(110deg, transparent 40%, rgba(255,255,255,.28) 50%, transparent 60%);
+        transform: translateX(-150%);
+        transition: transform var(--dur-3) var(--ease-emph);
+        mix-blend-mode: screen;
+      }
+    }
+
+    .title {
+      margin: 0;
+      font-size: clamp(1.05rem, .7vw + .95rem, 1.35rem);
+      font-weight: 800;
+      letter-spacing: .2px;
+      line-height: 1.2;
+    }
+
+    .desc {
+      margin: 0;
+      font-size: .95rem;
+      opacity: .9;
+      max-width: 60ch;
+    }
+
+    /* Hover 3D lift + subtle parallax + sheen */
+    @media (hover: hover) {
+      &:hover {
+        transform: translateY(-6px) perspective(1000px) rotateX(.6deg) rotateY(-.6deg);
+        box-shadow: var(--shadow-1);
+      }
+      &:hover::before { transform: scale(1.06); filter: saturate(1.08) contrast(1.06); }
+      &:hover .inner::after { transform: translateX(140%); }
+      &:active { transform: translateY(-2px); box-shadow: var(--shadow-1); }
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 3px;
+      box-shadow: var(--shadow-1);
+      animation: pulseFocus var(--dur-4) ease-out 1;
+    }
+  }
+}
+
+/* ---- How it works ---- */
+.howItWorks {
+  max-width: 720px;
+  margin-inline: auto;
+
+  h2 {
+    text-align: center;
+    font-size: clamp(1.2rem, .8vw + 1rem, 1.6rem);
+    font-weight: 800;
+    margin: 0 0 .4rem;
+  }
+
+  ol {
+    counter-reset: li;
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+    display: grid;
+    gap: .75rem;
+
+    li {
+      position: relative;
+      padding-left: 2rem;
+      font-size: 1rem;
+      background: color-mix(in srgb, var(--surface-0) 80%, transparent);
+      border: 1px solid var(--border-1);
+      border-radius: var(--r-md);
+      padding: .9rem 1rem .9rem 2.5rem;
+      box-shadow: var(--shadow-1);
+
+      &:before {
+        counter-increment: li;
+        content: counter(li);
+        position: absolute; left: .8rem; top: .8rem;
+        width: 28px; height: 28px;
+        background: linear-gradient(135deg, var(--primary), var(--primary-700));
+        color: #fff;
+        border-radius: 50%;
+        display: grid; place-items: center;
+        font-weight: 800;
+        box-shadow: var(--shadow-1);
+      }
+    }
+  }
+}
+
+/* ---- Utilities & animations ---- */
+.sectionPad { padding-block: clamp(1.5rem, 4vw, 3rem); }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes kenBurns {
+  0%   { transform: scale(1.035); }
+  50%  { transform: scale(1.075); }
+  100% { transform: scale(1.04); }
+}
+
+@keyframes hintDrop {
+  0% { opacity: 0; transform: translate(-50%, 0); }
+  20% { opacity: 1; }
+  80% { opacity: 1; transform: translate(-50%, 12px); }
+  100% { opacity: 0; transform: translate(-50%, 18px); }
+}
+
+@keyframes pulseFocus {
+  0% { box-shadow: var(--shadow-1); }
+  100% { box-shadow: var(--shadow-1); }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .navbar,
+  .hero .ctaGroup button,
+  .categories .card,
+  .scrollHint:after {
+    transition: none !important;
+    animation: none !important;
+  }
+  .hero::before { transform: none !important; }
+}
+
+/* ========================================================================== */
+/* End of file                                                                 */
+/* ========================================================================== */
+
+
+/* Enforced baseline for card-like elements */
+.card, .box, .panel, .tile {
+  background: var(--surface-0);
+  border: 1px solid var(--border-1);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1);
+  padding: clamp(12px, 2.4vw, 20px);
+}

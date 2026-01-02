@@ -1,0 +1,76 @@
+@use "../stylus/util/mixins.scss" as *;
+
+.footer {
+  border-top: 1px solid var(--border-soft);
+  background: var(--surface-1);
+  color: var(--on-surface-1);
+}
+.inner {
+  @include container;
+  display: flex; align-items: center; gap: 12px;
+  padding-block: var(--space-12);
+  color: var(--on-surface-muted);
+}
+.sep { opacity: .6; }
+.inner a { 
+  color: var(--brand); 
+  text-decoration: none; 
+  margin-left: auto; 
+}
+.inner a:hover {
+  color: var(--brand-hover);
+}
+.meta { 
+  margin-left: auto; 
+  font-variant-numeric: tabular-nums; 
+  color: var(--on-surface-muted);
+}
+
+/* Dark mode support */
+:global([data-theme="dark"]) {
+  .footer {
+    background: var(--surface-1) !important;
+    background-color: var(--surface-1) !important;
+    color: var(--on-surface-1) !important;
+    border-color: var(--border-soft) !important;
+  }
+  
+  .inner {
+    color: var(--on-surface-muted) !important;
+  }
+  
+  .inner a {
+    color: var(--brand) !important;
+  }
+  
+  .inner a:hover {
+    color: var(--brand-hover) !important;
+  }
+  
+  .meta {
+    color: var(--on-surface-muted) !important;
+  }
+  
+  /* Force override any remaining blue elements in footer */
+  .footer *,
+  .inner *,
+  .meta * {
+    background: transparent !important;
+    background-color: transparent !important;
+    color: var(--on-surface-muted) !important;
+  }
+  
+  .footer a,
+  .inner a {
+    color: var(--brand) !important;
+  }
+  
+  /* Override any hardcoded styles */
+  .footer[style],
+  .inner[style],
+  .meta[style] {
+    background: var(--surface-1) !important;
+    background-color: var(--surface-1) !important;
+    color: var(--on-surface-1) !important;
+  }
+}

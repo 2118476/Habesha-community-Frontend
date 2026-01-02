@@ -1,0 +1,161 @@
+// src/components/ErrorBoundary.module.scss
+.errorBoundary {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: var(--bg-1, #f5f5f5);
+}
+
+.errorCard {
+  max-width: 600px;
+  width: 100%;
+  background: var(--surface, #ffffff);
+  border-radius: 16px;
+  padding: 3rem 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.errorIcon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.errorTitle {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-1, #1a1a1a);
+  margin-bottom: 0.75rem;
+}
+
+.errorMessage {
+  font-size: 1rem;
+  color: var(--text-2, #666);
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.errorDetails {
+  text-align: left;
+  margin: 2rem 0;
+  padding: 1rem;
+  background: var(--bg-2, #f9f9f9);
+  border-radius: 8px;
+  border: 1px solid var(--border, #e0e0e0);
+
+  summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-1, #1a1a1a);
+    margin-bottom: 0.5rem;
+    user-select: none;
+
+    &:hover {
+      color: var(--primary, #007bff);
+    }
+  }
+}
+
+.errorStack {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #2d2d2d;
+  color: #f8f8f2;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-size: 0.875rem;
+  font-family: 'Courier New', Courier, monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.errorActions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btnPrimary,
+.btnSecondary {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  outline: none;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.btnPrimary {
+  background: var(--primary, #007bff);
+  color: white;
+
+  &:hover {
+    background: var(--primary-hover, #0056b3);
+  }
+}
+
+.btnSecondary {
+  background: var(--bg-2, #f0f0f0);
+  color: var(--text-1, #1a1a1a);
+
+  &:hover {
+    background: var(--bg-3, #e0e0e0);
+  }
+}
+
+// Dark mode support
+[data-theme="dark"] {
+  .errorBoundary {
+    background: var(--bg-1, #1a1a1a);
+  }
+
+  .errorCard {
+    background: var(--surface, #2d2d2d);
+  }
+
+  .errorTitle {
+    color: var(--text-1, #f5f5f5);
+  }
+
+  .errorMessage {
+    color: var(--text-2, #b0b0b0);
+  }
+
+  .errorDetails {
+    background: var(--bg-2, #1f1f1f);
+    border-color: var(--border, #404040);
+  }
+
+  .btnSecondary {
+    background: var(--bg-2, #3a3a3a);
+    color: var(--text-1, #f5f5f5);
+
+    &:hover {
+      background: var(--bg-3, #4a4a4a);
+    }
+  }
+}

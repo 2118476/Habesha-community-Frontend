@@ -1,0 +1,35 @@
+/*!
+ * Layout styles.
+ *
+ * Defines the overall page skeleton including the container for the
+ * navigation bar, sidebar and page content. The layout is flexible
+ * and adapts naturally from desktop to mobile via flex and CSS
+ * variables defined in the tokens.
+ */
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.contentWrapper {
+  display: flex;
+  flex: 1;
+}
+
+.pageContent {
+  flex: 1;
+  padding: var(--s-8);
+  background: var(--surface-0);
+  color: var(--on-surface-0);
+}
+
+@media (max-width: 768px) {
+  .contentWrapper {
+    flex-direction: column;
+  }
+  .pageContent {
+    padding: var(--s-6);
+  }
+}

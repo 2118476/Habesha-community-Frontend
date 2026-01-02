@@ -1,0 +1,31 @@
+.pageLoader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  padding: var(--space-8);
+  width: 100%;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  text-align: center;
+}
+
+.message {
+  margin: 0;
+  color: var(--on-surface-muted);
+  font-size: var(--fs-14);
+  font-weight: var(--fw-500);
+}
+
+.minimalLoader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  width: 100%;
+}

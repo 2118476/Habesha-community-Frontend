@@ -1,0 +1,574 @@
+/* src/stylus/sections/Rentals.module.scss
+   Rentals — LIST VIEW
+   ------------------------------------------------------------------ */
+
+@use "../util/glassmorphism.scss" as *;
+
+:root {
+  /* spacing / radii */
+  --radius-lg: 20px;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --gap: 16px;
+  --gap-lg: 20px;
+
+  /* surfaces + shadows */
+  --bg: var(--surface-0, #ffffff);
+  --bg-soft: var(--surface-1, #f7f7f8);
+  --border: var(--border-1, #e5e7eb);
+
+  --elev: var(--elevation-1, 0 6px 24px rgba(0,0,0,0.06));
+  --elev-hover: var(--elevation-2, 0 10px 30px rgba(0,0,0,0.08));
+  --shadow-1: var(--elev);
+  --shadow-hover: var(--elev-hover);
+
+  /* text / brand */
+  --text: var(--text-1, #0f172a);
+  --muted: var(--muted-1, #667085);
+  --brand: var(--brand, #4f46e5);
+  --brand-weak: color-mix(in oklab, var(--brand), #fff 75%);
+  --accent: var(--accent, #22c55e);
+
+  /* skeleton */
+  --skeleton: linear-gradient(90deg, #eee, #f5f5f5, #eee);
+  
+  /* Glassmorphism - GLOWING */
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.06);
+  --blur-amount: blur(24px);
+}
+
+:global([data-theme="dark"]) {
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.15);
+  --glass-shadow: 0 6px 24px rgba(0, 0, 0, 0.2), 0 3px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* ============================================================
+   PAGE WRAPPER + HEADER
+   ============================================================ */
+
+.wrapper {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.headerRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--gap);
+  margin-bottom: 20px;
+}
+
+.headerTextBlock {
+  display: grid;
+  gap: 4px;
+}
+
+.marketHeading {
+  font-size: clamp(22px, 2.2vw, 28px);
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.marketSub {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  line-height: 1.3;
+  color: var(--muted);
+}
+
+.dotSep {
+  color: var(--muted);
+  user-select: none;
+}
+
+/* ============================================================
+   LAYOUT: FILTERS (LEFT) + RESULTS (RIGHT)
+   ============================================================ */
+
+.layout {
+  display: grid;
+  align-items: flex-start;
+  grid-template-columns: 260px 1fr;
+  gap: var(--gap-lg);
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Filters column ---------- */
+
+.filtersCol {
+  position: sticky;
+  top: 64px;       /* below header bar */
+  align-self: flex-start;
+  z-index: 10;
+
+  @media (max-width: 900px) {
+    position: static;
+  }
+}
+
+.filtersCard {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-1);
+  padding: 16px;
+  display: grid;
+  gap: 16px;
+}
+
+.filterBlock {
+  display: grid;
+  gap: 8px;
+}
+
+.filterLabel {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.filterInput {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-soft);
+  color: var(--text);
+  font-size: 14px;
+  padding: 10px 12px;
+
+  &::placeholder {
+    color: var(--muted);
+  }
+}
+
+.filterHint {
+  font-size: 12px;
+  line-height: 1.3;
+  color: var(--muted);
+}
+
+/* price range group inside filters */
+.priceInputs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+
+  @media (max-width: 360px) {
+    flex-wrap: wrap;
+  }
+}
+
+.priceField {
+  width: 100%;
+  max-width: 100px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-soft);
+  color: var(--text);
+  font-size: 14px;
+  padding: 10px 12px;
+  flex: 1 1 auto;
+
+  &::placeholder {
+    color: var(--muted);
+  }
+}
+
+.priceSep {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1;
+}
+
+/* room type pills */
+.typePills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pill {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: var(--bg-soft);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.2;
+  padding: 8px 10px;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all 0.16s ease;
+
+  &:hover {
+    background: var(--bg);
+    box-shadow: var(--shadow-1);
+  }
+}
+
+.pillActive {
+  background: var(--brand-weak);
+  color: var(--brand);
+  border-color: color-mix(in oklab, var(--brand), #000 10%);
+  box-shadow: var(--shadow-1);
+}
+
+/* ---------- Results column ---------- */
+
+.resultsCol {
+  min-width: 0;
+  display: grid;
+  gap: 16px;
+}
+
+/* sort row on top of results */
+.sortRow {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.countRow {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--muted);
+  line-height: 1.3;
+}
+
+.sortBox {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sortLabel {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.2;
+}
+
+.sortSelect {
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-soft);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+/* ============================================================
+   RESULTS GRID + CARDS
+   ============================================================ */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--gap);
+
+  @media (max-width: 1100px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media (max-width: 760px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (max-width: 460px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  display: grid;
+  grid-template-rows: 190px auto;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur-amount);
+  -webkit-backdrop-filter: var(--blur-amount);
+  overflow: hidden;
+  box-shadow: var(--glass-shadow);
+  text-decoration: none;
+  transition:
+    transform .24s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow .24s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color .24s cubic-bezier(0.4, 0, 0.2, 1),
+    background .24s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+
+  /* Inner highlight for glass effect */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, 
+      transparent 0%, 
+      rgba(255, 255, 255, 0.4) 50%, 
+      transparent 100%
+    );
+    opacity: 0.6;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+      0 8px 25px rgba(0, 0, 0, 0.15),
+      0 4px 10px rgba(0, 0, 0, 0.1),
+      0 2px 4px rgba(0, 0, 0, 0.08);
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.12);
+  }
+}
+
+:global([data-theme="dark"]) .card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    0 6px 20px rgba(0, 0, 0, 0.25),
+    0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Fallback for browsers without backdrop-filter */
+@supports not (backdrop-filter: blur(20px)) {
+  .card {
+    background: rgba(255, 255, 255, 0.85);
+  }
+  
+  :global([data-theme="dark"]) .card {
+    background: rgba(18, 26, 43, 0.85);
+  }
+}
+
+.cardMedia {
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-soft);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transform: scale(1.0);
+    transition: transform .35s ease;
+  }
+
+  /* bottom-left price tag */
+  .priceTag {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    padding: 6px 10px;
+    border-radius: 24px;
+    background: rgba(0,0,0,0.68);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.2;
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+  }
+
+  .priceSuffix {
+    font-weight: 400;
+    opacity: 0.9;
+    font-size: 11px;
+  }
+
+  /* top-right featured ribbon */
+  .featureTag {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px 8px;
+    border-radius: 6px;
+    background: color-mix(in oklab, var(--accent), #000 5%);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.1;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+}
+
+.cardBody {
+  padding: 12px 12px 14px;
+}
+
+.cardTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cardSub {
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.badgeRow {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  font-size: 11px;
+  padding: 5px 8px;
+  border-radius: 24px;
+  background: var(--brand-weak);
+  color: var(--brand);
+  border: 1px solid var(--border);
+  line-height: 1.2;
+  font-weight: 500;
+}
+
+.badgeAccent {
+  background: color-mix(in oklab, var(--accent), #fff 75%);
+  color: var(--accent);
+  border-color: color-mix(in oklab, var(--accent), #000 8%);
+  border-radius: 24px;
+}
+
+.badgeMuted {
+  background: var(--bg-soft);
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.2;
+  padding: 5px 8px;
+}
+
+/* ============================================================
+   SKELETON (LOADING STATE)
+   ============================================================ */
+
+.skeletonCard {
+  pointer-events: none;
+}
+
+.skeletonThumb,
+.skeletonLine,
+.skeletonChip {
+  background: #eee;
+  background-image: var(--skeleton);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s linear infinite;
+}
+
+.skeletonThumb {
+  height: 100%;
+}
+
+.skeletonLine {
+  height: 12px;
+  margin: 10px 0 6px;
+  border-radius: var(--radius-sm);
+}
+
+.skeletonChipRow {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.skeletonChip {
+  width: 64px;
+  height: 22px;
+  border-radius: 24px;
+}
+
+@keyframes shimmer {
+  0%   { background-position: -100% 0; }
+  100% { background-position: 100% 0; }
+}
+
+/* ============================================================
+   EMPTY STATE + LOAD MORE
+   ============================================================ */
+
+.emptyState {
+  margin: 60px auto;
+  max-width: 520px;
+  text-align: center;
+  color: var(--muted);
+
+  .emptyImg {
+    width: 160px;
+    opacity: .7;
+    margin-bottom: 14px;
+  }
+
+  h3 {
+    color: var(--text);
+    font-size: 18px;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+
+  p {
+    margin-bottom: 16px;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+}
+
+.emptyImg {
+  width: 160px;
+  opacity: .7;
+  margin-bottom: 14px;
+}
+
+.loadMoreRow {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0 6px;
+}
+
+/* Disable hover lift on reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: box-shadow 0.2s ease !important;
+  }
+  .card:hover {
+    transform: none !important;
+  }
+}

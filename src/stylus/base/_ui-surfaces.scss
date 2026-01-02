@@ -1,0 +1,102 @@
+/* src/layout/AppShell.module.scss
+ * OneUI-style shell: header, sidebar, content, bottom bar.
+ */
+
+.root {
+  min-height: 100vh;
+  background: var(--bg-app);
+  color: var(--on-surface-0);
+  display: flex;
+  flex-direction: column;
+}
+
+/* App content below header */
+.mainRow {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  max-width: var(--app-max-width);
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 var(--app-gutter) 16px;
+  gap: 16px;
+}
+
+/* Sidebar column */
+.sidebarCol {
+  position: relative;
+}
+
+/* Apply glass sidebar shell */
+.sidebarInner {
+  @extend .uiSidebarShell;
+  position: sticky;
+  top: calc(var(--app-header-height) + 10px);
+  max-height: calc(100vh - var(--app-header-height) - 20px);
+  overflow-y: auto;
+  padding: 10px 10px 14px;
+  border-radius: var(--radius-lg);
+}
+
+/* Main content card */
+.contentCol {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.contentCard {
+  background: var(--surface-0);
+  color: var(--on-surface-0);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-subtle);
+  backdrop-filter: blur(var(--glass-blur-md)) saturate(150%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-md)) saturate(150%);
+  padding: 14px 14px 22px;
+  animation: ui-fade-pop var(--motion-med) var(--motion-ease-soft) both;
+}
+
+/* Mobile layout: sidebar becomes drawer (you already handle logic in AppShell.jsx) */
+@media (max-width: 900px) {
+  .mainRow {
+    grid-template-columns: minmax(0, 1fr);
+    padding-inline: 8px;
+  }
+
+  .sidebarCol {
+    display: none;
+  }
+
+  /* Example: when you render MobileNav as a drawer, wrap its root in .uiSidebarShell / .uiPanel */
+}
+
+/* Bottom bar shadow when present */
+.bottomBarSpacer {
+  height: 56px;
+}
+
+/* If you have a fixed bottom bar, give it glass look as well */
+.bottomBarShell {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(100%, var(--app-max-width));
+  padding: 8px var(--app-gutter);
+  z-index: 45;
+  pointer-events: none;
+}
+
+.bottomBarInner {
+  pointer-events: auto;
+  background: var(--surface-1);
+  color: var(--on-surface-0);
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(var(--glass-blur-md)) saturate(150%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-md)) saturate(150%);
+  animation: ui-fade-pop var(--motion-fast) var(--motion-ease-out) both;
+}

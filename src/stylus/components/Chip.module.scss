@@ -1,0 +1,42 @@
+/*
+ * Chip styles.
+ *
+ * Small inline badge used to display user summaries. The chip shows
+ * an avatar, display name and username of the author. It uses the
+ * design system tokens for spacing, typography, colours and radius.
+ */
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-2) var(--s-3);
+  background: var(--surface-2);
+  color: var(--on-surface-2);
+  border-radius: var(--r-sm);
+  font-size: var(--text-sm);
+  text-decoration: none;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
+
+  &:hover {
+    background: var(--surface-1);
+    color: var(--on-surface-1);
+  }
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--border-1);
+}
+
+.name {
+  font-weight: 600;
+}
+
+.handle {
+  font-size: var(--text-xs);
+  opacity: 0.6;
+}

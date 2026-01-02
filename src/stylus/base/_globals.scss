@@ -1,0 +1,1385 @@
+
+/* ===================================================================
+ * GLOBAL THEME APPLICATION
+ * Light mode (DEFAULT): pure white background + black text
+ * Dark mode: black/blue gradient background + white text
+ * =================================================================== */
+html, body, #root { 
+  height: 100%; 
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  background: var(--bg-app);
+}
+
+body {
+  /* Apply gradient background - will be white in light mode, gradient in dark */
+  background: var(--bg-app);
+  background-attachment: fixed;
+  
+  /* Text color - black in light, white in dark */
+  color: var(--on-surface-1);
+  
+  /* Typography */
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, 'Noto Sans Ethiopic', Arial, sans-serif;
+  line-height: var(--lh-normal);
+  font-size: var(--fs-16);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  
+  /* Ensure smooth theme transitions */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Auth pages use their own gradient background - target by container presence */
+.account-container {
+  /* Ensure auth page has full viewport and proper stacking */
+  position: relative;
+  z-index: 1;
+}
+
+/* When account-container exists, override body background */
+body:has(.account-container),
+html:has(.account-container),
+#root:has(.account-container) {
+  background: linear-gradient(-45deg, #4481eb 0%, #04befe 100%) !important;
+  background-attachment: fixed !important;
+  min-height: 100vh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Ensure root element doesn't add extra spacing on auth pages */
+#root:has(.account-container) {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Hide animated backgrounds when auth container is present */
+body:has(.account-container) .bg-aurora,
+body:has(.account-container) .bg-blobs,
+body:has(.account-container) .bg-grid,
+body:has(.account-container) .bg-combined {
+  display: none !important;
+}
+
+/* Prevent AppShell styles from affecting auth pages */
+body:has(.account-container) .app-shell {
+  display: none !important;
+}
+
+/* AppShell-scoped UI elements so auth screens keep their original look */
+.app-shell {
+  /* Links */
+  a { color: var(--primary); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Generic surfaces */
+  .card, .panel, .surface {
+    background: var(--surface-1);
+    border: 1px solid var(--border-1);
+    border-radius: var(--radius-12);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Inputs */
+  input, textarea, select {
+    background: var(--surface-1);
+    color: var(--on-surface-1);
+    border: 1px solid var(--border-1);
+    border-radius: var(--radius-8);
+    padding: 10px 12px;
+    outline: none;
+  }
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--ring);
+  }
+
+  /* Buttons */
+  .button, button, [role="button"] {
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: var(--radius-8);
+    border: 1px solid var(--border-1);
+    background: var(--surface-1);
+    color: var(--on-surface-1);
+  }
+  .button.primary, button.primary { background: var(--primary); color: var(--on-primary); border-color: transparent; }
+  .button.ghost { background: transparent; }
+  .button:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+
+  /* Utility containers */
+  .container { max-width: var(--content-max); margin-inline: auto; padding-inline: var(--container-pad); }
+  .grid { display: grid; gap: 16px; }
+  .grid.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  @media (max-width: 860px) { .grid.cols-2 { grid-template-columns: 1fr; } }
+}
+
+/* Backwards‑compat tokens for older modules */
+:root {
+  --header-h: 64px;
+  --sidebar-w: 260px;
+  --sidebar-rail-w: 84px;
+  --shadow: var(--shadow-sm);
+  --bg: var(--surface-0);
+  --surface: var(--surface-1);
+  --text: var(--on-surface-1);
+  --muted: var(--muted-1);
+  --border: var(--border-1);
+}
+
+
+/* Modern baseline global styles with smooth interactions */
+html { 
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+*, *::before, *::after { 
+  box-sizing: inherit; 
+}
+
+/* Smooth scroll lock for modals/drawers */
+body.no-scroll,
+html.no-scroll {
+  overflow: hidden;
+  height: 100%;
+}
+
+img, video { 
+  max-width: 100%; 
+  height: auto; 
+  display: block; 
+}
+
+a { 
+  color: var(--brand); 
+  text-decoration: none;
+  transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+a:hover { 
+  color: color-mix(in oklab, var(--brand) 80%, black);
+  text-decoration: none;
+}
+
+a:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+button, input, select, textarea {
+  font: inherit;
+  color: var(--on-surface-1);
+  background: var(--surface-1);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+button {
+  cursor: pointer;
+  color: var(--on-surface-1);
+}
+
+button:hover:not(:disabled) {
+  background: var(--surface-2);
+  border-color: var(--border-strong);
+}
+
+input:focus, 
+textarea:focus, 
+select:focus {
+  outline: none;
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px var(--ring);
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Modern surface container with glassmorphism */
+.surface {
+  background: var(--surface-1);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-subtle);
+  backdrop-filter: blur(var(--glass-blur-sm));
+  -webkit-backdrop-filter: blur(var(--glass-blur-sm));
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.surface:hover {
+  box-shadow: var(--shadow-soft);
+  transform: translateY(-2px);
+}
+
+/* Utility spacing */
+.u-stack > * + * { margin-top: var(--space-4); }
+.u-cluster { 
+  display: flex; 
+  flex-wrap: wrap; 
+  gap: var(--space-3); 
+  align-items: center; 
+}
+.u-center { 
+  display: grid; 
+  place-items: center; 
+}
+.u-grid { 
+  display: grid; 
+  gap: var(--space-4); 
+}
+
+/* Page paddings with smooth reveal */
+.page {
+  padding-inline: clamp(16px, 4vw, 36px);
+  padding-block: clamp(24px, 5vw, 48px);
+  animation: fade-in-up 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+  color: var(--on-surface-1);
+}
+
+/* Light mode page text visibility */
+:root:not([data-theme="dark"]) .page,
+:global([data-theme="light"]) .page {
+  color: #000000 !important;
+  
+  h1, h2, h3, h4, h5, h6 {
+    color: #000000 !important;
+  }
+  
+  p, span, div, li, td, th {
+    color: #000000 !important;
+  }
+  
+  a {
+    color: #0ea5e9 !important;
+  }
+}
+
+/* Dark mode page text */
+:global([data-theme="dark"]) .page {
+  color: var(--on-surface-1) !important;
+  
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--on-surface-1) !important;
+  }
+  
+  p, span, div, li, td, th {
+    color: var(--on-surface-1) !important;
+  }
+  
+  a {
+    color: var(--brand) !important;
+  }
+}
+
+/* ======================== NUCLEAR LIGHT MODE FIX ======================== */
+/* Force ALL text to be visible in light mode - including Amharic text */
+:root:not([data-theme="dark"]) {
+  /* Target ALL elements in light mode */
+  * {
+    color: #000000 !important;
+  }
+  
+  /* Override for elements that should remain colored */
+  .error,
+  .danger,
+  [class*="error"],
+  [class*="danger"] {
+    color: #e11d48 !important;
+  }
+  
+  .muted,
+  .secondary,
+  .hint,
+  .help,
+  [class*="muted"],
+  [class*="secondary"],
+  [class*="hint"],
+  [class*="help"] {
+    color: #666666 !important;
+  }
+  
+  /* Links should remain blue */
+  a,
+  .link,
+  [class*="link"] {
+    color: #0ea5e9 !important;
+  }
+  
+  /* Primary buttons and brand elements should keep their colors */
+  .primary,
+  .brand,
+  [class*="primary"],
+  [class*="brand"] {
+    color: #ffffff !important;
+  }
+  
+  /* Button overrides - ensure buttons maintain proper colors */
+  button,
+  .btn,
+  [class*="btn"] {
+    color: inherit !important;
+  }
+  
+  /* Primary button text should be white */
+  button.primary,
+  .btn.primary,
+  .primary button,
+  .primary .btn,
+  [class*="primary"] button,
+  [class*="primary"] .btn,
+  button[class*="primary"],
+  .btn[class*="primary"] {
+    background: var(--brand, #2563eb) !important;
+    color: #ffffff !important;
+    border-color: var(--brand, #2563eb) !important;
+  }
+  
+  /* Success button text should be white */
+  button.success,
+  .btn.success,
+  .success button,
+  .success .btn,
+  [class*="success"] button,
+  [class*="success"] .btn,
+  button[class*="success"],
+  .btn[class*="success"] {
+    background: #16a34a !important;
+    color: #ffffff !important;
+    border-color: #16a34a !important;
+  }
+  
+  /* Danger button text should be white */
+  button.danger,
+  .btn.danger,
+  .danger button,
+  .danger .btn,
+  [class*="danger"] button,
+  [class*="danger"] .btn,
+  button[class*="danger"],
+  .btn[class*="danger"] {
+    background: #e11d48 !important;
+    color: #ffffff !important;
+    border-color: #e11d48 !important;
+  }
+  
+  /* Success elements */
+  .success,
+  [class*="success"] {
+    color: #16a34a !important;
+  }
+  
+  /* Warning elements */
+  .warning,
+  [class*="warning"] {
+    color: #f59e0b !important;
+  }
+  
+  /* Input placeholders */
+  input::placeholder,
+  textarea::placeholder {
+    color: #666666 !important;
+  }
+  
+  /* ======================== HERO TEXT EXCEPTION ======================== */
+  /* Hero text should ALWAYS be white on video background */
+  .heroInner,
+  .heroInner *,
+  .heroInner h1,
+  .heroInner h2,
+  .heroInner h3,
+  .heroInner p,
+  .heroInner span,
+  .heroInner div,
+  .title,
+  .subtitle,
+  [class*="hero"] .title,
+  [class*="hero"] .subtitle,
+  [class*="heroInner"],
+  [class*="heroInner"] *,
+  [class*="heroTitle"],
+  [class*="heroSubtitle"] {
+    color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(0,0,0,.45) !important;
+  }
+  
+  /* Hero tabs should also be white */
+  .heroTabsWrap [role="tab"],
+  .heroTabsWrap .tab,
+  .heroStage ~ .heroTabsWrap [role="tab"],
+  .heroStage ~ .heroTabsWrap .tab,
+  .heroVideo ~ * .heroTabsWrap [role="tab"],
+  .heroVideo ~ * .heroTabsWrap .tab {
+    color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(0,0,0,.35) !important;
+  }
+  
+  /* ======================== HEADER ICONS EXCEPTION ======================== */
+  /* Header icons should be white on hero background in light mode */
+  :global(body[data-hero="true"]) .header:not([data-scrolled="true"]) *,
+  :global(body[data-hero="true"]) .header:not([data-scrolled="true"]) svg,
+  :global(body[data-hero="true"]) .header:not([data-scrolled="true"]) .logo,
+  :global(body[data-hero="true"]) .header:not([data-scrolled="true"]) .brand,
+  :global(body[data-hero="true"]) .header:not([data-scrolled="true"]) .name,
+  :global(body[data-hero="true"]) .header:not([data-scrolled="true"]) .menuBtn,
+  :global(body[data-hero="true"]) .header:not([data-scrolled="true"]) .userBtn,
+  :global(body[data-hero="true"]) .header:not([data-scrolled="true"]) .searchIconWrap,
+  :global(body[data-hero="true"]) .header:not([data-scrolled="true"]) .theme,
+  :global(body[data-hero="true"]) .header:not([data-scrolled="true"]) .theme *,
+  :global(body[data-hero="true"]) .header:not([data-scrolled="true"]) .tip,
+  :global(body[data-hero="true"]) .header:not([data-scrolled="true"]) .tip *,
+  :global(body[data-hero="true"]) .header:not([data-scrolled="true"]) button,
+  :global(body[data-hero="true"]) .header:not([data-scrolled="true"]) [role="button"],
+  :global(body[data-hero="true"]) .header:not([data-scrolled="true"]) [class*="button"],
+  :global(body[data-hero="true"]) .header:not([data-scrolled="true"]) [class*="toggle"],
+  :global(body[data-hero="true"]) .header:not([data-scrolled="true"]) [class*="badge"],
+  :global(body[data-hero="true"]) .header:not([data-scrolled="true"]) [data-testid] {
+    color: rgba(255, 255, 255, 0.95) !important;
+    fill: rgba(255, 255, 255, 0.95) !important;
+    stroke: rgba(255, 255, 255, 0.95) !important;
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.45)) !important;
+  }
+}
+
+/* Smooth scrollbar styling */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface-0);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 5px;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--brand);
+}
+
+/* Selection styling */
+::selection {
+  background: var(--brand-soft);
+  color: var(--on-surface-1);
+}
+
+::-moz-selection {
+  background: var(--brand-soft);
+  color: var(--on-surface-1);
+}
+
+/* Ensure proper selection contrast for all elements */
+* ::selection {
+  background: rgba(10, 132, 255, 0.2);
+  color: var(--on-surface-1) !important;
+}
+
+* ::-moz-selection {
+  background: rgba(10, 132, 255, 0.2);
+  color: var(--on-surface-1) !important;
+}
+
+/* Specific overrides for common problematic elements */
+p ::selection,
+span ::selection,
+div ::selection,
+h1 ::selection,
+h2 ::selection,
+h3 ::selection,
+h4 ::selection,
+h5 ::selection,
+h6 ::selection,
+li ::selection,
+td ::selection,
+th ::selection,
+a ::selection {
+  background: rgba(10, 132, 255, 0.2) !important;
+  color: var(--on-surface-1) !important;
+}
+
+p ::-moz-selection,
+span ::-moz-selection,
+div ::-moz-selection,
+h1 ::-moz-selection,
+h2 ::-moz-selection,
+h3 ::-moz-selection,
+h4 ::-moz-selection,
+h5 ::-moz-selection,
+h6 ::-moz-selection,
+li ::-moz-selection,
+td ::-moz-selection,
+th ::-moz-selection,
+a ::-moz-selection {
+  background: rgba(10, 132, 255, 0.2) !important;
+  color: var(--on-surface-1) !important;
+}
+
+/* ===================================================================
+ * COMPREHENSIVE DARK MODE ENFORCEMENT
+ * Ensure all components use proper design tokens
+ * =================================================================== */
+
+/* Global card and surface styling */
+:global([data-theme="dark"]) {
+  /* Ensure all cards use proper dark mode styling */
+  .card,
+  .surface,
+  .panel,
+  [class*="card"],
+  [class*="Card"],
+  [class*="item"],
+  [class*="Item"] {
+    background: var(--surface-1) !important;
+    color: var(--on-surface-1) !important;
+    border-color: var(--border-soft) !important;
+    
+    /* Text elements within cards */
+    h1, h2, h3, h4, h5, h6,
+    .title, .name, .heading,
+    [class*="title"], [class*="Title"],
+    [class*="name"], [class*="Name"],
+    [class*="heading"], [class*="Heading"] {
+      color: var(--on-surface-1) !important;
+    }
+    
+    /* Secondary text elements */
+    .subtitle, .description, .meta, .info,
+    .location, .date, .time, .when,
+    [class*="subtitle"], [class*="Subtitle"],
+    [class*="description"], [class*="Description"],
+    [class*="meta"], [class*="Meta"],
+    [class*="location"], [class*="Location"],
+    [class*="date"], [class*="Date"],
+    [class*="time"], [class*="Time"],
+    [class*="when"], [class*="When"] {
+      color: var(--on-surface-muted) !important;
+    }
+    
+    /* Links within cards */
+    a {
+      color: var(--brand) !important;
+    }
+    
+    a:hover {
+      color: var(--brand-hover) !important;
+    }
+  }
+  
+  /* Ensure buttons use proper dark mode styling */
+  button,
+  .button,
+  .btn,
+  [role="button"],
+  [class*="button"],
+  [class*="Button"],
+  [class*="btn"],
+  [class*="Btn"] {
+    background: var(--surface-1) !important;
+    color: var(--on-surface-1) !important;
+    border-color: var(--border-soft) !important;
+  }
+  
+  button:hover,
+  .button:hover,
+  .btn:hover,
+  [role="button"]:hover {
+    background: var(--surface-elevated) !important;
+    border-color: var(--border-strong) !important;
+  }
+  
+  /* Ensure inputs use proper dark mode styling */
+  input,
+  textarea,
+  select,
+  .input,
+  [class*="input"],
+  [class*="Input"] {
+    background: var(--surface-0) !important;
+    color: var(--on-surface-1) !important;
+    border-color: var(--border-soft) !important;
+  }
+  
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--on-surface-muted) !important;
+  }
+  
+  /* Ensure proper text colors throughout */
+  p, span, div, li, td, th {
+    color: var(--on-surface-1);
+  }
+  
+  /* Muted text elements */
+  .muted, .secondary, .subtle,
+  [class*="muted"], [class*="Muted"],
+  [class*="secondary"], [class*="Secondary"],
+  [class*="subtle"], [class*="Subtle"] {
+    color: var(--on-surface-muted) !important;
+  }
+}
+
+/* ===================================================================
+ * COMPREHENSIVE LIGHT MODE ENFORCEMENT
+ * Ensure all components use proper design tokens in light mode
+ * =================================================================== */
+
+/* Light mode enforcement (ensure consistency) */
+:global([data-theme="light"]),
+:root:not([data-theme="dark"]) {
+  /* Force light mode on ALL elements - ensure dark text on light backgrounds */
+  *,
+  *::before,
+  *::after {
+    /* Ensure dark text on light backgrounds */
+    color: var(--on-surface-1) !important;
+  }
+  
+  /* Ensure all cards use proper light mode styling */
+  .card,
+  .surface,
+  .panel,
+  [class*="card"],
+  [class*="Card"],
+  [class*="item"],
+  [class*="Item"] {
+    background: var(--surface-1) !important;
+    color: var(--on-surface-1) !important;
+    border-color: var(--border-soft) !important;
+  }
+  
+  /* Ensure proper text colors */
+  h1, h2, h3, h4, h5, h6,
+  .title, .name, .heading,
+  [class*="title"], [class*="Title"],
+  [class*="name"], [class*="Name"],
+  [class*="heading"], [class*="Heading"] {
+    color: var(--on-surface-1) !important;
+  }
+  
+  /* Secondary text */
+  .subtitle, .description, .meta, .info,
+  .location, .date, .time, .when,
+  [class*="subtitle"], [class*="Subtitle"],
+  [class*="description"], [class*="Description"],
+  [class*="meta"], [class*="Meta"],
+  [class*="location"], [class*="Location"],
+  [class*="date"], [class*="Date"],
+  [class*="time"], [class*="Time"],
+  [class*="when"], [class*="When"] {
+    color: var(--on-surface-muted) !important;
+  }
+  
+  /* Force all containers to be light */
+  div, section, article, main, aside, header, footer,
+  .container, .wrapper, .content, .page, .layout,
+  .panel, .card, .surface, .section {
+    background: var(--surface-1) !important;
+    background-color: var(--surface-1) !important;
+    color: var(--on-surface-1) !important;
+  }
+  
+  /* Ensure proper text visibility for all elements */
+  p, span, div, li, td, th, dt, dd,
+  label, button, input, textarea, select {
+    color: var(--on-surface-1) !important;
+  }
+  
+  /* Muted text elements */
+  small, .small,
+  .muted, .secondary, .subtitle,
+  .meta, .info, .description,
+  .timestamp, .date, .time {
+    color: var(--on-surface-muted) !important;
+  }
+  
+  /* Buttons and interactive elements */
+  button, .button, .btn,
+  [role="button"],
+  [type="button"],
+  [type="submit"],
+  [type="reset"] {
+    background: var(--surface-2) !important;
+    background-color: var(--surface-2) !important;
+    color: var(--on-surface-1) !important;
+    border-color: var(--border-soft) !important;
+  }
+  
+  button:hover, .button:hover, .btn:hover,
+  [role="button"]:hover {
+    background: var(--surface-elevated) !important;
+    background-color: var(--surface-elevated) !important;
+  }
+  
+  /* Input elements */
+  input, textarea, select,
+  .input,
+  [class*="input"],
+  [class*="Input"] {
+    background: var(--surface-0) !important;
+    color: var(--on-surface-1) !important;
+    border-color: var(--border-soft) !important;
+  }
+  
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--on-surface-muted) !important;
+  }
+  
+  /* Links */
+  a, .link {
+    color: var(--brand) !important;
+  }
+  
+  a:hover, .link:hover {
+    color: var(--brand-hover) !important;
+  }
+  
+  /* Override any white text that would be invisible in light mode */
+  [style*="color: white"],
+  [style*="color: #fff"],
+  [style*="color: #ffffff"],
+  .text-white,
+  .white-text {
+    color: var(--on-surface-1) !important;
+  }
+  
+  /* Pagination and navigation elements */
+  .pagination,
+  .pagination *,
+  [class*="pagination"],
+  [class*="Pagination"],
+  [class*="nav"],
+  [class*="Nav"] {
+    color: var(--on-surface-1) !important;
+  }
+  
+  /* Events page specific overrides */
+  .events,
+  .eventsList,
+  .eventsContainer,
+  [class*="event"],
+  [class*="Event"] {
+    background: var(--surface-1) !important;
+    background-color: var(--surface-1) !important;
+    color: var(--on-surface-1) !important;
+  }
+  
+  .events *,
+  .eventsList *,
+  .eventsContainer *,
+  [class*="event"] *,
+  [class*="Event"] * {
+    color: var(--on-surface-1) !important;
+  }
+  
+  /* Service page specific overrides */
+  .services,
+  .servicesList,
+  .servicesContainer,
+  [class*="service"],
+  [class*="Service"] {
+    background: var(--surface-1) !important;
+    background-color: var(--surface-1) !important;
+    color: var(--on-surface-1) !important;
+  }
+  
+  .services *,
+  .servicesList *,
+  .servicesContainer *,
+  [class*="service"] *,
+  [class*="Service"] * {
+    color: var(--on-surface-1) !important;
+  }
+  
+  /* EntityCard "item" class overrides */
+  .item,
+  a.item,
+  [class="item"],
+  .list .item,
+  .list a.item {
+    background: var(--surface-1) !important;
+    background-color: var(--surface-1) !important;
+    color: var(--on-surface-1) !important;
+    border-color: var(--border-soft) !important;
+  }
+  
+  .item:hover,
+  a.item:hover {
+    background: var(--surface-elevated) !important;
+    background-color: var(--surface-elevated) !important;
+  }
+  
+  /* Button component overrides */
+  .btn,
+  .button,
+  button,
+  [class*="btn"],
+  [class*="button"],
+  [class*="Button"] {
+    background: var(--surface-2) !important;
+    background-color: var(--surface-2) !important;
+    color: var(--on-surface-1) !important;
+    border-color: var(--border-soft) !important;
+  }
+  
+  /* Primary button overrides - keep white text on brand background */
+  .btn.primary,
+  .button.primary,
+  button.primary,
+  [class*="btn"][class*="primary"],
+  [class*="button"][class*="primary"] {
+    background: var(--brand) !important;
+    background-color: var(--brand) !important;
+    color: #ffffff !important;
+    border-color: var(--brand) !important;
+  }
+  
+  /* Footer specific overrides */
+  .footer,
+  footer,
+  [class*="footer"],
+  [class*="Footer"] {
+    background: var(--surface-1) !important;
+    background-color: var(--surface-1) !important;
+    color: var(--on-surface-1) !important;
+    border-color: var(--border-soft) !important;
+  }
+  
+  .footer *,
+  footer *,
+  [class*="footer"] *,
+  [class*="Footer"] * {
+    color: var(--on-surface-1) !important;
+  }
+  
+  .footer a,
+  footer a,
+  [class*="footer"] a,
+  [class*="Footer"] a {
+    color: var(--brand) !important;
+  }
+}
+
+/* ===================================================================
+ * FORCE DARK MODE ON ALL PAGES - OVERRIDE ANY BLUE BACKGROUNDS
+ * =================================================================== */
+:global([data-theme="dark"]) {
+  /* Force dark mode on ALL elements - override any blue backgrounds */
+  *,
+  *::before,
+  *::after {
+    /* Remove any blue or light backgrounds */
+    background-color: var(--surface-1) !important;
+    color: var(--on-surface-1) !important;
+  }
+  
+  /* Specific overrides for common blue background patterns */
+  [style*="background: #"],
+  [style*="background-color: #"],
+  [style*="background: rgb"],
+  [style*="background: rgba"],
+  [class*="blue"],
+  [class*="Blue"],
+  .bg-blue,
+  .background-blue {
+    background: var(--surface-1) !important;
+    background-color: var(--surface-1) !important;
+    color: var(--on-surface-1) !important;
+  }
+  
+  /* Messages page specific overrides */
+  .messagesPageWrapper,
+  .messagesPageWrapper *,
+  .layout,
+  .layout *,
+  .threadsPane,
+  .threadsPane *,
+  .chatPane,
+  .chatPane *,
+  .messagesList,
+  .messagesList *,
+  .threadsList,
+  .threadsList *,
+  .conversationView,
+  .conversationView * {
+    background: var(--surface-1) !important;
+    background-color: var(--surface-1) !important;
+    color: var(--on-surface-1) !important;
+  }
+  
+  /* Profile page specific overrides */
+  .profileContainer,
+  .profileContainer *,
+  .profileCard,
+  .profileCard *,
+  .profileHeader,
+  .profileHeader *,
+  .profileContent,
+  .profileContent *,
+  .userProfile,
+  .userProfile *,
+  .publicProfile,
+  .publicProfile * {
+    background: var(--surface-1) !important;
+    background-color: var(--surface-1) !important;
+    color: var(--on-surface-1) !important;
+  }
+  
+  /* Override any remaining blue elements */
+  div[style*="background"],
+  section[style*="background"],
+  article[style*="background"],
+  main[style*="background"],
+  aside[style*="background"],
+  header[style*="background"],
+  footer[style*="background"] {
+    background: var(--surface-1) !important;
+    background-color: var(--surface-1) !important;
+    color: var(--on-surface-1) !important;
+  }
+  
+  /* Ensure proper text colors */
+  h1, h2, h3, h4, h5, h6,
+  p, span, div, section, article, main, aside,
+  label, button, input, textarea, select,
+  li, td, th, dt, dd {
+    color: var(--on-surface-1) !important;
+  }
+  
+  /* Secondary text elements */
+  small, .small,
+  .muted, .secondary, .subtitle,
+  .meta, .info, .description,
+  .timestamp, .date, .time {
+    color: var(--on-surface-muted) !important;
+  }
+  
+  /* Buttons and interactive elements */
+  button, .button, .btn,
+  input, textarea, select,
+  [role="button"],
+  [type="button"],
+  [type="submit"],
+  [type="reset"] {
+    background: var(--surface-2) !important;
+    background-color: var(--surface-2) !important;
+    color: var(--on-surface-1) !important;
+    border-color: var(--border-soft) !important;
+  }
+  
+  button:hover, .button:hover, .btn:hover,
+  [role="button"]:hover {
+    background: var(--surface-elevated) !important;
+    background-color: var(--surface-elevated) !important;
+  }
+  
+  /* Links */
+  a, .link {
+    color: var(--brand) !important;
+  }
+  
+  a:hover, .link:hover {
+    color: var(--brand-hover) !important;
+  }
+  
+  /* Cards and panels */
+  .card, .panel, .surface,
+  .container, .wrapper, .content,
+  [class*="card"], [class*="Card"],
+  [class*="panel"], [class*="Panel"],
+  [class*="container"], [class*="Container"] {
+    background: var(--surface-1) !important;
+    background-color: var(--surface-1) !important;
+    color: var(--on-surface-1) !important;
+    border-color: var(--border-soft) !important;
+  }
+  
+  /* Override any gradient backgrounds */
+  [style*="linear-gradient"],
+  [style*="radial-gradient"],
+  .gradient, .bg-gradient {
+    background: var(--surface-1) !important;
+    background-image: none !important;
+  }
+  
+  /* Ensure proper contrast for all text */
+  * {
+    /* Force text to be visible */
+    text-shadow: none !important;
+  }
+  
+  /* Override any white text that might be invisible */
+  [style*="color: white"],
+  [style*="color: #fff"],
+  [style*="color: #ffffff"],
+  .text-white,
+  .white-text {
+    color: var(--on-surface-1) !important;
+  }
+}
+/* ===================================================================
+ * NUCLEAR OPTION: FORCE DARK MODE ON EVERYTHING
+ * This is the final override to catch any remaining blue backgrounds
+ * =================================================================== */
+:global([data-theme="dark"]) {
+  /* Target any element that might have a blue or light background */
+  *[style*="background"],
+  *[class*="bg-"],
+  *[class*="background"],
+  *[id*="bg-"],
+  *[id*="background"] {
+    background: var(--surface-1) !important;
+    background-color: var(--surface-1) !important;
+    background-image: none !important;
+    color: var(--on-surface-1) !important;
+  }
+  
+  /* Target specific blue color patterns */
+  *[style*="#2b6fff"],
+  *[style*="#0a84ff"],
+  *[style*="#007acc"],
+  *[style*="#2563eb"],
+  *[style*="rgb(43, 111, 255)"],
+  *[style*="rgba(43, 111, 255"],
+  *[style*="rgb(37, 99, 235)"],
+  *[style*="rgba(37, 99, 235"],
+  *[style*="blue"] {
+    background: var(--surface-1) !important;
+    background-color: var(--surface-1) !important;
+    color: var(--on-surface-1) !important;
+  }
+  
+  /* Force all containers to be dark */
+  div, section, article, main, aside, header, footer,
+  .container, .wrapper, .content, .page, .layout,
+  .panel, .card, .surface, .section {
+    background: var(--surface-1) !important;
+    background-color: var(--surface-1) !important;
+    color: var(--on-surface-1) !important;
+  }
+  
+  /* Ensure proper text visibility */
+  * {
+    color: var(--on-surface-1) !important;
+  }
+  
+  /* Secondary text elements */
+  .muted, .secondary, .subtitle, .description,
+  .meta, .info, .timestamp, .date, .time,
+  small, .small {
+    color: var(--on-surface-muted) !important;
+  }
+  
+  /* Links */
+  a, .link {
+    color: var(--brand) !important;
+  }
+  
+  /* Interactive elements */
+  button, .button, .btn, input, textarea, select {
+    background: var(--surface-2) !important;
+    background-color: var(--surface-2) !important;
+    color: var(--on-surface-1) !important;
+    border-color: var(--border-soft) !important;
+  }
+  
+  /* Hover states */
+  button:hover, .button:hover, .btn:hover,
+  .card:hover, .panel:hover, .surface:hover {
+    background: var(--surface-elevated) !important;
+    background-color: var(--surface-elevated) !important;
+  }
+  
+  /* ===================================================================
+   * SPECIFIC OVERRIDES FOR KNOWN PROBLEMATIC ELEMENTS
+   * =================================================================== */
+  
+  /* EntityCard "item" class overrides */
+  .item,
+  a.item,
+  [class="item"],
+  .list .item,
+  .list a.item,
+  .services .item,
+  .services a.item {
+    background: var(--surface-1) !important;
+    background-color: var(--surface-1) !important;
+    color: var(--on-surface-1) !important;
+    border-color: var(--border-soft) !important;
+  }
+  
+  .item:hover,
+  a.item:hover {
+    background: var(--surface-elevated) !important;
+    background-color: var(--surface-elevated) !important;
+  }
+  
+  /* Button component overrides */
+  .btn,
+  .button,
+  button,
+  [class*="btn"],
+  [class*="button"],
+  [class*="Button"] {
+    background: var(--surface-2) !important;
+    background-color: var(--surface-2) !important;
+    color: var(--on-surface-1) !important;
+    border-color: var(--border-soft) !important;
+  }
+  
+  /* Primary button overrides */
+  .btn.primary,
+  .button.primary,
+  button.primary,
+  [class*="btn"][class*="primary"],
+  [class*="button"][class*="primary"] {
+    background: var(--brand) !important;
+    background-color: var(--brand) !important;
+    color: #ffffff !important;
+    border-color: var(--brand) !important;
+  }
+  
+  /* Override hardcoded brand colors */
+  *[style*="var(--btn-brand"],
+  *[style*="#2563eb"],
+  *[style*="color-mix"] {
+    background: var(--surface-1) !important;
+    background-color: var(--surface-1) !important;
+    color: var(--on-surface-1) !important;
+  }
+  
+  /* Footer specific overrides */
+  .footer,
+  footer,
+  [class*="footer"],
+  [class*="Footer"] {
+    background: var(--surface-1) !important;
+    background-color: var(--surface-1) !important;
+    color: var(--on-surface-1) !important;
+    border-color: var(--border-soft) !important;
+  }
+  
+  .footer *,
+  footer *,
+  [class*="footer"] *,
+  [class*="Footer"] * {
+    color: var(--on-surface-1) !important;
+  }
+  
+  .footer a,
+  footer a,
+  [class*="footer"] a,
+  [class*="Footer"] a {
+    color: var(--brand) !important;
+  }
+  
+  /* Service page specific overrides */
+  .services,
+  .servicesList,
+  .servicesContainer,
+  [class*="service"],
+  [class*="Service"] {
+    background: var(--surface-1) !important;
+    background-color: var(--surface-1) !important;
+    color: var(--on-surface-1) !important;
+  }
+  
+  .services *,
+  .servicesList *,
+  .servicesContainer *,
+  [class*="service"] *,
+  [class*="Service"] * {
+    background: var(--surface-1) !important;
+    background-color: var(--surface-1) !important;
+    color: var(--on-surface-1) !important;
+  }
+}
+
+/* ===================================================================
+ * NOTIFICATION SYSTEM OVERFLOW FIX
+ * Ensure notifications are never cut off by viewport constraints
+ * =================================================================== */
+
+/* Ensure body doesn't have overflow hidden that could cut off notifications */
+body {
+  /* Allow notifications to be visible outside viewport if needed */
+  overflow-x: hidden; /* Keep horizontal scroll hidden */
+  overflow-y: auto;   /* Allow vertical scroll */
+}
+
+/* Ensure notification container is always visible */
+body:has([class*="EnterpriseNotificationSystem"]) {
+  /* Prevent any overflow hidden that could cut off notifications */
+  overflow: visible !important;
+}
+
+/* Ensure notification portals are never clipped */
+#root {
+  /* Allow notifications to extend beyond root container */
+  overflow: visible !important;
+}
+
+/* Global notification container positioning fix */
+[class*="EnterpriseNotificationSystem"] {
+  /* Ensure notifications are always on top and visible */
+  z-index: 999999 !important;
+  position: fixed !important;
+  
+  /* Prevent any parent container from clipping notifications */
+  clip: unset !important;
+  clip-path: none !important;
+  
+  /* Ensure proper stacking context */
+  isolation: isolate;
+}
+
+/* Ensure notification items are never cut off */
+[class*="notification"] {
+  /* Prevent text cutoff */
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  
+  /* Ensure proper box sizing */
+  box-sizing: border-box !important;
+  
+  /* Prevent any clipping */
+  clip: unset !important;
+  clip-path: none !important;
+}
+
+/* Mobile notification fixes */
+@media (max-width: 480px) {
+  [class*="EnterpriseNotificationSystem"] {
+    /* Ensure notifications fit on mobile screens */
+    left: 8px !important;
+    right: 8px !important;
+    max-width: calc(100vw - 16px) !important;
+    width: calc(100vw - 16px) !important;
+  }
+  
+  /* Ensure notification content doesn't overflow on mobile */
+  [class*="notification"] {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
+  }
+  
+  /* Ensure notification text wraps properly on mobile */
+  [class*="notification"] * {
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    hyphens: auto !important;
+  }
+}
+
+/* High DPI display fixes */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  [class*="EnterpriseNotificationSystem"] {
+    /* Ensure crisp rendering on high DPI displays */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    
+    /* Prevent subpixel rendering issues */
+    transform: translateZ(0);
+    will-change: transform;
+  }
+}
+
+/* Accessibility: Ensure notifications are always readable */
+@media (prefers-reduced-motion: reduce) {
+  [class*="notification"] {
+    /* Remove animations that might cause clipping */
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+/* High contrast mode fixes */
+@media (forced-colors: active) {
+  [class*="EnterpriseNotificationSystem"],
+  [class*="notification"] {
+    /* Ensure proper contrast in high contrast mode */
+    border: 2px solid CanvasText !important;
+    background: Canvas !important;
+    color: CanvasText !important;
+  }
+}
+
+/* Print media: Hide notifications */
+@media print {
+  [class*="EnterpriseNotificationSystem"] {
+    display: none !important;
+  }
+}
+
+/* ===================================================================
+ * FONT SCALING SYSTEM
+ * Global font size scaling based on user preference
+ * =================================================================== */
+
+/* Ensure all rem-based typography scales with the root font-size */
+body {
+  /* Use rem units so they scale with root font-size */
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* Headings scale proportionally */
+h1 { font-size: 2rem; }
+h2 { font-size: 1.75rem; }
+h3 { font-size: 1.5rem; }
+h4 { font-size: 1.25rem; }
+h5 { font-size: 1.125rem; }
+h6 { font-size: 1rem; }
+
+/* Ensure buttons and inputs scale with font size */
+button, input, textarea, select {
+  font-size: 1rem;
+}
+
+/* Small text elements */
+small, .small {
+  font-size: 0.875rem;
+}
+
+/* Large text elements */
+.large {
+  font-size: 1.125rem;
+}
+
+/* Ensure consistent scaling across all components */
+.card, .panel, .surface {
+  font-size: 1rem;
+}
+
+/* Navigation and menu items */
+nav, .nav, .menu {
+  font-size: 1rem;
+}
+
+/* Form labels */
+label {
+  font-size: 1rem;
+}
+
+/* Help text and descriptions */
+.help, .description, .meta {
+  font-size: 0.875rem;
+}

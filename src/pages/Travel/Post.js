@@ -1,10 +1,19 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import api from '../../api/axiosInstance';
 import { toast } from 'react-toastify';
 
+import sectionStyles from '../../stylus/sections/Travel.module.scss';
+import formStyles from '../../stylus/components/Form.module.scss';
+import buttonStyles from '../../stylus/components/Button.module.scss';
+
 // Form to create a new travel post.
-// Includes light validation and clears after submit.
+// Includes validation, min date, inline error, toast + redirect on success.
 const TravelPost = () => {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     originCity: '',
     destinationCity: '',
@@ -12,119 +21,191 @@ const TravelPost = () => {
     message: '',
     contactMethod: '',
   });
+
+  const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
 
-  const handleChange = (e) => {
-    setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
+  const todayISO = new Date().toISOString().slice(0, 10);
+
+  const setField = (name) => (e) => {
+    const value = e.target.value;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    // clear field-level error as user types
+    setErrors((prev) => ({ ...prev, [name]: '' }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!form.originCity.trim() || !form.destinationCity.trim() || !form.travelDate || !form.contactMethod.trim()) {
-      toast.warn('Fill origin, destination, date, and contact method');
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: '' }));
+  };
+
+  const validate = () => {
+    const e = {};
+    if (!form.originCity.trim()) e.originCity = t('forms.required');
+    if (!form.destinationCity.trim()) e.destinationCity = t('forms.required');
+    if (!form.travelDate) e.travelDate = t('forms.required');
+    return e;
+  };
+
+  const onBlurDate = () => {
+    setErrors((prev) => ({
+      ...prev,
+      travelDate: !form.travelDate ? t('forms.required') : '',
+    }));
+  };
+
+  const handleSubmit = async (ev) => {
+    ev.preventDefault();
+
+    const e = validate();
+    if (Object.keys(e).length) {
+      setErrors(e);
+      toast.error(t('errors.validation'));
       return;
     }
 
     setSubmitting(true);
     try {
-      await api.post('/travel', {
+      const payload = {
         originCity: form.originCity.trim(),
         destinationCity: form.destinationCity.trim(),
-        travelDate: form.travelDate,       // YYYY-MM-DD
+        travelDate: form.travelDate, // yyyy-MM-dd
         message: form.message?.trim() || '',
         contactMethod: form.contactMethod.trim(),
-      });
-      toast.success('Travel post created');
+      };
 
-      // Reset form
-      setForm({
-        originCity: '',
-        destinationCity: '',
-        travelDate: '',
-        message: '',
-        contactMethod: '',
-      });
-    } catch (e) {
-      console.error(e);
-      toast.error('Failed to create travel post');
+      const { data } = await api.post('/travel', payload);
+
+      toast.success(t('toast.saveSuccess'));
+      // redirect to details page
+      if (data?.id) {
+        navigate(`/app/travel/${data.id}`);
+      } else {
+        navigate('/app/travel');
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error(t('errors.saveFailed'));
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <div style={{ maxWidth: 720 }}>
-      <h2 style={{ marginBottom: 8 }}>Post Travel Plan</h2>
-      <p style={{ marginTop: 0, color: '#64748b' }}>
-        Share a route & date so people can reach you. <em>Use at your own risk.</em>
-      </p>
+    <div className={sectionStyles.container}>
+      <div className={sectionStyles.formWrapper}>
+        <h2 style={{ marginBottom: 8 }}>{t('travel.postYourTravel')}</h2>
+        <p style={{ marginTop: 0, color: '#64748b' }}>
+          {t('travel.shareYourRoute')}
+        </p>
 
-      <form onSubmit={handleSubmit} className="card" style={{ display: 'grid', gap: 12 }}>
-        <div className="hstack" style={{ gap: 12, flexWrap: 'wrap' }}>
-          <input
-            name="originCity"
-            value={form.originCity}
+        <form className={sectionStyles.form} onSubmit={handleSubmit} noValidate>
+          <div className={sectionStyles.row}>
+            <div className={sectionStyles.col}>
+              <label className={formStyles.label} htmlFor="originCity">{t('travel.fromCity')}</label>
+              <input
+                id="originCity"
+                name="originCity"
+                type="text"
+                value={form.originCity}
+                onChange={handleChange}
+                required
+                className={formStyles.input}
+                placeholder={t('travel.fromPlaceholder')}
+              />
+              {errors.originCity && (
+                <div className={formStyles.errorText} role="alert">{errors.originCity}</div>
+              )}
+            </div>
+
+            <div className={sectionStyles.col}>
+              <label className={formStyles.label} htmlFor="destinationCity">{t('travel.toCity')}</label>
+              <input
+                id="destinationCity"
+                name="destinationCity"
+                type="text"
+                value={form.destinationCity}
+                onChange={handleChange}
+                required
+                className={formStyles.input}
+                placeholder={t('travel.toPlaceholder')}
+              />
+              {errors.destinationCity && (
+                <div className={formStyles.errorText} role="alert">{errors.destinationCity}</div>
+              )}
+            </div>
+
+            <div className={sectionStyles.col}>
+              <label className={formStyles.label} htmlFor="travelDate">{t('travel.travelDate')}</label>
+              <input
+                id="travelDate"
+                type="date"
+                name="travelDate"
+                value={form.travelDate}
+                onChange={handleChange}
+                onBlur={onBlurDate}
+                required
+                className={formStyles.input}
+                min={todayISO}
+              />
+              {errors.travelDate && (
+                <div className={formStyles.errorText} role="alert">{errors.travelDate}</div>
+              )}
+            </div>
+          </div>
+
+          <label className={formStyles.label} htmlFor="message">{t('travel.messageOptional')}</label>
+          <textarea
+            id="message"
+            name="message"
+            value={form.message}
             onChange={handleChange}
-            placeholder="Origin city"
-            required
-            style={inputStyle}
+            rows={4}
+            className={formStyles.textarea}
+            placeholder={t('travel.messagePlaceholder')}
           />
+
+          <label className={formStyles.label} htmlFor="contactMethod">{t('travel.preferredContact')}</label>
           <input
-            name="destinationCity"
-            value={form.destinationCity}
+            id="contactMethod"
+            name="contactMethod"
+            type="text"
+            value={form.contactMethod}
             onChange={handleChange}
-            placeholder="Destination city"
-            required
-            style={inputStyle}
+            className={formStyles.input}
+            placeholder={t('travel.contactPlaceholder')}
           />
-          <input
-            type="date"
-            name="travelDate"
-            value={form.travelDate}
-            onChange={handleChange}
-            required
-            style={inputStyle}
-          />
-        </div>
 
-        <textarea
-          name="message"
-          value={form.message}
-          onChange={handleChange}
-          placeholder="Message (optional)"
-          rows={4}
-          style={{
-            padding: '10px 12px',
-            borderRadius: 10,
-            border: '1px solid #cbd5e1',
-            resize: 'vertical',
-          }}
-        />
-
-        <input
-          name="contactMethod"
-          value={form.contactMethod}
-          onChange={handleChange}
-          placeholder="Contact method (email/phone/Telegram)"
-          required
-          style={inputStyle}
-        />
-
-        <div className="hstack" style={{ gap: 8 }}>
-          <button type="submit" className="btn" disabled={submitting}>
-            {submitting ? 'Posting…' : 'Post'}
-          </button>
-        </div>
-      </form>
+          <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+            <button
+              type="submit"
+              disabled={submitting}
+              className={buttonStyles.button}
+              style={{
+                color: '#ffffff',
+                backgroundColor: 'var(--btn-brand, #2563eb)',
+                border: 'none',
+                padding: '10px 16px',
+                borderRadius: '8px',
+                cursor: submitting ? 'not-allowed' : 'pointer',
+                opacity: submitting ? 0.7 : 1
+              }}
+            >
+              {submitting ? t('forms.submitting') : t('travel.postTravel')}
+            </button>
+            <button
+              type="button"
+              className={buttonStyles.ghost}
+              onClick={() => navigate('/app/travel')}
+            >
+              {t('common.cancel')}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
-};
-
-const inputStyle = {
-  padding: '10px 12px',
-  borderRadius: 10,
-  border: '1px solid #cbd5e1',
-  minWidth: 200,
 };
 
 export default TravelPost;

@@ -1,0 +1,458 @@
+/*!
+ * Enterprise Button Component
+ * - Variants: primary, secondary, subtle, outline, ghost, link, tonal, success, warning, danger
+ * - Sizes: sm, md (default), lg, iconOnly
+ * - States: hover/active/focus/disabled/loading (also [aria-busy])
+ * - Groups: .btnGroup (standard) and .btnGroup.segmented
+ * - A11y: :focus-visible ring, prefers-reduced-motion, forced-colors
+ * - Theming: uses your tokens; safe fallbacks included
+ */
+
+/* ==================== Tokens & fallbacks ==================== */
+:root {
+  --btn-brand: var(--brand, #2563eb);
+  --btn-on-brand: #ffffff;
+
+  --btn-surface-1: var(--surface-1, #ffffff);
+  --btn-surface-2: var(--surface-2, #f6f7f9);
+  --btn-on-surface-1: var(--on-surface-1, #0f172a);
+  --btn-on-surface-2: var(--on-surface-muted, #374151);
+
+  --btn-border: var(--border-soft, #e6e8ee);
+  --btn-border-strong: var(--border-strong, #d1d5db);
+
+  --btn-danger: #e11d48;
+  --btn-on-danger: #ffffff;
+  --btn-success: #16a34a;
+  --btn-on-success: #ffffff;
+  --btn-warning: #f59e0b;
+  --btn-on-warning: #111827;
+
+  --btn-focus: var(--brand, #2563eb);
+  --btn-dur: .18s;
+  --btn-ease: cubic-bezier(.2,.7,.2,1);
+
+  --btn-radius: 24px;
+  --btn-pad-x-sm: 10px;  --btn-pad-x-md: 14px;  --btn-pad-x-lg: 18px;
+  --btn-gap: 8px;
+
+  --btn-text-sm: .875rem;
+  --btn-text-md: .9375rem;
+  --btn-text-lg: 1.0625rem;
+
+  --btn-shadow-1: 0 1px 0 rgba(16,24,40,.04), 0 8px 24px rgba(16,24,40,.06);
+  --btn-shadow-press: 0 1px 0 rgba(16,24,40,.08);
+}
+
+/* Dark mode button tokens */
+:global([data-theme="dark"]) {
+  :root {
+    --btn-brand: var(--brand, #007acc);
+    --btn-on-brand: #ffffff;
+    
+    --btn-surface-1: var(--surface-1, rgba(37, 37, 38, 0.95));
+    --btn-surface-2: var(--surface-2, rgba(45, 45, 48, 0.95));
+    --btn-on-surface-1: var(--on-surface-1, #d4d4d4);
+    --btn-on-surface-2: var(--on-surface-muted, #969696);
+    
+    --btn-border: var(--border-soft, rgba(255, 255, 255, 0.06));
+    --btn-border-strong: var(--border-strong, rgba(255, 255, 255, 0.12));
+    
+    --btn-focus: var(--brand, #007acc);
+    
+    --btn-shadow-1: 0 2px 8px rgba(0, 0, 0, 0.3), 0 1px 4px rgba(0, 0, 0, 0.2);
+    --btn-shadow-press: 0 1px 0 rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* ==================== Base ==================== */
+.btn {
+  /* per-instance vars, overridden by variants */
+  --btn-bg: var(--btn-surface-1);
+  --btn-fg: var(--btn-on-surface-1);
+  --btn-br: var(--btn-border);
+  --btn-shadow: var(--btn-shadow-1);
+  --btn-ring: 0 0 0 3px color-mix(in oklab, var(--btn-focus) 38%, transparent);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--btn-gap);
+
+  height: 44px;
+  padding: 0 var(--btn-pad-x-md);
+  border-radius: var(--btn-radius);
+  border: 1px solid var(--btn-br);
+
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font-weight: 700;
+  font-size: var(--btn-text-md);
+  letter-spacing: -.01em;
+  line-height: 1;
+  text-decoration: none;
+
+  box-shadow: var(--btn-shadow);
+  transition:
+    background var(--btn-dur) var(--btn-ease),
+    border-color var(--btn-dur) var(--btn-ease),
+    color var(--btn-dur) var(--btn-ease),
+    transform var(--btn-dur) var(--btn-ease),
+    box-shadow var(--btn-dur) var(--btn-ease),
+    opacity var(--btn-dur) var(--btn-ease);
+
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+
+  &:hover { background: color-mix(in oklab, var(--btn-bg) 92%, #000 8%); }
+  &:active {
+    transform: translateY(1px);
+    box-shadow: var(--btn-shadow-press);
+    background: color-mix(in oklab, var(--btn-bg) 88%, #000 12%);
+  }
+  &:focus-visible { box-shadow: var(--btn-shadow), var(--btn-ring); }
+
+  &:disabled, &[aria-disabled="true"] {
+    opacity: .60;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  /* icon helpers */
+  > .icon { width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; }
+  &.iconOnly { width: 44px; padding: 0; }
+
+  /* Loading */
+  &.loading, &[data-loading="true"], &[aria-busy="true"] {
+    position: relative;
+    pointer-events: none;
+    opacity: .95;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset-inline-end: var(--btn-pad-x-md);
+      width: 16px; height: 16px; border-radius: 50%;
+      border: 2px solid currentColor; border-right-color: transparent;
+      animation: btn-spin .7s linear infinite;
+    }
+    &.iconOnly::after { inset-inline-end: 50%; transform: translateX(50%); }
+  }
+}
+
+@keyframes btn-spin { to { transform: rotate(360deg); } }
+
+/* ==================== Variants ==================== */
+/* Primary */
+.primary {
+  --btn-bg: var(--btn-brand);
+  --btn-fg: var(--btn-on-brand);
+  --btn-br: color-mix(in oklab, var(--btn-brand) 65%, #000 35%);
+}
+/* Secondary (brand-tinted fill) */
+.secondary {
+  --btn-bg: color-mix(in oklab, var(--btn-brand) 14%, #fff 86%);
+  --btn-fg: color-mix(in oklab, var(--btn-brand) 70%, #000 30%);
+  --btn-br: color-mix(in oklab, var(--btn-brand) 28%, #000 72%);
+}
+/* Subtle (raised neutral) */
+.subtle {
+  --btn-bg: var(--btn-surface-2);
+  --btn-fg: var(--btn-on-surface-2);
+  --btn-br: var(--btn-border);
+}
+/* Outline (transparent with border) */
+.outline {
+  --btn-bg: transparent;
+  --btn-fg: var(--btn-brand);
+  --btn-br: color-mix(in oklab, var(--btn-brand) 35%, #000 65%);
+  &:hover  { background: color-mix(in oklab, var(--btn-brand) 8%, #fff 92%); }
+  &:active { background: color-mix(in oklab, var(--btn-brand) 14%, #fff 86%); }
+}
+/* Ghost (minimal emphasis) */
+.ghost {
+  --btn-bg: transparent;
+  --btn-fg: var(--btn-brand);
+  --btn-br: transparent;
+  &:hover  { background: color-mix(in oklab, var(--btn-brand) 6%, #fff 94%); }
+  &:active { background: color-mix(in oklab, var(--btn-brand) 12%, #fff 88%); }
+}
+/* Link (text button) */
+.link {
+  --btn-bg: transparent;
+  --btn-fg: var(--btn-brand);
+  --btn-br: transparent;
+  padding-inline: 0; height: auto; box-shadow: none;
+  &:hover { text-decoration: underline; background: transparent; }
+}
+/* Tonal (filled-tonal) */
+.tonal {
+  --btn-bg: color-mix(in oklab, var(--btn-brand) 10%, #fff 90%);
+  --btn-fg: color-mix(in oklab, var(--btn-brand) 90%, #000 10%);
+  --btn-br: color-mix(in oklab, var(--btn-brand) 22%, #000 78%);
+}
+
+/* Semantic */
+.success {
+  --btn-bg: var(--btn-success);
+  --btn-fg: var(--btn-on-success);
+  --btn-br: color-mix(in oklab, var(--btn-success) 65%, #000 35%);
+}
+.warning {
+  --btn-bg: var(--btn-warning);
+  --btn-fg: var(--btn-on-warning);
+  --btn-br: color-mix(in oklab, var(--btn-warning) 65%, #000 35%);
+}
+.danger, .destructive {
+  --btn-bg: var(--btn-danger);
+  --btn-fg: var(--btn-on-danger);
+  --btn-br: color-mix(in oklab, var(--btn-danger) 65%, #000 35%);
+}
+
+/* ==================== Sizes ==================== */
+.sm {
+  height: 36px;
+  padding: 0 var(--btn-pad-x-sm);
+  font-size: var(--btn-text-sm);
+  &.iconOnly { width: 36px; }
+}
+.md { height: 44px; } /* for clarity */
+.lg {
+  height: 52px;
+  padding: 0 var(--btn-pad-x-lg);
+  font-size: var(--btn-text-lg);
+  &.iconOnly { width: 52px; }
+}
+
+/* Block / width helpers */
+.block, .full { width: 100%; }
+.pill { border-radius: 999px; }
+
+/* ==================== Button Groups ==================== */
+.btnGroup {
+  display: inline-flex; gap: 8px; flex-wrap: wrap;
+}
+.btnGroup.segmented {
+  gap: 0;
+  .btn {
+    border-radius: 0;
+    box-shadow: none;
+    &:not(:last-child) { border-right-color: transparent; }
+    &:first-child { border-top-left-radius: var(--btn-radius); border-bottom-left-radius: var(--btn-radius); }
+    &:last-child  { border-top-right-radius: var(--btn-radius); border-bottom-right-radius: var(--btn-radius); }
+  }
+}
+
+/* ==================== Motion/Contrast ==================== */
+@media (prefers-reduced-motion: reduce) {
+  .btn { transition: none; }
+}
+
+:global(:root[data-theme="dark"]) .btn {
+  --btn-border: color-mix(in oklab, #fff 16%, transparent);
+  --btn-shadow-1: 0 1px 0 rgba(0,0,0,.25), 0 10px 30px rgba(0,0,0,.35);
+  --btn-shadow-press: 0 1px 0 rgba(0,0,0,.35);
+}
+:global(:root[data-theme="dark"]) .subtle {
+  --btn-bg: color-mix(in oklab, #fff 8%, transparent);
+  --btn-fg: #e5e7eb;
+}
+:global(:root[data-theme="dark"]) .outline,
+:global(:root[data-theme="dark"]) .ghost,
+:global(:root[data-theme="dark"]) .link {
+  --btn-fg: var(--btn-brand);
+}
+
+@media (forced-colors: active) {
+  .btn {
+    border: 1px solid ButtonText;
+    background: ButtonFace;
+    color: ButtonText;
+    box-shadow: none;
+  }
+  .primary, .secondary, .danger, .success, .warning, .tonal {
+    background: Highlight; color: HighlightText;
+  }
+  .outline, .ghost, .link { background: transparent; }
+}
+
+/* ===================================================================
+ * COMPREHENSIVE LIGHT MODE BUTTON OVERRIDES
+ * Ensure all button variants are visible in light mode
+ * =================================================================== */
+:root:not([data-theme="dark"]) {
+  .btn {
+    background: var(--btn-surface-1) !important;
+    color: var(--btn-on-surface-1) !important;
+    border-color: var(--btn-border) !important;
+  }
+  
+  .btn:hover {
+    background: var(--btn-surface-2) !important;
+    color: var(--btn-on-surface-1) !important;
+  }
+  
+  .primary {
+    background: var(--btn-brand) !important;
+    color: #ffffff !important;
+    border-color: var(--btn-brand) !important;
+  }
+  
+  .primary:hover {
+    background: color-mix(in oklab, var(--btn-brand) 92%, #000 8%) !important;
+    color: #ffffff !important;
+  }
+  
+  .primary:active {
+    background: color-mix(in oklab, var(--btn-brand) 88%, #000 12%) !important;
+    color: #ffffff !important;
+  }
+  
+  .secondary {
+    background: #f8f9fa !important;
+    color: var(--btn-brand) !important;
+    border-color: #dee2e6 !important;
+  }
+  
+  .subtle {
+    background: #f8f9fa !important;
+    color: #495057 !important;
+    border-color: #dee2e6 !important;
+  }
+  
+  .outline {
+    background: transparent !important;
+    color: var(--btn-brand) !important;
+    border-color: var(--btn-brand) !important;
+  }
+  
+  .ghost {
+    background: transparent !important;
+    color: var(--btn-brand) !important;
+    border-color: transparent !important;
+  }
+  
+  .link {
+    background: transparent !important;
+    color: var(--btn-brand) !important;
+    border-color: transparent !important;
+  }
+  
+  .tonal {
+    background: #e3f2fd !important;
+    color: var(--btn-brand) !important;
+    border-color: #bbdefb !important;
+  }
+  
+  .success {
+    background: var(--btn-success) !important;
+    color: #ffffff !important;
+    border-color: var(--btn-success) !important;
+  }
+  
+  .warning {
+    background: var(--btn-warning) !important;
+    color: #000000 !important;
+    border-color: var(--btn-warning) !important;
+  }
+  
+  .danger, .destructive {
+    background: var(--btn-danger) !important;
+    color: #ffffff !important;
+    border-color: var(--btn-danger) !important;
+  }
+  
+  /* Override nuclear option for buttons */
+  .btn * {
+    color: inherit !important;
+  }
+  
+  .primary * {
+    color: #ffffff !important;
+  }
+  
+  .success * {
+    color: #ffffff !important;
+  }
+  
+  .danger *, .destructive * {
+    color: #ffffff !important;
+  }
+}
+
+/* ===================================================================
+ * COMPREHENSIVE DARK MODE BUTTON OVERRIDES
+ * Ensure all button variants properly use dark mode tokens
+ * =================================================================== */
+:global([data-theme="dark"]) {
+  .btn {
+    background: var(--btn-surface-1) !important;
+    color: var(--btn-on-surface-1) !important;
+    border-color: var(--btn-border) !important;
+    box-shadow: var(--btn-shadow-1) !important;
+  }
+  
+  .btn:hover {
+    background: var(--btn-surface-2) !important;
+    border-color: var(--btn-border-strong) !important;
+  }
+  
+  .primary {
+    background: var(--btn-brand) !important;
+    color: var(--btn-on-brand) !important;
+    border-color: var(--btn-brand) !important;
+  }
+  
+  .secondary {
+    background: var(--btn-surface-2) !important;
+    color: var(--btn-brand) !important;
+    border-color: var(--btn-border-strong) !important;
+  }
+  
+  .subtle {
+    background: var(--btn-surface-2) !important;
+    color: var(--btn-on-surface-2) !important;
+    border-color: var(--btn-border) !important;
+  }
+  
+  .outline {
+    background: transparent !important;
+    color: var(--btn-brand) !important;
+    border-color: var(--btn-brand) !important;
+  }
+  
+  .ghost {
+    background: transparent !important;
+    color: var(--btn-brand) !important;
+    border-color: transparent !important;
+  }
+  
+  .link {
+    background: transparent !important;
+    color: var(--btn-brand) !important;
+    border-color: transparent !important;
+  }
+  
+  .tonal {
+    background: var(--btn-surface-2) !important;
+    color: var(--btn-brand) !important;
+    border-color: var(--btn-border) !important;
+  }
+  
+  /* Override any hardcoded brand colors */
+  .btn[style*="#2563eb"],
+  .btn[style*="var(--btn-brand"],
+  .btn[style*="color-mix"] {
+    background: var(--btn-surface-1) !important;
+    color: var(--btn-on-surface-1) !important;
+  }
+  
+  .primary[style*="#2563eb"],
+  .primary[style*="var(--btn-brand"],
+  .primary[style*="color-mix"] {
+    background: var(--btn-brand) !important;
+    color: var(--btn-on-brand) !important;
+  }
+}

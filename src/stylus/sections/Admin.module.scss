@@ -1,0 +1,38 @@
+/*
+ * Styles for admin pages.
+ *
+ * Provides consistent styling for tables and lists used in the admin
+ * section. Rows feature zebra striping and sticky headers for
+ * improved readability. Buttons use the design system.
+ */
+
+.container {
+  max-width: 960px;
+  margin: var(--s-8) auto;
+  padding: 0 var(--s-4);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: var(--s-4);
+}
+
+.table th,
+.table td {
+  padding: var(--s-3);
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.table th {
+  background: var(--surface-1);
+  color: var(--on-surface-1);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.table tr:nth-child(even) {
+  background: var(--surface-2);
+}

@@ -1,0 +1,44 @@
+// src/components/LanguageToggle.module.scss
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid var(--border-soft, rgba(148, 163, 184, 0.32));
+  border-radius: 12px;
+  background: transparent;
+  color: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: color-mix(
+      in oklab,
+      var(--surface-2, #eef1f7) 50%,
+      transparent
+    );
+    border-color: var(--border-medium, rgba(148, 163, 184, 0.48));
+  }
+
+  &:focus {
+    outline: 2px solid var(--accent-primary, #2563eb);
+    outline-offset: 2px;
+  }
+}
+
+.current {
+  font-weight: 700;
+}
+
+.separator {
+  opacity: 0.6;
+  margin: 0 1px;
+}
+
+.next {
+  opacity: 0.7;
+  font-weight: 500;
+}

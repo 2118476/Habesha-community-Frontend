@@ -1,0 +1,22 @@
+.kpi {
+  border: 1px solid var(--border-1);
+  border-radius: var(--radius-16);
+  padding: var(--space-16);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-1);
+  display: grid;
+  gap: 8px;
+}
+.top { display: flex; align-items: baseline; gap: 8px; justify-content: space-between; }
+.icon { font-size: 20px; }
+.value { font-size: 28px; font-weight: var(--fw-700); }
+.bottom { display: flex; align-items: center; justify-content: space-between; color: var(--color-muted); }
+.delta { font-size: var(--fs-12); padding: 2px 6px; border-radius: 24px; border: 1px solid var(--border-1); }
+.up { color: #0a7e2e; }
+.down { color: #b42318; }
+.spark {
+  height: 28px;
+  background: linear-gradient(180deg, transparent 40%, color-mix(in oklab, var(--color-primary) 40%, transparent));
+  border-radius: var(--radius-sm);
+  opacity: .5;
+}

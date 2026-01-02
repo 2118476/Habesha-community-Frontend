@@ -1,0 +1,359 @@
+/* ==========================================================================
+   Profile.module.scss — Editor / Settings ONLY
+   - Header bar, summary grid, avatar editor, form fields, dropzone, image editor
+   - Card/section styling reused by settings pages
+   - A11y + dark theme for editor components
+   ========================================================================== */
+
+/* ========================== Design tokens ========================== */
+:root {
+  --pf-ink-1: var(--on-surface-1);
+  --pf-ink-2: var(--on-surface-muted);
+
+  --pf-bg:        var(--surface-0);
+  --pf-surface:   var(--surface-1);
+  --pf-surface-2: var(--surface-2);
+  --pf-border:    var(--border-soft);
+
+  --pf-brand:     var(--brand);
+
+  --pf-radius-sm: 8px;
+  --pf-radius-md: 12px;
+  --pf-radius-lg: 16px;
+
+  --pf-shadow-1: var(--shadow-subtle);
+  --pf-shadow-2: var(--shadow-soft);
+
+  --pf-ring: 0 0 0 3px color-mix(in oklab, var(--pf-brand) 35%, transparent);
+}
+
+/* ========================== Container ========================== */
+.container {
+  max-width: 1000px;
+  margin-inline: auto;
+  padding: clamp(12px, 2vw, 24px);
+  color: var(--pf-ink-1);
+}
+
+/* ========================== Header ========================== */
+.headerBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.pageTitle {
+  margin: 0;
+  font-size: clamp(20px, 2.2vw, 26px);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+/* ========================== Card / Section ========================== */
+.section {
+  margin-block-start: 14px;
+  padding: clamp(14px, 2vw, 18px);
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-border);
+  border-radius: var(--pf-radius-lg);
+  box-shadow: var(--pf-shadow-1);
+}
+.sectionTitle {
+  margin: 0 0 12px;
+  font-size: clamp(16px, 1.6vw, 18px);
+  font-weight: 900;
+  letter-spacing: -0.01em;
+}
+
+/* ========================== Summary (avatar + meta) ========================== */
+.summaryGrid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 16px;
+  align-items: center;
+}
+@media (max-width: 640px) { .summaryGrid { gap: 12px; } }
+
+.avatarShell { position: relative; inline-size: 112px; block-size: 112px; }
+.avatarWrap {
+  inline-size: 100%; block-size: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--pf-border);
+  background: transparent;
+  cursor: pointer;
+  appearance: none; -webkit-appearance: none;
+  padding: 0;
+}
+.avatarWrap:focus-visible { outline: none; box-shadow: var(--pf-ring); }
+.avatarImg { inline-size: 100%; block-size: 100%; object-fit: cover; display: block; border-radius: 50%; }
+.avatarOverlay {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  font-size: 13px; color: var(--on-primary); background: rgba(0,0,0,.25);
+  opacity: 0; transition: opacity .12s ease; pointer-events: none; border-radius: 50%;
+}
+.avatarWrap:hover .avatarOverlay,
+.avatarWrap:focus-visible .avatarOverlay { opacity: 1; }
+
+/* Avatar dropdown */
+.menu {
+  position: absolute; z-index: 1000; top: calc(100% + 8px); left: 0; min-width: 220px;
+  background: var(--pf-surface); border: 1px solid var(--pf-border);
+  border-radius: var(--pf-radius-md); box-shadow: var(--pf-shadow-1);
+  padding: 6px; display: grid; gap: 4px;
+}
+.menu > button {
+  text-align: left; padding: 8px 10px; border-radius: var(--pf-radius-sm);
+  border: 1px solid transparent; background: transparent; cursor: pointer; font-size: 14px;
+}
+.menu > button:hover { background: var(--surface-2); border-color: var(--pf-border); }
+.menu > button:focus-visible { outline: none; box-shadow: var(--pf-ring); }
+
+/* Meta block */
+.metaCol { min-width: 0; }
+.nameBlock { display: grid; gap: 4px; }
+.nameLine  { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.displayName {
+  font-weight: 800; font-size: clamp(18px, 1.8vw, 20px); letter-spacing: -0.01em;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.roleBadge {
+  font-size: 12px; padding: 4px 8px; border-radius: 12px;
+  background: var(--surface-2); color: var(--brand); border: 1px solid var(--pf-border);
+}
+.handle { color: var(--pf-ink-2); font-size: 14px; }
+.metaList { margin: 8px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 14px; }
+.metaList strong { font-weight: 700; }
+
+/* ========================== Form ========================== */
+.formList {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 16px;
+}
+@media (max-width: 700px) { .formList { grid-template-columns: 1fr; } }
+
+.field { display: grid; gap: 6px; }
+.field > span { font-size: 13px; color: var(--pf-ink-2); }
+.input {
+  inline-size: 100%; padding: 10px 12px; border: 1px solid var(--pf-border);
+  border-radius: var(--pf-radius-sm); background: var(--surface-1); font-size: 14px; line-height: 1.25rem;
+  color: var(--pf-ink-1);
+}
+.input:focus { outline: none; box-shadow: var(--pf-ring); }
+.readonlyBox {
+  inline-size: 100%; padding: 10px 12px; border: 1px solid var(--pf-border);
+  border-radius: var(--pf-radius-sm); background: var(--surface-2); color: var(--pf-ink-2);
+  font-size: 14px; line-height: 1.25rem;
+}
+.actions {
+  grid-column: 1 / -1;
+  display: flex; justify-content: flex-end; gap: 8px; margin-top: 6px;
+}
+
+/* ========================== Dropzone & Editor ========================== */
+.dropzone {
+  margin-top: 4px; padding: 20px; border: 1px dashed var(--pf-border);
+  border-radius: var(--pf-radius-md); background: var(--surface-2); text-align: center; cursor: pointer;
+}
+.dropzone:focus-visible { outline: none; box-shadow: var(--pf-ring); }
+.dropText { margin: 0; font-size: 14px; color: var(--pf-ink-2); }
+.dropText span { text-decoration: underline; }
+
+.editorWrap { margin-top: 14px; display: grid; gap: 12px; max-width: 320px; }
+.frame {
+  inline-size: 260px; block-size: 260px; position: relative; overflow: hidden;
+  border-radius: var(--pf-radius-md); border: 1px solid var(--pf-border); background: var(--surface-2); cursor: grab;
+}
+.frame:active { cursor: grabbing; }
+.frameImg { position: absolute; left: 50%; top: 50%; user-select: none; pointer-events: none; }
+.sliderWrap { display: grid; gap: 6px; max-width: 260px; font-size: 14px; }
+.slider { inline-size: 100%; }
+.editorActions { display: flex; gap: 8px; }
+
+/* ========================== Dark theme (editor only) ========================== */
+
+
+/* ========================== High contrast ========================== */
+@media (forced-colors: active) {
+  .avatarWrap,
+  .menu,
+  .section,
+  .readonlyBox,
+  .dropzone,
+  .frame {
+    border: 1px solid CanvasText;
+    background: Canvas;
+    color: CanvasText;
+    forced-color-adjust: none;
+  }
+}
+
+/* ========================== A11y / Motion ========================== */
+
+/* ========================== IMPORTANT NOTE ==========================
+   All Public Profile styles (hero, .tabRail/.tabBtn, counters, lists,
+   photos, contact chips, etc.) have been removed from this file.
+   Those live in: PublicProfile.module.scss
+   ================================================================== */
+/* ===================================================================
+ * COMPREHENSIVE DARK MODE SUPPORT - FORCE OVERRIDE ALL BLUE
+ * =================================================================== */
+:global([data-theme="dark"]) {
+  /* FORCE dark mode on the entire profile page */
+  .container {
+    background: var(--surface-0) !important;
+    background-color: var(--surface-0) !important;
+    background-image: none !important;
+    color: var(--on-surface-1) !important;
+  }
+  
+  /* Override ALL child elements */
+  .container *,
+  .section *,
+  .card *,
+  .panel *,
+  .profileHeader *,
+  .profileContent *,
+  .userInfo *,
+  .avatarSection * {
+    background: var(--surface-1) !important;
+    background-color: var(--surface-1) !important;
+    background-image: none !important;
+    color: var(--on-surface-1) !important;
+  }
+  
+  /* Specific profile elements */
+  .section,
+  .card,
+  .panel,
+  .profileCard,
+  .userCard,
+  .infoCard {
+    background: var(--surface-1) !important;
+    background-color: var(--surface-1) !important;
+    color: var(--on-surface-1) !important;
+    border-color: var(--border-soft) !important;
+  }
+  
+  /* Form elements */
+  .input,
+  .textarea,
+  .select,
+  input,
+  textarea,
+  select {
+    background: var(--surface-2) !important;
+    background-color: var(--surface-2) !important;
+    color: var(--on-surface-1) !important;
+    border-color: var(--border-soft) !important;
+  }
+  
+  .input:focus,
+  .textarea:focus,
+  .select:focus,
+  input:focus,
+  textarea:focus,
+  select:focus {
+    border-color: var(--brand) !important;
+    box-shadow: 0 0 0 3px var(--ring) !important;
+  }
+  
+  .readonlyBox {
+    background: var(--surface-2) !important;
+    background-color: var(--surface-2) !important;
+    color: var(--on-surface-muted) !important;
+  }
+  
+  /* Buttons */
+  .button,
+  .btn,
+  button {
+    background: var(--surface-2) !important;
+    background-color: var(--surface-2) !important;
+    color: var(--on-surface-1) !important;
+    border-color: var(--border-soft) !important;
+  }
+  
+  .button:hover,
+  .btn:hover,
+  button:hover {
+    background: var(--surface-elevated) !important;
+    background-color: var(--surface-elevated) !important;
+  }
+  
+  /* Dropzone and upload areas */
+  .dropzone {
+    background: var(--surface-2) !important;
+    background-color: var(--surface-2) !important;
+    border-color: var(--border-soft) !important;
+    color: var(--on-surface-1) !important;
+  }
+  
+  .frame {
+    background: var(--surface-2) !important;
+    background-color: var(--surface-2) !important;
+    border-color: var(--border-soft) !important;
+  }
+  
+  /* Text elements */
+  .pageTitle,
+  .sectionTitle,
+  .userName,
+  .userHandle,
+  h1, h2, h3, h4, h5, h6,
+  p, span, div, label {
+    color: var(--on-surface-1) !important;
+  }
+  
+  /* Secondary text */
+  .userMeta,
+  .description,
+  .hint,
+  small {
+    color: var(--on-surface-muted) !important;
+  }
+  
+  /* Role badges */
+  .roleBadge {
+    background: var(--surface-2) !important;
+    background-color: var(--surface-2) !important;
+    color: var(--brand) !important;
+  }
+  
+  /* Menu items */
+  .menu,
+  .dropdown {
+    background: var(--surface-1) !important;
+    background-color: var(--surface-1) !important;
+    border-color: var(--border-soft) !important;
+    box-shadow: var(--shadow-soft) !important;
+  }
+  
+  .menuItem {
+    color: var(--on-surface-1) !important;
+  }
+  
+  .menuItem:hover {
+    background: var(--surface-elevated) !important;
+    background-color: var(--surface-elevated) !important;
+  }
+  
+  /* Override any inline styles */
+  [style*="background: #"],
+  [style*="background-color: #"],
+  [style*="background: rgb"],
+  [style*="background: rgba"] {
+    background: var(--surface-1) !important;
+    background-color: var(--surface-1) !important;
+  }
+  
+  /* Force override any blue backgrounds */
+  [style*="blue"],
+  [class*="blue"],
+  [class*="Blue"] {
+    background: var(--surface-1) !important;
+    background-color: var(--surface-1) !important;
+    color: var(--on-surface-1) !important;
+  }
+}

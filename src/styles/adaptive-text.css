@@ -1,0 +1,121 @@
+/* Adaptive Text Colors - Ensures all text is readable */
+
+/* ===================================================================
+ * FONT SCALE IMPLEMENTATION
+ * Global font scaling using root font-size percentage
+ * =================================================================== */
+
+/* Font scale implementation using root font-size percentage */
+html[data-fontScale="small"] {
+  font-size: 93.75% !important; /* 15px base instead of 16px */
+}
+
+html[data-fontScale="default"],
+html:not([data-fontScale]) {
+  font-size: 100% !important; /* 16px base (default) */
+}
+
+html[data-fontScale="large"] {
+  font-size: 112.5% !important; /* 18px base instead of 16px */
+}
+
+/* Ensure all rem-based typography scales with the root font-size */
+body {
+  /* Use rem units so they scale with root font-size */
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* ===================================================================
+ * ADAPTIVE TEXT COLORS
+ * =================================================================== */
+
+/* Force dark mode globally */
+:root,
+body,
+[data-theme="dark"],
+[data-theme="light"] {
+  /* Dark background */
+  --app-bg: #1a0b2e;
+  
+  /* White text for dark backgrounds */
+  --app-text-primary: #ffffff;
+  --app-text-secondary: rgba(255, 255, 255, 0.8);
+  --app-text-tertiary: rgba(255, 255, 255, 0.6);
+  --app-text-muted: rgba(255, 255, 255, 0.5);
+  
+  /* Borders */
+  --app-border: rgba(255, 255, 255, 0.1);
+  --app-border-hover: rgba(255, 255, 255, 0.2);
+  
+  /* Backgrounds */
+  --app-surface: rgba(28, 28, 36, 0.9);
+  --app-surface-hover: rgba(32, 32, 40, 0.95);
+}
+
+/* Apply to all text elements */
+body,
+html {
+  background: var(--app-bg) !important;
+  color: var(--app-text-primary) !important;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--app-text-primary) !important;
+}
+
+/* Paragraphs and spans */
+p, span, div, label, li {
+  color: inherit;
+}
+
+/* Links */
+a {
+  color: var(--app-text-secondary);
+}
+
+a:hover {
+  color: var(--app-text-primary);
+}
+
+/* Buttons */
+button {
+  color: var(--app-text-primary);
+}
+
+/* Inputs */
+input,
+textarea,
+select {
+  background: var(--app-surface) !important;
+  color: var(--app-text-primary) !important;
+  border-color: var(--app-border) !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--app-text-muted) !important;
+}
+
+/* Tables */
+table,
+th,
+td {
+  color: var(--app-text-primary);
+  border-color: var(--app-border);
+}
+
+/* Code blocks */
+code,
+pre {
+  color: var(--app-text-primary);
+  background: var(--app-surface);
+}
+
+/* Ensure all text is antialiased */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}

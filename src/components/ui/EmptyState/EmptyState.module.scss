@@ -1,0 +1,21 @@
+@use "../../../stylus/util/mixins.scss" as *;
+
+.empty {
+  @include card;
+  padding: var(--space-24);
+  text-align: center;
+}
+.illustration {
+  height: 80px;
+  margin-bottom: var(--space-12);
+  // When referenced from a CSS module the ``public`` folder is not part of
+  // the resolution path. Copy the texture into ``src/images`` and refer to
+  // it relative to this file.
+  background-image: url('/images/habesha-pattern.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: .2;
+}
+h4 { margin: 0 0 8px 0; }
+p { margin: 0 0 12px 0; color: var(--color-muted); }
