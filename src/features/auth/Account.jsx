@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import registerLogo from "../assets/images/login-register-icons/undraw_launching_re_tomg.svg";
 import loginLogo from "../assets/images/login-register-icons/undraw_secure_login_pdn4.svg";
 import { Link, useNavigate } from "react-router-dom";

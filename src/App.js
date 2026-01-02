@@ -13,14 +13,13 @@ import useAuth from "./hooks/useAuth";
 import useGlobalTheme from "./hooks/useGlobalTheme";
 
 /* ---------- Loading components ---------- */
-import { MinimalPageLoader, PageLoader } from "./components/ui/PageLoader/PageLoader";
+import { MinimalPageLoader } from "./components/ui/PageLoader/PageLoader";
 
 /* ---------- Enterprise Notification System ---------- */
 import EnterpriseNotificationSystem from "./components/notifications/EnterpriseNotificationSystem";
 
 /* ---------- Small fallbacks ---------- */
 const Fallback = () => <MinimalPageLoader />;
-const PageFallback = () => <PageLoader />;
 
 /* ---------- Error boundary so broken chunks don’t crash the app ---------- */
 class ErrorBoundary extends React.Component {

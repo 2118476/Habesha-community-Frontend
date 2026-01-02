@@ -110,8 +110,8 @@ function Card({ item, index }) {
       aria-label={`${item.title} — ${item.description}`}
       draggable={false}
       style={{
-        ["--kb-speed"]: `${kbSpeed}s`,
-        ["--bg-image"]: `url("${item.imageUrl}")`,
+        "--kb-speed": `${kbSpeed}s`,
+        "--bg-image": `url("${item.imageUrl}")`,
       }}
     >
       <div className={styles.content} style={{ color: ink }}>
@@ -147,7 +147,7 @@ export default function ExploreCategories() {
         <div
           className={styles.track}
           role="list"
-          style={{ ["--marquee-duration"]: marqueeDuration }}
+          style={{ "--marquee-duration": marqueeDuration }}
         >
           {marqueeItems.map((item, i) => (
             <Card key={`${item.key}-${i}`} item={item} index={i} />

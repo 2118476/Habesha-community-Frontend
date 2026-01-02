@@ -1569,7 +1569,7 @@ function ListGrid({ items, type }) {
   if (!safe?.length) return <p className={styles.empty}>Nothing to show.</p>;
 
   return (
-    <ul className={styles.listGrid} role="list">
+    <ul className={styles.listGrid}>
       {safe.map((it, i) => {
         const key = keyOf(it, i);
         const title = it.title || it.name || "Untitled";

@@ -27,7 +27,7 @@ export default function NotificationBell() {
   const headerId = "notif-panel-header";
 
   // Persisted "last seen" to highlight new items across sessions
-  const [lastSeenAt, setLastSeenAt] = useState(() => {
+  const [, setLastSeenAt] = useState(() => {
     const v = localStorage.getItem(LS_KEY);
     return v || null;
   });

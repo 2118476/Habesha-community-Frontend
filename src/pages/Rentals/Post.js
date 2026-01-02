@@ -206,7 +206,7 @@ export default function RentalsPost() {
             <div className={sectionStyles.grid}>
               {previews.map((src, i) => (
                 <div key={i} className={sectionStyles.thumb}>
-                  <img src={src} alt={`photo ${i+1}`} />
+                  <img src={src} alt={`Preview ${i+1}`} />
                   <button
                     type="button"
                     className={buttonStyles.ghost}

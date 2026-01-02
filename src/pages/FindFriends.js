@@ -5,7 +5,6 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import formStyles from '../stylus/components/Form.module.scss';
 import buttonStyles from '../stylus/components/Button.module.scss';
-import Avatar from '../components/Avatar';
 import styles from '../stylus/sections/Friends.module.scss';
 
 /**

@@ -1,7 +1,6 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import Account from '../../features/auth/Account';
-import PublicNavbar from '../../public/PublicNavbar';
 
 /**
  * Registration page reusing the Account component (signup view).

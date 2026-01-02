@@ -7,13 +7,11 @@ import useAuth from "../../hooks/useAuth";
 import { fetchFeed } from "../../api/feed";
 import styles from "./FeedPage.module.scss";
 import { mountSectionReveals, mountHeroParallax } from "../../utils/scrollMotion";
-import FeedGridSection from "../../components/feed/FeedGridSection";
 import { apiBase, makeApiUrl } from "../../api/httpUrl";
 
 /* NEW: wire actions */
 import api from "../../api/axiosInstance";
 import { enterpriseToast } from "../../components/ToastExports";
-import { notify } from "../../components/notifications/EnterpriseNotificationSystem";
 
 // Threaded comments (with reply support) for posts/ads
 import CommentsThread from "../../components/ads/CommentsThread.jsx";
@@ -537,7 +535,7 @@ function AdsFeedTimeline({ items = [] }) {
     return null;
   };
 
-  const bootstrapFrom = (it) => {
+  const bootstrapFrom = useCallback((it) => {
     // liked flag from various fields
     const liked =
       !!it?.likedByMe || !!it?.liked || !!it?.userLiked || !!it?.viewerLiked;
@@ -570,7 +568,7 @@ function AdsFeedTimeline({ items = [] }) {
       loadedLikes: false,    // likes loaded from /ads/:id
       commentsLoaded: false, // comment COUNT loaded from /api/ads/:id/comments
     };
-  };
+  }, []);
 
   // ensure there's a state entry for every item
   useEffect(() => {
@@ -582,7 +580,7 @@ function AdsFeedTimeline({ items = [] }) {
       });
       return next;
     });
-  }, [items]);
+  }, [items, bootstrapFrom]);
 
   // ---------- Like count from /ads/:id ----------
   const fetchAndSetLikeCount = async (id, seed) => {
@@ -1003,7 +1001,6 @@ function AdsFeedTimeline({ items = [] }) {
           <article
             key={`ad-${id}`}
             className={styles.post}
-            role="article"
             aria-describedby={`meta-${id}`}
             data-liked={st.liked ? "true" : "false"}
             data-pinned={pinned ? "true" : "false"}
@@ -1963,12 +1960,12 @@ export default function FeedPage() {
             <h4>{t('feed.comingSoonApp')}</h4>
             <p>{t('feed.fasterAccess')}</p>
             <div className={styles.badges}>
-              <a href="#" className={styles.storeBadge}>
+              <button type="button" className={styles.storeBadge}>
                 {t('feed.appStore')}
-              </a>
-              <a href="#" className={styles.storeBadge}>
+              </button>
+              <button type="button" className={styles.storeBadge}>
                 {t('feed.googlePlay')}
-              </a>
+              </button>
             </div>
           </div>
           <div className={styles.footerCard}>

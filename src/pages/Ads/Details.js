@@ -4,7 +4,6 @@ import React, {
   useState,
   useMemo,
   useCallback,
-  useRef,
 } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -379,26 +378,6 @@ export default function AdDetails() {
       userId: posterId,
     });
   }, [posterPreview, posterInlineAvatar, posterId]);
-
-  /* posterUser object for <Avatar/> */
-  const posterUser = useMemo(
-    () => ({
-      id: posterId,
-      fullName: posterNameRaw,
-      name: posterNameRaw,
-      username:
-        ad?.posterUsername || ad?.user?.username || "",
-      avatarUrl: posterAvatarResolved,
-      profileImageUrl: posterAvatarResolved,
-    }),
-    [
-      posterId,
-      posterNameRaw,
-      ad?.posterUsername,
-      ad?.user?.username,
-      posterAvatarResolved,
-    ]
-  );
 
   /* --- photos for carousel (like rentals) --- */
   const photos = useMemo(() => {

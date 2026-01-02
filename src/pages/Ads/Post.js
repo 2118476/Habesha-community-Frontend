@@ -96,7 +96,7 @@ const AdPost = () => {
       // Upload photos if any
       if (files.length && data?.id) {
         try {
-          const uploadResult = await uploadAdPhotos(data.id, files);
+          await uploadAdPhotos(data.id, files);
         } catch (uploadError) {
           console.error('Photo upload failed:', uploadError);
           toast.error('Photo upload failed: ' + uploadError.message);
@@ -205,7 +205,7 @@ const AdPost = () => {
                 }}>
                   <img 
                     src={src} 
-                    alt={`photo ${i+1}`} 
+                    alt={`Preview ${i+1}`} 
                     style={{
                       width: '100%',
                       height: '120px',
