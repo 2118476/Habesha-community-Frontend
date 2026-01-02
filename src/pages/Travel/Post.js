@@ -27,13 +27,6 @@ const TravelPost = () => {
 
   const todayISO = new Date().toISOString().slice(0, 10);
 
-  const setField = (name) => (e) => {
-    const value = e.target.value;
-    setForm((prev) => ({ ...prev, [name]: value }));
-    // clear field-level error as user types
-    setErrors((prev) => ({ ...prev, [name]: '' }));
-  };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));

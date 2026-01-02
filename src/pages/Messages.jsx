@@ -23,7 +23,6 @@ import { ListLoader, SectionLoader } from "../components/ui/SectionLoader/Sectio
 
 const POLL_MS = 10000;
 const MOBILE_BREAKPOINT = 900;
-const TABLET_BREAKPOINT = 1200;
 const DEBUG = false;
 
 /* ================================ utils ================================= */
@@ -1048,28 +1047,6 @@ export default function Messages() {
       return next;
     });
   };
-  const bulkPin = () => {
-    for (const id of selectedIds) onTogglePin(id);
-    setSelectedIds(new Set());
-  };
-  const bulkArchive = () => {
-    for (const id of selectedIds) onToggleArchive(id);
-    setSelectedIds(new Set());
-  };
-  const bulkMarkRead = async () => {
-    const ids = Array.from(selectedIds);
-    if (!ids.length) return;
-    try {
-      await Promise.allSettled(
-        ids.map((id) => api.post(`/api/messages/read/${id}`))
-      );
-      setThreads((prev) =>
-        prev.map((t) => (ids.includes(t.id) ? { ...t, unread: 0 } : t))
-      );
-      kickCounts();
-    } catch {}
-    setSelectedIds(new Set());
-  };
 
   /* ----------------------------- keyboard nav ---------------------------- */
   // Keyboard navigation removed for cleaner UI
@@ -1144,7 +1121,7 @@ export default function Messages() {
     };
     el.addEventListener("scroll", onScroll);
     return () => el.removeEventListener("scroll", onScroll);
-  }, [scrollAreaRef.current]);
+  }, []);
 
   /* ------------------------- close menus on outside ----------------------- */
   useEffect(() => {
@@ -1173,7 +1150,7 @@ export default function Messages() {
         toast.error(t('friends.failedToUpdateRequest'));
       }
     },
-    [loadContactRequests]
+    [loadContactRequests, t]
   );
 
   const sendMessage = useCallback(async () => {
@@ -1224,7 +1201,7 @@ export default function Messages() {
     } catch {
       toast.error(t('messages.failedToSendMessage'));
     }
-  }, [newMessage, selected?.id, myId, loadConversationSilent, kickCounts]);
+  }, [newMessage, selected?.id, myId, loadConversationSilent, kickCounts, t]);
 
   const selectThread = (t) => {
     const id = String(t.id);

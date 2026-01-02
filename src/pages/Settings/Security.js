@@ -13,7 +13,7 @@ export default function SecuritySettings() {
 
   const [busyPw, setBusyPw] = useState(false);
   const [msg, setMsg] = useState("");          // generic status text
-  const [msgKind, setMsgKind] = useState("");  // "success" | "error" | ""
+  const [, setMsgKind] = useState("");  // "success" | "error" | ""
 
   const [sessions, setSessions] = useState([]);
   const [loadingSessions, setLoadingSessions] = useState(false);

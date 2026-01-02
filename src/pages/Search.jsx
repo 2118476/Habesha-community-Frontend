@@ -62,7 +62,7 @@ export default function Search() {
       }
     })();
     return () => { cancelled = true; };
-  }, [q]);
+  }, [q, t]);
 
   return (
     <div style={{ maxWidth: 1180, margin: "0 auto", padding: 16 }}>

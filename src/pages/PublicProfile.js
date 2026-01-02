@@ -504,7 +504,7 @@ export default function PublicProfile() {
 
   // FRIEND STATE
   const [friendState, setFriendState] = useState("NONE");
-  const [incomingReqId, setIncomingReqId] = useState(null);
+  const [, setIncomingReqId] = useState(null);
   const [outgoingReqId, setOutgoingReqId] = useState(null);
 
   // CONTACT REQUEST STATE

@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useEffect, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import useRecentActivity from "../hooks/useRecentActivity";
@@ -6,7 +6,7 @@ import useCounts from "../hooks/useCounts";
 import ActivityItem from "../components/activity/ActivityItem";
 import api from "../api/axiosInstance";
 import styles from "../stylus/sections/NotificationsPage.module.scss";
-import { ListLoader, SectionLoader } from "../components/ui/SectionLoader/SectionLoader";
+import { ListLoader } from "../components/ui/SectionLoader/SectionLoader";
 
 export default function NotificationsPage() {
   const { t } = useTranslation();
@@ -23,7 +23,7 @@ export default function NotificationsPage() {
 
   // Persisted "last seen" to highlight new items across sessions
   const LS_KEY = "notif.seenAt";
-  const [lastSeenAt, setLastSeenAt] = useState(() => {
+  const [, setLastSeenAt] = useState(() => {
     const v = localStorage.getItem(LS_KEY);
     return v || null;
   });

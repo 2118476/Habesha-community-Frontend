@@ -13,7 +13,6 @@ import { PageLoader } from "../../components/ui/PageLoader/PageLoader";
 import styles from "../../stylus/sections/RentalsDetail.module.scss";
 import buttonStyles from "../../stylus/components/Button.module.scss";
 
-import EntityMetaBar from "../../components/EntityMetaBar.jsx";
 import ImageCarousel from "../../components/ImageCarousel.jsx";
 import OwnerActions from "../../components/OwnerActions.jsx";
 
@@ -66,7 +65,7 @@ export default function RentalDetails() {
         setLoading(false);
       }
     })();
-  }, [id]);
+  }, [id, t]);
 
   // figure out owner/poster (backend is not 100% consistent in naming)
   const posterObj = item?.postedBy || item?.owner || item?.user || null;

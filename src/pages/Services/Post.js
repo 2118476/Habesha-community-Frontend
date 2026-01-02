@@ -11,7 +11,7 @@ import buttonStyles from '../../stylus/components/Button.module.scss';
 // services based on role.
 const ServicePost = () => {
   const { t } = useTranslation();
-  const [imageFile, setImageFile] = useState(null);
+  const [, setImageFile] = useState(null);
   const [form, setForm] = useState({
     category: '',
     title: '',

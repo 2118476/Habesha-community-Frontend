@@ -45,7 +45,7 @@ const AccountSettings = () => {
       return;
     }
     
-    if (phone && !/^[\d\s\-\+\(\)]+$/.test(phone)) {
+    if (phone && !/^[\d\s\-+()]+$/.test(phone)) {
       toast.error(t('settings.account.invalidPhone'));
       return;
     }

@@ -243,7 +243,7 @@ export default function HomeSwapDetails() {
       await navigator.clipboard.writeText(window.location.href);
       toast.success(t("homeSwapDetails.linkCopied"));
     } catch {}
-  }, []);
+  }, [t]);
 
   // DM shortcut
   const openDM = useCallback(
@@ -286,7 +286,7 @@ export default function HomeSwapDetails() {
       }
       localStorage.setItem("hs.saved", JSON.stringify([...set]));
     } catch {}
-  }, [id]);
+  }, [id, t]);
 
   // Keyboard shortcuts
   useEffect(() => {

@@ -70,7 +70,7 @@ function resolveRentalId(item) {
 function RentalCard({ item }) {
   const { t } = useTranslation();
   const cardRef = useRef(null); // observed for lazy-load images
-  const [visible, setVisible] = useState(false);
+  const [, setVisible] = useState(false);
 
   const [imgSrc, setImgSrc] = useState(FALLBACK_PIXEL);
   const [imgAttempt, setImgAttempt] = useState("initial"); // initial -> fallbackFirst -> pixel

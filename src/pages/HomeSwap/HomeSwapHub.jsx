@@ -75,7 +75,7 @@ function AuthImage({ src, alt = '', style, className, onError }) {
       active = false;
       if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
-  }, [src]);
+  }, [src, onError]);
 
   if (err || !src) return null;
   if (!url) {
