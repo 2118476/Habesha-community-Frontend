@@ -193,7 +193,7 @@ function Account({ initialSignUp = false, redirect = "/app/home" }) {
   return (
     <div className="body">
       <div className={`account-container ${isSignUpClick ? "sign-up-mode" : ""}`}>
-         <div class="jebena"></div>
+         <div className="jebena"></div>
         <div className="forms-container">
           <div className="signin-signup">
             {/* Signin/login form */}

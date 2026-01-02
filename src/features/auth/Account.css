@@ -36,6 +36,7 @@
   height: 100%;
   top: 0;
   left: 0;
+  z-index: 2;
 }
 
 .signin-signup {
@@ -47,7 +48,7 @@
   transition: 1s 0.7s ease-in-out;
   display: grid;
   grid-template-columns: 1fr;
-  z-index: 5;
+  z-index: 3;
 }
 
 form.sign-up-form {
@@ -311,6 +312,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   left: 0;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  z-index: 2;
 }
 
 .account-container:before {
@@ -324,7 +326,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   background-image: linear-gradient(-45deg, #ff6b6b 0%, #feca57 50%, #ff9ff3 100%);
   transition: 1.8s ease-in-out;
   border-radius: 50%;
-  z-index: 6;
+  z-index: 0;
+  pointer-events: none;
 }
 
 /* Ensure the sliding circle doesn't create white edges */
@@ -347,7 +350,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   align-items: flex-end;
   justify-content: space-around;
   text-align: center;
-  z-index: 6;
+  z-index: 3;
 }
 
 .left-panel {
@@ -529,13 +532,16 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     right: initial;
     top: initial;
     transition: 2s ease-in-out;
+    z-index: 0;
+    pointer-events: none;
   }
 
   .account-container.sign-up-mode:before {
     transform: translate(-50%, 100%);
     bottom: 32%;
     right: initial;
-    z-index: 1;
+    z-index: 0;
+    pointer-events: none;
   }
 
   /* Ensure mobile doesn't have white edges */
@@ -603,11 +609,15 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   .account-container:before {
     bottom: 70%;
     left: 50%;
+    z-index: 0;
+    pointer-events: none;
   }
 
   .account-container.sign-up-mode:before {
     bottom: 23%;
     left: 50%;
+    z-index: 0;
+    pointer-events: none;
   }
 
   /* Ensure smallest mobile screens don't have white edges */
