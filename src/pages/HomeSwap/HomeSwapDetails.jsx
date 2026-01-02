@@ -236,7 +236,7 @@ export default function HomeSwapDetails() {
         toast.info(t("homeSwapDetails.sharingNotSupported"));
       }
     } catch {}
-  }, [item]);
+  }, [item, t]);
 
   const copyLink = useCallback(async () => {
     try {

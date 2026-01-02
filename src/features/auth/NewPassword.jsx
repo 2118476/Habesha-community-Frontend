@@ -11,7 +11,6 @@ function NewPassword() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [updateSuccess, setUpdateSuccess] = useState("");
   const { resetToken } = useParams();
   const navigate = useNavigate();
   console.log(resetToken);
@@ -155,11 +154,7 @@ function NewPassword() {
               onSubmit={handleUpdateSubmit}
             >
               <h2 className="form-title">New Password</h2>
-              {updateSuccess ? (
-                <p className="emailSuccess">{updateSuccess}</p>
-              ) : (
-                errorMessage && <p>{errorMessage}</p>
-              )}
+              {errorMessage && <p>{errorMessage}</p>}
               <div className="input-field">
                 <i className="fas fa-lock"></i>
                 <input

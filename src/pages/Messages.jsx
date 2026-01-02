@@ -591,7 +591,7 @@ export default function Messages() {
       });
     }
     return out;
-  }, [messages]);
+  }, [messages, t]);
 
   // Plain list of normalized msgs for search-in-chat
   const chatMsgs = useMemo(
@@ -1060,7 +1060,7 @@ export default function Messages() {
       d.lastSeen || d.lastActive || d.lastLogin || d.updatedAt || d.lastSeenAt;
     if (last) return `${t('messages.lastSeen')} ${timeAgo(last, t)}`;
     return "";
-  }, [selectedDetails]);
+  }, [selectedDetails, t]);
 
   useEffect(() => {
     // show unread total in tab title

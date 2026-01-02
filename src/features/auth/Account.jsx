@@ -15,7 +15,6 @@ function Account({ initialSignUp = false, redirect = "/app/home" }) {
 
   const today = new Date().toISOString().slice(0, 10);
   const [timeRemaining, setTimeRemaining] = useState(0);
-  const [validLoginAttempts, setValidLoginAttempts] = useState(0);
   const [disabled, setDisabled] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -72,7 +71,6 @@ function Account({ initialSignUp = false, redirect = "/app/home" }) {
       setTimeRemaining(null);
       navigate(redirect); // instant redirect on success
     } catch (err) {
-      setValidLoginAttempts((prev) => prev + 1);
 
       let reason = "Login failed. Please check your credentials.";
       if (err && err.response) {

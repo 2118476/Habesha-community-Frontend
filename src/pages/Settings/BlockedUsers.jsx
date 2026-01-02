@@ -1,5 +1,5 @@
 // src/pages/Settings/BlockedUsers.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import api from "../../api/axiosInstance";
@@ -16,7 +16,7 @@ export default function BlockedUsers() {
   const [loading, setLoading] = useState(true);
   const [unblocking, setUnblocking] = useState(null);
 
-  const loadBlocks = async () => {
+  const loadBlocks = useCallback(async () => {
     setLoading(true);
     try {
       const { data } = await api.get("/api/users/me/blocks");
@@ -28,11 +28,11 @@ export default function BlockedUsers() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [t]);
 
   useEffect(() => {
     loadBlocks();
-  }, []);
+  }, [loadBlocks]);
 
   const handleUnblock = async (blockId, username) => {
     const ok = window.confirm(t('settings.blocked.confirmUnblock', { username }));

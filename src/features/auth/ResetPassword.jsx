@@ -9,7 +9,6 @@ import Swal from "sweetalert2";
 function ResetPassword() {
   const [email, setEmail] = useState("");
   const [emailErrorMessage, setEmailErrorMessage] = useState("");
-  const [emailSuccess, setEmailSuccess] = useState("");
 
   const fireAlert = () => {
     Swal.fire({
@@ -63,9 +62,7 @@ function ResetPassword() {
               onSubmit={handleEmailSubmit}
             >
               <h2 className="form-title">Reset Password</h2>
-              {emailSuccess
-                ? ""
-                : emailErrorMessage && <p>{emailErrorMessage}</p>}
+              {emailErrorMessage && <p>{emailErrorMessage}</p>}
               <div className="input-field">
                 <i className="fas fa-envelope"></i>
                 <input
