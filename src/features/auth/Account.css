@@ -678,13 +678,29 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   z-index: 1 !important; 
 }
 
-/* If any overlay still captures clicks, set pointer events */
+/* If any overlay still captures clicks, set pointer events - but preserve panel functionality */
 .account-container .panels-container { 
-  pointer-events: none !important; 
+  /* Don't disable pointer events on panels-container as it contains the switching buttons */
 }
 
-.account-container .signin-signup, 
-.account-container form { 
+/* Enable pointer events for panel buttons and content */
+.account-container .panel,
+.account-container .left-panel,
+.account-container .right-panel { 
+  /* Let the original CSS handle panel pointer events for proper switching */
+}
+
+/* Only enable pointer events for the active form */
+.account-container .signin-signup { 
+  pointer-events: auto !important; 
+}
+
+.account-container .sign-in-form { 
+  pointer-events: auto !important; 
+}
+
+/* Signup form should follow the original logic - none by default, auto when active */
+.account-container.sign-up-mode .sign-up-form { 
   pointer-events: auto !important; 
 }
 
