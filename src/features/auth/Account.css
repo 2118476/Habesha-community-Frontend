@@ -667,19 +667,19 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 /* Force stacking so the form is always on top */
 .account-container .forms-container { 
   position: relative; 
-  z-index: 10 !important; 
+  z-index: 15 !important; 
 }
 
 .account-container .signin-signup { 
-  z-index: 11 !important; 
+  z-index: 16 !important; 
 }
 
 .account-container .panels-container { 
-  z-index: 20 !important; 
+  z-index: 10 !important; 
 }
 
 .account-container .panel { 
-  z-index: 21 !important; 
+  z-index: 11 !important; 
 }
 
 /* If any overlay still captures clicks, set pointer events - but preserve panel functionality */
@@ -703,8 +703,18 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   pointer-events: auto !important; 
 }
 
+.account-container .sign-in-form input,
+.account-container .sign-in-form .input-field { 
+  pointer-events: auto !important; 
+}
+
 /* Signup form should follow the original logic - none by default, auto when active */
 .account-container.sign-up-mode .sign-up-form { 
+  pointer-events: auto !important; 
+}
+
+.account-container.sign-up-mode .sign-up-form input,
+.account-container.sign-up-mode .sign-up-form .input-field { 
   pointer-events: auto !important; 
 }
 
