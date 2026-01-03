@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { submitNewPassword } from '../../api/authReset';
-import './Account.css';
+import '../../features/auth/Account.css';
 
 const ResetPassword = () => {
   const [searchParams] = useSearchParams();

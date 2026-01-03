@@ -286,8 +286,9 @@ select:focus {
 
 /* ======================== NUCLEAR LIGHT MODE FIX ======================== */
 /* Force ALL text to be visible in light mode - including Amharic text */
-:root:not([data-theme="dark"]) {
-  /* Target ALL elements in light mode */
+/* EXCLUDES AUTH PAGES to prevent overlay issues */
+:root:not([data-theme="dark"]) body:not(.auth-page-active) {
+  /* Target ALL elements in light mode - EXCLUDE AUTH PAGES */
   * {
     color: #000000 !important;
   }
@@ -637,11 +638,12 @@ a ::-moz-selection {
 /* ===================================================================
  * COMPREHENSIVE LIGHT MODE ENFORCEMENT
  * Ensure all components use proper design tokens in light mode
+ * EXCLUDES AUTH PAGES to prevent overlay issues
  * =================================================================== */
 
-/* Light mode enforcement (ensure consistency) */
-:global([data-theme="light"]),
-:root:not([data-theme="dark"]) {
+/* Light mode enforcement (ensure consistency) - EXCLUDE AUTH PAGES */
+:global([data-theme="light"]) body:not(.auth-page-active),
+:root:not([data-theme="dark"]) body:not(.auth-page-active) {
   /* Force light mode on ALL elements - ensure dark text on light backgrounds */
   *,
   *::before,
@@ -685,10 +687,23 @@ a ::-moz-selection {
     color: var(--on-surface-muted) !important;
   }
   
-  /* Force all containers to be light */
-  div, section, article, main, aside, header, footer,
-  .container, .wrapper, .content, .page, .layout,
-  .panel, .card, .surface, .section {
+  /* Force all containers to be light - EXCLUDE AUTH PAGES */
+  body:not(.auth-page-active) div, 
+  body:not(.auth-page-active) section, 
+  body:not(.auth-page-active) article, 
+  body:not(.auth-page-active) main, 
+  body:not(.auth-page-active) aside, 
+  body:not(.auth-page-active) header, 
+  body:not(.auth-page-active) footer,
+  body:not(.auth-page-active) .container, 
+  body:not(.auth-page-active) .wrapper, 
+  body:not(.auth-page-active) .content, 
+  body:not(.auth-page-active) .page, 
+  body:not(.auth-page-active) .layout,
+  body:not(.auth-page-active) .panel, 
+  body:not(.auth-page-active) .card, 
+  body:not(.auth-page-active) .surface, 
+  body:not(.auth-page-active) .section {
     background: var(--surface-1) !important;
     background-color: var(--surface-1) !important;
     color: var(--on-surface-1) !important;
@@ -878,9 +893,10 @@ a ::-moz-selection {
 
 /* ===================================================================
  * FORCE DARK MODE ON ALL PAGES - OVERRIDE ANY BLUE BACKGROUNDS
+ * EXCLUDES AUTH PAGES to prevent overlay issues
  * =================================================================== */
-:global([data-theme="dark"]) {
-  /* Force dark mode on ALL elements - override any blue backgrounds */
+:global([data-theme="dark"]) body:not(.auth-page-active) {
+  /* Force dark mode on ALL elements - override any blue backgrounds - EXCLUDE AUTH PAGES */
   *,
   *::before,
   *::after {
@@ -1036,9 +1052,10 @@ a ::-moz-selection {
 /* ===================================================================
  * NUCLEAR OPTION: FORCE DARK MODE ON EVERYTHING
  * This is the final override to catch any remaining blue backgrounds
+ * EXCLUDES AUTH PAGES to prevent overlay issues
  * =================================================================== */
-:global([data-theme="dark"]) {
-  /* Target any element that might have a blue or light background */
+:global([data-theme="dark"]) body:not(.auth-page-active) {
+  /* Target any element that might have a blue or light background - EXCLUDE AUTH PAGES */
   *[style*="background"],
   *[class*="bg-"],
   *[class*="background"],
@@ -1065,10 +1082,23 @@ a ::-moz-selection {
     color: var(--on-surface-1) !important;
   }
   
-  /* Force all containers to be dark */
-  div, section, article, main, aside, header, footer,
-  .container, .wrapper, .content, .page, .layout,
-  .panel, .card, .surface, .section {
+  /* Force all containers to be dark - EXCLUDE AUTH PAGES */
+  body:not(.auth-page-active) div, 
+  body:not(.auth-page-active) section, 
+  body:not(.auth-page-active) article, 
+  body:not(.auth-page-active) main, 
+  body:not(.auth-page-active) aside, 
+  body:not(.auth-page-active) header, 
+  body:not(.auth-page-active) footer,
+  body:not(.auth-page-active) .container, 
+  body:not(.auth-page-active) .wrapper, 
+  body:not(.auth-page-active) .content, 
+  body:not(.auth-page-active) .page, 
+  body:not(.auth-page-active) .layout,
+  body:not(.auth-page-active) .panel, 
+  body:not(.auth-page-active) .card, 
+  body:not(.auth-page-active) .surface, 
+  body:not(.auth-page-active) .section {
     background: var(--surface-1) !important;
     background-color: var(--surface-1) !important;
     color: var(--on-surface-1) !important;

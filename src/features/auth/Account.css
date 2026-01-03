@@ -653,6 +653,41 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   box-shadow: none !important;
 }
 
+/* DEFENSIVE CSS - Ensure nothing can overlay the form */
+.account-container .panels-container,
+.account-container .panel,
+.account-container .forms-container,
+.account-container .signin-signup {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  filter: none !important;
+}
+
+/* Force stacking so the form is always on top */
+.account-container .forms-container { 
+  position: relative; 
+  z-index: 5 !important; 
+}
+
+.account-container .signin-signup { 
+  z-index: 10 !important; 
+}
+
+.account-container .panels-container { 
+  z-index: 1 !important; 
+}
+
+/* If any overlay still captures clicks, set pointer events */
+.account-container .panels-container { 
+  pointer-events: none !important; 
+}
+
+.account-container .signin-signup, 
+.account-container form { 
+  pointer-events: auto !important; 
+}
+
 /* Form elements - ensure visibility */
 .account-container .form-title {
   color: #333333 !important;
