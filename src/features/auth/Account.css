@@ -66,6 +66,20 @@ form.sign-up-form {
   pointer-events: none;
 }
 
+/* CRITICAL FIX: Ensure signup form is clickable when active */
+.account-container.sign-up-mode form.sign-up-form {
+  opacity: 1;
+  z-index: 2;
+  pointer-events: all !important;
+}
+
+/* CRITICAL FIX: Ensure all form elements are clickable when signup is active */
+.account-container.sign-up-mode form.sign-up-form input,
+.account-container.sign-up-mode form.sign-up-form .input-field,
+.account-container.sign-up-mode form.sign-up-form .account-btn {
+  pointer-events: all !important;
+}
+
 .sign-up-form p {
   /* Error message color with fallback */
   color: var(--on-surface-1, #333333);

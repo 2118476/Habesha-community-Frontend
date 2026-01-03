@@ -241,6 +241,9 @@ function Account({ initialSignUp = false, redirect = "/app/home" }) {
             <form className="sign-up-form" noValidate onSubmit={handleSubmit}>
               <h2 className="form-title">Sign up</h2>
 
+              {/* Display submit error if any */}
+              {errors.submit && <p className="error-message">{errors.submit}</p>}
+
               <div className="input-field">
                 <i className="fas fa-user"></i>
                 <input
@@ -349,7 +352,12 @@ function Account({ initialSignUp = false, redirect = "/app/home" }) {
               </div>
               {errors ? errors.confirmPassword && showErrors && <p>{errors.confirmPassword}</p> : ""}
 
-              <input type="submit" className="account-btn" value="Sign up" />
+              <input 
+                type="submit" 
+                className="account-btn" 
+                value="Sign up"
+                onClick={() => console.log('🖱️ Signup button clicked!')} 
+              />
             </form>
           </div>
         </div>
