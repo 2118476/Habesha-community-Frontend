@@ -13,7 +13,6 @@ function NewPassword() {
   const [errorMessage, setErrorMessage] = useState("");
   const { resetToken } = useParams();
   const navigate = useNavigate();
-  console.log(resetToken);
 
   const fireAlert = () => {
     Swal.fire({

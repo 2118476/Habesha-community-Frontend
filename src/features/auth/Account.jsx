@@ -332,7 +332,6 @@ function Account({ initialSignUp = false, redirect = "/app/home" }) {
                 type="submit" 
                 className="account-btn" 
                 value="Sign up"
-                onClick={() => console.log('🖱️ Signup button clicked!')} 
               />
             </form>
           </div>

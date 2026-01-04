@@ -35,11 +35,9 @@ const useForm = (validateForm) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('🚀 Signup form submitted!', values); // Debug log
     
     //check the values in the signup form
     const errors = validateForm(values);
-    console.log('📝 Validation errors:', errors); // Debug log
     
     if (Object.keys(errors).length === 0) {
       const { firstName, lastName, country, phone, email, password } = values;
@@ -56,13 +54,10 @@ const useForm = (validateForm) => {
         role: 'USER',
       };
       
-      console.log('📤 Sending registration request:', registration); // Debug log
-      
       try {
         // Use the unified /auth/register endpoint.  The shared
         // axios instance will prefix the baseURL automatically.
         const res = await api.post('/auth/register', registration);
-        console.log('✅ Registration successful:', res.data); // Debug log
         
         if (res.status === 200 || res.status === 201) {
           // Reset form values after successful registration
@@ -95,7 +90,6 @@ const useForm = (validateForm) => {
         setErrors({ submit: errorMessage });
       }
     } else {
-      console.log('❌ Form validation failed:', errors); // Debug log
       setErrors(errors);
     }
   };
