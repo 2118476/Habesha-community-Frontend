@@ -36,7 +36,7 @@
   height: 100%;
   top: 0;
   left: 0;
-  z-index: 2;
+  z-index: 10; /* FIXED: Ensure forms are above panels and background */
 }
 
 .signin-signup {
@@ -48,7 +48,7 @@
   transition: 1s 0.7s ease-in-out;
   display: grid;
   grid-template-columns: 1fr;
-  z-index: 3;
+  z-index: 15; /* FIXED: Highest z-index for form container */
 }
 
 form.sign-up-form {
@@ -326,7 +326,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   left: 0;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  z-index: 2;
+  z-index: 5; /* FIXED: Lower than forms but above background */
 }
 
 .account-container:before {
@@ -364,7 +364,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   align-items: flex-end;
   justify-content: space-around;
   text-align: center;
-  z-index: 3;
+  z-index: 6; /* FIXED: Above background but below forms */
 }
 
 .left-panel {
@@ -373,7 +373,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .right-panel {
-  pointer-events: none;
+  pointer-events: all; /* FIXED: Allow clicks on signup button */
   padding: 6rem 12% 2rem 17%;
 }
 

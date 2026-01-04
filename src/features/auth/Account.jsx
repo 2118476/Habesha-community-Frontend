@@ -106,86 +106,46 @@ function Account({ initialSignUp = false, redirect = "/app/home" }) {
   const signUpBtn = () => setIsSignUpClick(true);
   const signInBtn = () => setIsSignUpClick(false);
 
-  // Password strength UI (DOM queries kept as-is from your original)
-  const indicator = document.querySelector(".pass-indicator");
-  const input = document.querySelector(".pass");
-  const weak = document.querySelector(".weak");
-  const medium = document.querySelector(".medium");
-  const strong = document.querySelector(".strong");
-  const text = document.querySelector(".pass-text");
-  const showPass = document.querySelector(".show-pass");
-  const passRegexWeak = /[a-z]/;
-  const passRegexMedium = /\d+/;
-  const passRegexStrong = /.[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/;
-  let no;
+  // Password strength state management (React-based instead of DOM queries)
+  const [passwordStrength, setPasswordStrength] = useState({ level: 0, text: '', show: false });
+  const [showPassword, setShowPassword] = useState(false);
 
-  const passwordIndicator = () => {
-    if (!input) return;
-    if (input.value !== "") {
-      indicator.style.display = "block";
-      indicator.style.display = "flex";
-      if (
-        input.value.length <= 3 &&
-        (input.value.match(passRegexWeak) ||
-          input.value.match(passRegexMedium) ||
-          input.value.match(passRegexStrong))
-      )
-        no = 1;
-      if (
-        input.value.length >= 6 &&
-        ((input.value.match(passRegexWeak) && input.value.match(passRegexMedium)) ||
-          (input.value.match(passRegexMedium) && input.value.match(passRegexStrong)) ||
-          (input.value.match(passRegexWeak) && input.value.match(passRegexStrong)))
-      )
-        no = 2;
-      if (
-        input.value.length >= 6 &&
-        input.value.match(passRegexWeak) &&
-        input.value.match(passRegexMedium) &&
-        input.value.match(passRegexStrong)
-      )
-        no = 3;
-      if (no === 1) {
-        weak.classList.add("active");
-        text.style.display = "block";
-        text.textContent = "Your password is too weak";
-        text.classList.add("weak");
-      }
-      if (no === 2) {
-        medium.classList.add("active");
-        text.textContent = "Your password is medium";
-        text.classList.add("medium");
-      } else {
-        medium.classList.remove("active");
-        text.classList.remove("medium");
-      }
-      if (no === 3) {
-        weak.classList.add("active");
-        medium.classList.add("active");
-        strong.classList.add("active");
-        text.textContent = "Your password is strong";
-        text.classList.add("strong");
-      } else {
-        strong.classList.remove("active");
-        text.classList.remove("strong");
-      }
-      showPass.style.display = "block";
-      showPass.onclick = function () {
-        if (input.type === "password") {
-          input.type = "text";
-          showPass.textContent = "HIDE";
-          showPass.style.color = "#acacac";
-        } else {
-          input.type = "password";
-          showPass.textContent = "SHOW";
-          showPass.style.color = "#000";
-        }
-      };
-    } else {
-      indicator.style.display = "none";
-      text.style.display = "none";
-      showPass.style.display = "none";
+  const checkPasswordStrength = (password) => {
+    if (!password) {
+      setPasswordStrength({ level: 0, text: '', show: false });
+      return;
     }
+
+    const passRegexWeak = /[a-z]/;
+    const passRegexMedium = /\d+/;
+    const passRegexStrong = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/;
+    
+    let level = 0;
+    let text = '';
+
+    if (password.length <= 3 && 
+        (passRegexWeak.test(password) || passRegexMedium.test(password) || passRegexStrong.test(password))) {
+      level = 1;
+      text = 'Your password is too weak';
+    }
+    
+    if (password.length >= 6 && 
+        ((passRegexWeak.test(password) && passRegexMedium.test(password)) ||
+         (passRegexMedium.test(password) && passRegexStrong.test(password)) ||
+         (passRegexWeak.test(password) && passRegexStrong.test(password)))) {
+      level = 2;
+      text = 'Your password is medium';
+    }
+    
+    if (password.length >= 6 && 
+        passRegexWeak.test(password) && 
+        passRegexMedium.test(password) && 
+        passRegexStrong.test(password)) {
+      level = 3;
+      text = 'Your password is strong';
+    }
+
+    setPasswordStrength({ level, text, show: true });
   };
   
   return (
@@ -322,22 +282,38 @@ function Account({ initialSignUp = false, redirect = "/app/home" }) {
                 <i className="fas fa-lock"></i>
                 <input
                   className="pass"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   name="password"
                   value={values.password}
-                  onChange={handleChange}
-                  onKeyUp={passwordIndicator}
+                  onChange={(e) => {
+                    handleChange(e);
+                    checkPasswordStrength(e.target.value);
+                  }}
                   placeholder="Password*"
                 />
-                <span className="show-pass">SHOW</span>
+                {values.password && (
+                  <span 
+                    className="show-pass"
+                    onClick={() => setShowPassword(!showPassword)}
+                    style={{ display: 'block' }}
+                  >
+                    {showPassword ? 'HIDE' : 'SHOW'}
+                  </span>
+                )}
               </div>
 
-              <div className="pass-indicator">
-                <span className="weak"></span>
-                <span className="medium"></span>
-                <span className="strong"></span>
-              </div>
-              <div className="pass-text"></div>
+              {passwordStrength.show && (
+                <div className="pass-indicator" style={{ display: 'flex' }}>
+                  <span className={`weak ${passwordStrength.level >= 1 ? 'active' : ''}`}></span>
+                  <span className={`medium ${passwordStrength.level >= 2 ? 'active' : ''}`}></span>
+                  <span className={`strong ${passwordStrength.level >= 3 ? 'active' : ''}`}></span>
+                </div>
+              )}
+              {passwordStrength.text && (
+                <div className={`pass-text ${passwordStrength.level === 1 ? 'weak' : passwordStrength.level === 2 ? 'medium' : 'strong'}`}>
+                  {passwordStrength.text}
+                </div>
+              )}
               {errors ? errors.password && showErrors && <p>{errors.password}</p> : ""}
 
               <div className="input-field">
