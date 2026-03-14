@@ -3,20 +3,10 @@ import api from "./axiosInstance";
 
 /**
  * Fetch a single home swap post by id.
- * Falls back to the plain endpoint used by the listing pages.  Note that
- * for editing we only need the basic fields (title, location, description).
+ * The response includes photos: [{ id, url, width, height, sortOrder }].
  */
 export async function getHomeSwap(id) {
   const { data } = await api.get(`/homeswap/${id}`);
-  return data;
-}
-
-/**
- * Fetch a home swap post along with its photo metadata.  Your backend
- * exposes `/homeswap/{id}/with-photos` for this richer payload.
- */
-export async function getHomeSwapWithPhotos(id) {
-  const { data } = await api.get(`/homeswap/${id}/with-photos`);
   return data;
 }
 

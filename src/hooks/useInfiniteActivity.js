@@ -12,7 +12,8 @@ export default function useInfiniteActivity(pageSize = 20) {
       const params = { limit: pageSize };
       if (pageParam) params.before = pageParam; // ISO or epoch millis accepted by backend
       const res = await api.get("/api/activity", { params });
-      const items = Array.isArray(res.data) ? res.data : [];
+      const raw = res.data;
+      const items = Array.isArray(raw) ? raw : Array.isArray(raw?.items) ? raw.items : [];
       return {
         items,
         nextCursor: items.length ? items[items.length - 1].createdAt : undefined,

@@ -12,7 +12,7 @@ export async function ensureThreadAndNavigate(navigate, targetUserId, api) {
     if (api) {
       try {
         // Preferred: create or get existing 1:1 thread
-        const res = await api.post(`/api/messages/threads/ensure`, null, { params: { targetUserId } });
+        const res = await api.post(`/api/messages/ensure-thread`, null, { params: { targetUserId } });
         threadId = res?.data?.id || res?.data?.threadId;
       } catch {}
       if (!threadId) {

@@ -90,24 +90,10 @@ export default function NotificationsPage() {
   }, [items, t]);
 
   const handleItemSelect = async (item) => {
-    // Mark individual item as read if it's unread
-    const wasUnread = unreadIdSet.has(item.id);
-    
-    if (wasUnread) {
-      try {
-        // Try to mark individual item as read
-        await api.put(`/api/notifications/${item.id}/read`);
-      } catch {
-        // Fallback: update lastSeenAt to current time
-        const now = new Date().toISOString();
-        setLastSeenAt(now);
-        localStorage.setItem(LS_KEY, now);
-      }
-      
-      // Optimistic update: refresh counts and activity
-      refetchCounts?.();
-      refetchActivity?.();
-    }
+    // No per-item read endpoint exists; mark-all-seen handles read state.
+    // Just refresh counts.
+    refetchCounts?.();
+    refetchActivity?.();
   };
 
   const markAll = async () => {

@@ -300,9 +300,7 @@ export default function HomeSwapHub() {
           : visible.map((item) => {
               const id = item?.id || item?._id;
               const explicitCover = coverFrom(item);
-              // Fallback to first photo from backend if we know there is at least one
-              const derivedCover = item?.photosCount > 0 ? `/homeswap/${id}/photos/0` : null;
-              const coverSrc = explicitCover || derivedCover;
+              const coverSrc = explicitCover;
 
               const created = item?.createdAt || item?.postedAt || item?.updatedAt;
               const recent = isRecent(created);

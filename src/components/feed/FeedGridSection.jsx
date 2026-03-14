@@ -15,10 +15,6 @@ function fallbackPhotoPath(type, id) {
   if (!id) return null;
   const t = (type || "").toLowerCase();
   switch (t) {
-    case "home_swap":
-    case "home-swap":
-    case "homeswap":
-      return `/homeswap/${id}/photos/first`;
     case "rental":
     case "rentals":
     case "rental_listing":

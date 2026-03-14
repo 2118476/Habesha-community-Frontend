@@ -56,7 +56,7 @@ function photoIdToEndpoint(type, fid, id) {
     case "home_swap":
     case "home-swap":
     case "homeswap":
-      return id ? `/homeswap/${encodeURIComponent(id)}/photos/first` : null;
+      return null;
 
     case "service":
     case "services":

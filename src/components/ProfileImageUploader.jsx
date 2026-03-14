@@ -26,7 +26,7 @@ export default function ProfileImageUploader() {
     fd.append('file', preview.file);
     setBusy(true);
     try {
-      await api.post('/account/profile-image', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+      await api.post('/users/me/profile-image', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
       toast.success('Profile photo updated');
     } catch (e) {
       toast.error('Upload failed');
@@ -38,7 +38,7 @@ export default function ProfileImageUploader() {
   const onRemove = async () => {
     setBusy(true);
     try {
-      await api.delete('/account/profile-image');
+      await api.delete('/users/me/profile-image');
       setPreview(null);
       toast.success('Profile photo removed');
     } catch (e) {

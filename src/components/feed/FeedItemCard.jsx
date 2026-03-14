@@ -122,8 +122,6 @@ function deriveImgFromItem(item) {
   if (!id) return null;
 
   if (t.includes("rental")) return absolutize(`/rentals/${id}/photos/first`);
-  if (t.includes("swap") || t.includes("home"))
-    return absolutize(`/homeswap/${id}/photos/first`);
 
   return null;
 }

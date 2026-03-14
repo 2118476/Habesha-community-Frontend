@@ -10,20 +10,7 @@ import api from '../api/axiosInstance';
  */
 
 const CANDIDATE_ENDPOINTS = [
-  // common choices
-  '/api/notifications',
-  '/api/notifications/recent',
-  '/api/notifications/list',
-  '/api/activity/recent',
-  '/api/activities/recent',
-  '/api/recent-activities',
-  // fallbacks people often use
   '/api/activity',
-  '/api/activities',
-  '/api/users/me/notifications',
-  '/api/users/me/activity',
-  '/notifications',
-  '/notifications/recent',
 ];
 
 const arr = (v) => {

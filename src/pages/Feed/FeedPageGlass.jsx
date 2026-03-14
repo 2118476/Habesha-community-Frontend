@@ -44,7 +44,6 @@ const getImageUrl = (item) => {
   const id = item?.id;
   const type = (item?.type || "").toLowerCase();
   if (id && type.includes("rental")) return makeApiUrl(`/rentals/${id}/photos/first`);
-  if (id && type.includes("swap")) return makeApiUrl(`/homeswap/${id}/photos/first`);
   if (id && (type.includes("ad") || type.includes("classified"))) return makeApiUrl(`/ads/${id}/photos/first`);
   
   return null;

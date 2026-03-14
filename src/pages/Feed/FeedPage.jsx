@@ -85,7 +85,6 @@ const imgOf = (it) => {
   const id = it?.id ?? it?._id ?? it?.listingId ?? it?.publicId ?? null;
   const t = (it?.type || "").toLowerCase();
   if (id && t.includes("rental")) return makeApiUrl(`/rentals/${id}/photos/first`);
-  if (id && (t.includes("home") || t.includes("swap"))) return makeApiUrl(`/homeswap/${id}/photos/first`);
   if (id && (t.includes("ad") || t.includes("classified"))) return makeApiUrl(`/ads/${id}/photos/first`);
   
   return null;

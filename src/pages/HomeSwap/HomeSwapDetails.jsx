@@ -42,50 +42,20 @@ function firstWord(name) {
   return (space === -1 ? s : s.slice(0, space)) || "there";
 }
 
-/** Derive photos from common fields + conventional endpoints (deduped). */
-function deriveHomeSwapPhotos(item, id) {
-  const candidates = [];
+/** Derive photos from the item's photos array (backend shape: photos[].url). */
+function deriveHomeSwapPhotos(item) {
+  const out = [];
 
-  const direct =
-    item?.coverUrl ||
-    item?.imageUrl ||
-    item?.thumbnailUrl ||
-    item?.image ||
-    item?.firstPhotoUrl ||
-    item?.photoUrl ||
-    item?.pictureUrl ||
-    null;
-  if (direct) candidates.push(direct);
-
-  if (Array.isArray(item?.images)) candidates.push(...item.images);
   if (Array.isArray(item?.photos)) {
     for (const p of item.photos) {
       if (!p) continue;
-      candidates.push(p.url || p.path || p.src || p);
-    }
-  }
-  if (Array.isArray(item?.photoPaths)) candidates.push(...item.photoPaths);
-
-  const fid = item?.firstPhotoId || item?.coverId || null;
-  if (fid) candidates.push(`/homeswap/photos/${encodeURIComponent(fid)}`);
-  if (id) {
-    candidates.push(`/homeswap/${encodeURIComponent(id)}/photos/first`);
-    const count = Number(item?.photoCount ?? item?.photosCount ?? 0);
-    if (count > 0) {
-      for (let i = 0; i < Math.min(count, 18); i++) {
-        candidates.push(`/homeswap/${encodeURIComponent(id)}/photos/${i}`);
-      }
+      const src = typeof p === "string" ? p : p.url || p.path || p.src || null;
+      if (!src) continue;
+      const abs = toAbs(src);
+      if (abs && !out.includes(abs)) out.push(abs);
     }
   }
 
-  const out = [];
-  for (const c of candidates) {
-    if (!c) continue;
-    const src = typeof c === "string" ? c : c?.url || c?.path || c?.src || null;
-    if (!src) continue;
-    const abs = toAbs(src);
-    if (abs && !out.includes(abs)) out.push(abs);
-  }
   return out;
 }
 
@@ -127,21 +97,14 @@ export default function HomeSwapDetails() {
   const amenitiesRef = useRef(null);
   const ownerRef = useRef(null);
 
-  // Load details (prefer richer payload if available)
+  // Load details
   useEffect(() => {
     let alive = true;
     (async () => {
       try {
         setLoading(true);
-        let data = null;
-        try {
-          const r = await api.get(`/homeswap/${id}/with-photos`);
-          data = r.data;
-        } catch {
-          const r = await api.get(`/homeswap/${id}`);
-          data = r.data;
-        }
-        if (alive) setItem(data);
+        const r = await api.get(`/homeswap/${id}`);
+        if (alive) setItem(r.data);
       } catch (e) {
         const msg =
           e?.response?.data?.message ||
@@ -220,7 +183,7 @@ export default function HomeSwapDetails() {
     return makeApiUrl(`/users/${ownerId}/profile-image`);
   }, [ownerId, ownerPreview]);
 
-  const photos = useMemo(() => deriveHomeSwapPhotos(item || {}, id), [item, id]);
+  const photos = useMemo(() => deriveHomeSwapPhotos(item || {}), [item]);
 
   // Share / copy link
   const handleShare = useCallback(async () => {

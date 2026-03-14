@@ -655,16 +655,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
    These overrides ensure auth page visibility
    ======================================== */
 
-/* Reset all global dark mode overrides within auth container */
-.account-container,
-.account-container *,
-.account-container *::before,
-.account-container *::after {
-  color: initial !important;
-  background: initial !important;
-  border: none !important;
-  outline: none !important;
-  box-shadow: none !important;
+/* Reset specific dark mode overrides within auth container */
+.account-container {
+  isolation: isolate;
 }
 
 /* DEFENSIVE CSS - Ensure nothing can overlay the form */
@@ -767,6 +760,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   background-color: #5995fd !important;
   color: #ffffff !important;
   border: none !important;
+  pointer-events: auto !important;
+  position: relative !important;
+  z-index: 20 !important;
+  cursor: pointer !important;
 }
 
 .account-container .account-btn:hover {

@@ -147,25 +147,8 @@ export default function NotificationBell() {
   }, [unread, refetchActivity]);
 
   const handleItemSelect = async (item) => {
-    // Mark individual item as read if it's unread
-    const wasUnread = unreadIdSet.has(item.id);
-    
-    if (wasUnread) {
-      try {
-        // Try to mark individual item as read
-        await api.put(`/api/notifications/${item.id}/read`);
-      } catch {
-        // Fallback: update lastSeenAt to current time
-        const now = new Date().toISOString();
-        setLastSeenAt(now);
-        localStorage.setItem(LS_KEY, now);
-      }
-      
-      // Optimistic update: refresh counts and activity
-      refetchCounts?.();
-      refetchActivity?.();
-    }
-    
+    // No per-item read endpoint exists; use mark-all-seen instead.
+    // Just close the panel and let the periodic mark-seen handle it.
     setOpen(false);
   };
 

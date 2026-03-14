@@ -60,8 +60,8 @@ function Account({ initialSignUp = false, redirect = "/app/home" }) {
       setLoginErrorMessages("Invalid email address!!!");
       return;
     }
-    if (password.length < 8) {
-      setLoginErrorMessages("Invalid password!!!");
+    if (password.length < 1) {
+      setLoginErrorMessages("Password is required!!!");
       return;
     }
 
