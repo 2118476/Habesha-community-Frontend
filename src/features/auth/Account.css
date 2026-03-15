@@ -1,10 +1,17 @@
-
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap");
 
-/* Font styling for account files */
+/* ===================================================================
+ * AUTH PAGE STYLES
+ * Self-contained, isolated from global theme/dark-mode overrides.
+ * The key trick: .account-container uses `isolation: isolate` and
+ * every child that the global selectors would match is scoped here
+ * with higher-specificity overrides so the global "nuclear" rules
+ * in _globals.scss / adaptive-text.css cannot bleed in.
+ * =================================================================== */
+
+/* ---------- wrapper ---------- */
 .body {
   font-family: "Poppins", sans-serif;
-  /* Ensure auth page body wrapper has no conflicting styles */
   background: transparent;
   margin: 0;
   padding: 0;
@@ -12,6 +19,7 @@
   min-height: 100vh;
 }
 
+/* ---------- full-screen container ---------- */
 .account-container {
   position: fixed;
   top: 0;
@@ -21,22 +29,84 @@
   overflow: hidden;
   margin: 0;
   padding: 0;
-  /* Ensure this container sits on the auth gradient background */
   background: transparent;
-  /* Prevent any global layout styles from affecting this */
   isolation: isolate;
   z-index: 1000;
 }
 
-/* Styling for both forms in the account file - signup and signin */
+/* Gradient backdrop — sits behind everything */
+.account-container::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(-45deg, #ff6b6b 0%, #feca57 50%, #ff9ff3 100%);
+  z-index: -2;
+  pointer-events: none;
+}
 
+/* Sliding coloured circle */
+.account-container::before {
+  content: "";
+  position: absolute;
+  height: 2000px;
+  width: 2000px;
+  top: -10%;
+  right: 48%;
+  transform: translateY(-50%);
+  background-image: linear-gradient(-45deg, #ff6b6b 0%, #feca57 50%, #ff9ff3 100%);
+  transition: 1.8s ease-in-out;
+  border-radius: 50%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.account-container.sign-up-mode::before {
+  transform: translate(100%, -50%);
+  right: 52%;
+}
+
+/* ===================================================================
+ * GLOBAL-STYLE ISOLATION
+ * The globals apply background / border / box-shadow / color with
+ * !important to .panel, button, input, div, etc.  We neutralise
+ * them here with equal-or-higher specificity + !important.
+ * =================================================================== */
+.account-container,
+.account-container *,
+.account-container *::before,
+.account-container *::after {
+  /* Strip any inherited surface / card / panel paint */
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  filter: none !important;
+}
+
+/* Panels & forms must be transparent so the gradient shows through */
+.account-container .panels-container,
+.account-container .panel,
+.account-container .left-panel,
+.account-container .right-panel,
+.account-container .forms-container,
+.account-container .signin-signup,
+.account-container .body {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  border-color: transparent !important;
+}
+
+/* ---------- forms container ---------- */
 .forms-container {
   position: absolute;
   width: 100%;
   height: 100%;
   top: 0;
   left: 0;
-  z-index: 10; /* FIXED: Ensure forms are above panels and background */
+  z-index: 10;
 }
 
 .signin-signup {
@@ -48,57 +118,17 @@
   transition: 1s 0.7s ease-in-out;
   display: grid;
   grid-template-columns: 1fr;
-  z-index: 15; /* FIXED: Highest z-index for form container */
+  z-index: 15;
+  pointer-events: auto !important;
 }
 
-form.sign-up-form {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  padding: 0rem 5rem;
-  transition: all 0.2s 0.7s;
-  overflow: hidden;
-  grid-column: 1 / 2;
-  grid-row: 1 / 2;
-  opacity: 0;
-  z-index: 1;
-  pointer-events: none;
-}
-
-/* CRITICAL FIX: Ensure signup form is clickable when active */
-.account-container.sign-up-mode form.sign-up-form {
-  opacity: 1;
-  z-index: 2;
-  pointer-events: all !important;
-}
-
-/* CRITICAL FIX: Ensure all form elements are clickable when signup is active */
-.account-container.sign-up-mode form.sign-up-form input,
-.account-container.sign-up-mode form.sign-up-form .input-field,
-.account-container.sign-up-mode form.sign-up-form .account-btn {
-  pointer-events: all !important;
-}
-
-.sign-up-form p {
-  /* Error message color with fallback */
-  color: var(--on-surface-1, #333333);
-  padding: 3px;
-  margin-bottom: 7px;
-  background-color: rgb(218, 189, 189);
-  border: 1px solid red;
-  width: 50%;
-  border-radius: 5px;
-  text-align: center;
-  font-size: 0.6rem;
-}
-
+/* ---------- sign-in form ---------- */
 form.sign-in-form {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  padding: 0rem 5rem;
+  padding: 0 5rem;
   transition: all 0.2s 0.7s;
   overflow: hidden;
   grid-column: 1 / 2;
@@ -106,48 +136,55 @@ form.sign-in-form {
   z-index: 2;
   opacity: 1;
   pointer-events: all;
+  background: transparent !important;
 }
 
-.sign-in-form .loginSuccess {
-  /* Success messages with fallback */
-  color: var(--on-surface-1, #333333);
-  padding: 3px;
-  margin-bottom: 7px;
-  background-color: rgb(61, 247, 14);
-  border: 1px solid green;
-  width: 50%;
-  border-radius: 5px;
-  text-align: center;
-  font-size: 0.7rem;
+/* ---------- sign-up form ---------- */
+form.sign-up-form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 0 5rem;
+  transition: all 0.2s 0.7s;
+  overflow: hidden;
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+  opacity: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: transparent !important;
 }
 
-.sign-in-form p {
-  /* Error messages with fallback */
-  color: var(--on-surface-1, #333333);
-  padding: 3px;
-  margin-bottom: 7px;
-  background-color: rgb(218, 189, 189);
-  border: 1px solid red;
-  width: 50%;
-  border-radius: 5px;
-  text-align: center;
-  font-size: 0.7rem;
+/* When sign-up mode is active */
+.account-container.sign-up-mode form.sign-up-form {
+  opacity: 1;
+  z-index: 2;
+  pointer-events: all !important;
 }
 
-.form-title {
+.account-container.sign-up-mode form.sign-in-form {
+  opacity: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ---------- form title ---------- */
+.account-container .form-title {
   font-family: "Poppins", sans-serif;
   font-size: 2.2rem;
-  /* Use theme token for heading colour with fallback */
-  color: var(--on-surface-1, #333333);
+  color: #333333 !important;
   margin-bottom: 10px;
   font-weight: bold;
+  background: transparent !important;
 }
 
-.input-field {
+/* ---------- input fields ---------- */
+.account-container .input-field {
   max-width: 380px;
   width: 100%;
-  /* White background for better visibility */
-  background-color: #ffffff;
+  background-color: #ffffff !important;
+  background: #ffffff !important;
   margin: 5px 0;
   height: 35px;
   border-radius: 50px;
@@ -155,52 +192,47 @@ form.sign-in-form {
   grid-template-columns: 15% 85%;
   padding: 0 0.4rem;
   position: relative;
-  border: none;
-  outline: none;
+  border: none !important;
+  outline: none !important;
 }
 
-.input-field i {
+.account-container .input-field i {
   text-align: center;
   line-height: 36px;
-  /* Dark icons on white background */
-  color: #333333;
+  color: #333333 !important;
   transition: 0.5s;
   font-size: 1.2rem;
+  background: transparent !important;
 }
 
-.input-field input {
-  background: none;
-  outline: none;
-  border: none;
+.account-container .input-field input {
+  background: transparent !important;
+  background-color: transparent !important;
+  outline: none !important;
+  border: none !important;
   line-height: 1.3;
   font-family: "Poppins", sans-serif;
   font-weight: 600;
   font-size: 1rem;
-  /* Black text on white background */
-  color: #000000;
+  color: #000000 !important;
+  pointer-events: auto !important;
 }
 
-/* Styling for Date picker input field in the signup form */
+.account-container .input-field input::placeholder {
+  color: #666666 !important;
+}
 
-::-webkit-datetime-edit-text,
-::-webkit-datetime-edit-month-field,
-::-webkit-datetime-edit-day-field,
-::-webkit-datetime-edit-year-field,
-::-webkit-calendar-picker-indicator {
+/* Date picker */
+.account-container ::-webkit-datetime-edit-text,
+.account-container ::-webkit-datetime-edit-month-field,
+.account-container ::-webkit-datetime-edit-day-field,
+.account-container ::-webkit-datetime-edit-year-field,
+.account-container ::-webkit-calendar-picker-indicator {
   color: #aaa;
 }
 
-input[type="date"]::-webkit-calendar-picker-indicator {
-  color: #aaa;
-}
-
-.input-field input::placeholder {
-  color: #666666;
-}
-
-/* Styling for password indicator */
-
-.show-pass {
+/* ---------- password show/hide ---------- */
+.account-container .show-pass {
   position: absolute;
   right: 10px;
   top: 50%;
@@ -208,13 +240,14 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   cursor: pointer;
   font-weight: 600;
   font-size: 1.1rem;
-  /* Black text on white background */
-  color: #000000;
+  color: #000000 !important;
+  background: none !important;
   display: none;
   -webkit-user-select: none;
   user-select: none;
 }
 
+/* ---------- password strength ---------- */
 .pass-indicator {
   width: 50%;
   height: 20px;
@@ -234,7 +267,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   border-radius: 10px;
   background-color: red;
 }
-
 .pass-indicator .medium::before {
   content: "";
   position: absolute;
@@ -244,7 +276,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   border-radius: 10px;
   background-color: red;
 }
-
 .pass-indicator .strong::before {
   content: "";
   position: absolute;
@@ -254,70 +285,104 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   border-radius: 10px;
   background-color: red;
 }
+.pass-indicator .weak.active::before { background: #ff4757; }
+.pass-indicator .medium.active::before { background: orange; }
+.pass-indicator .strong.active::before { background: #23ad5c; }
 
-.pass-indicator .weak.active::before {
-  background: #ff4757;
-}
-
-.pass-indicator .medium.active::before {
-  background: orange;
-}
-
-.pass-indicator .strong.active::before {
-  background: #23ad5c;
-}
-
-.pass-text .weak .medium .strong {
-  font-size: 0.75rem;
-  font-weight: 600;
-  display: none;
-  color: #ef0000;
-}
-
-/* Styling for the buttons in the account files */
-
-.account-btn {
+/* ---------- buttons ---------- */
+.account-container .account-btn {
   width: 200px;
-  background-color: #5995fd;
-  border: none;
-  outline: none;
+  background-color: #5995fd !important;
+  background: #5995fd !important;
+  border: none !important;
+  outline: none !important;
   height: 49px;
   border-radius: 49px;
-  color: #fff;
+  color: #ffffff !important;
   text-transform: uppercase;
   font-weight: 600;
   margin: 10px 0;
-  cursor: pointer;
+  cursor: pointer !important;
   transition: 0.5s;
+  pointer-events: auto !important;
+  position: relative;
+  z-index: 20;
 }
 
-.account-btn:hover {
-  background-color: #4d84e2;
-  color: #fff;
+.account-container .account-btn:hover {
+  background-color: #4d84e2 !important;
+  background: #4d84e2 !important;
+  color: #ffffff !important;
 }
 
-.account-btn:disabled {
-  background-color: #7692c1;
-  cursor: auto;
+.account-container .account-btn:disabled {
+  background-color: #7692c1 !important;
+  background: #7692c1 !important;
+  cursor: auto !important;
 }
 
-/* Styling for forgot password link the signin form */
+/* Panel switch buttons (transparent style) */
+.account-container .account-btn.transparent {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 2px solid #ffffff !important;
+  width: 130px;
+  height: 41px;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #ffffff !important;
+}
 
-.forgot {
+.account-container .account-btn.transparent:hover {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  color: #4481eb !important;
+}
+
+/* ---------- forgot password link ---------- */
+.account-container .forgot {
   font-family: "Poppins", sans-serif;
   font-size: 15px;
-  color: #333333;
-  text-decoration: none;
+  color: #333333 !important;
+  text-decoration: none !important;
+  background: transparent !important;
 }
 
-.forgot:hover {
-  color: #5995fd;
+.account-container .forgot:hover {
+  color: #5995fd !important;
   font-weight: 500;
-  text-decoration: underline;
+  text-decoration: underline !important;
 }
 
-/* Styling for the panel containers used for the sliding animation */
+/* ---------- error / success messages ---------- */
+.account-container .sign-in-form p,
+.account-container .sign-up-form p {
+  color: #333333 !important;
+  padding: 3px;
+  margin-bottom: 7px;
+  background-color: rgb(218, 189, 189) !important;
+  background: rgb(218, 189, 189) !important;
+  border: 1px solid red !important;
+  width: 50%;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 0.7rem;
+}
 
+.account-container .sign-in-form .loginSuccess {
+  color: #333333 !important;
+  padding: 3px;
+  margin-bottom: 7px;
+  background-color: rgb(61, 247, 14) !important;
+  background: rgb(61, 247, 14) !important;
+  border: 1px solid green !important;
+  width: 50%;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 0.7rem;
+}
+
+/* ---------- panels container ---------- */
 .panels-container {
   position: absolute;
   height: 100%;
@@ -326,28 +391,58 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   left: 0;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  z-index: 5; /* FIXED: Lower than forms but above background */
+  z-index: 5;
 }
 
-.account-container:before {
-  content: "";
-  position: absolute;
-  height: 2000px;
-  width: 2000px;
-  top: -10%;
-  right: 48%;
-  transform: translateY(-50%);
-  background-image: linear-gradient(-45deg, #ff6b6b 0%, #feca57 50%, #ff9ff3 100%);
-  transition: 1.8s ease-in-out;
-  border-radius: 50%;
-  z-index: 0;
-  pointer-events: none;
+/* ---------- panel (left / right) ---------- */
+.account-container .panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-around;
+  text-align: center;
+  z-index: 6;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  border-color: transparent !important;
 }
 
-/* Ensure the sliding circle doesn't create white edges */
-.account-container.sign-up-mode:before {
-  transform: translate(100%, -50%);
-  right: 52%;
+.account-container .left-panel {
+  pointer-events: all;
+  padding: 6rem 17% 2rem 12%;
+}
+
+.account-container .right-panel {
+  pointer-events: all;
+  padding: 6rem 12% 2rem 17%;
+}
+
+/* Panel text — always white on gradient */
+.account-container .panel .panel-content,
+.account-container .panel .panel-content *,
+.account-container .panel h3,
+.account-container .panel p {
+  color: #ffffff !important;
+  background: transparent !important;
+}
+
+.account-container .panel h3 {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  line-height: 1;
+  font-size: 1.5rem;
+}
+
+.account-container .panel p {
+  font-family: "Poppins", sans-serif;
+  font-size: 0.95rem;
+  padding: 0.7rem 0;
+}
+
+.account-container .panel .panel-content {
+  transition: transform 0.9s ease-in-out;
+  transition-delay: 0.6s;
 }
 
 .image {
@@ -356,79 +451,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   transition-delay: 0.4s;
 }
 
-/* Styling for panel containers which include the content and the image */
-
-.panel {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  justify-content: space-around;
-  text-align: center;
-  z-index: 6; /* FIXED: Above background but below forms */
-}
-
-.left-panel {
-  pointer-events: all;
-  padding: 6rem 17% 2rem 12%;
-}
-
-.right-panel {
-  pointer-events: all; /* FIXED: Allow clicks on signup button */
-  padding: 6rem 12% 2rem 17%;
-}
-
-.panel .panel-content {
-  color: #ffffff; /* White text for better visibility on gradient background */
-  transition: transform 0.9s ease-in-out;
-  transition-delay: 0.6s;
-}
-
-
-.panel h3 {
-  font-family: "Poppins", sans-serif;
-  font-weight: 600;
-  line-height: 1;
-  font-size: 1.5rem;
-  color: #ffffff;
-}
-
-.panel p {
-  font-family: "Poppins", sans-serif;
-  font-size: 0.95rem;
-  padding: 0.7rem 0;
-  color: #ffffff;
-}
-
-/* Styling for the buttons in the panel containers called signup and signin */
-
-.account-btn.transparent {
-  background: none;
-  border: 2px solid #ffffff;
-  width: 130px;
-  height: 41px;
-  font-weight: 600;
-  font-size: 1rem;
-  color: #ffffff;
-}
-
-.account-btn.transparent:hover {
-  background-color: #ffffff;
-  color: #4481eb;
-}
-
+/* ---------- slide animation ---------- */
 .right-panel .image,
 .right-panel .panel-content {
   transform: translateX(800px);
 }
-
-/* Styling for sliding animation when clicking signup/signin buttons in the panel containers */
-
-.account-container.sign-up-mode:before {
-  transform: translate(100%, -50%);
-  right: 52%;
-}
-
-/* move the left panel to the right side of the screen */
 
 .account-container.sign-up-mode .left-panel .image,
 .account-container.sign-up-mode .left-panel .panel-content {
@@ -438,24 +465,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .account-container.sign-up-mode .signin-signup {
   left: 25%;
 }
-
-/* Sliding animation - when clicking on the sign up button, the signup form appears */
-
-.account-container.sign-up-mode form.sign-up-form {
-  opacity: 1;
-  z-index: 2;
-  pointer-events: all;
-}
-
-/* and the signin form disappears */
-
-.account-container.sign-up-mode form.sign-in-form {
-  opacity: 0;
-  z-index: 1;
-  pointer-events: none;
-}
-
-/* move the right panel to the left and place it on the right side of the screen */
 
 .account-container.sign-up-mode .right-panel .image,
 .account-container.sign-up-mode .right-panel .panel-content {
@@ -470,13 +479,15 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   pointer-events: all;
 }
 
-/* Signup/login styling - tablet version */
-
+/* ===================================================================
+ * TABLET  (≤ 870px)
+ * =================================================================== */
 @media (max-width: 870px) {
   .account-container {
     min-height: 800px;
     height: 100vh;
   }
+
   .signin-signup {
     width: 100%;
     top: 95%;
@@ -485,16 +496,21 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   }
 
   .signin-signup,
-  .container.sign-up-mode .signin-signup {
+  .account-container.sign-up-mode .signin-signup {
     left: 50%;
   }
 
+  /*
+   * FIX: Use a single row for panels so they don't create visible
+   * horizontal bands.  The panels overlap the same area; the circle
+   * pseudo-element provides the colour split.
+   */
   .panels-container {
     grid-template-columns: 1fr;
-    grid-template-rows: 1fr 2fr 1fr;
+    grid-template-rows: auto 1fr auto;
   }
 
-  .panel {
+  .account-container .panel {
     flex-direction: row;
     justify-content: space-around;
     align-items: center;
@@ -502,13 +518,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     grid-column: 1 / 2;
   }
 
-  .right-panel {
-    grid-row: 3 / 4;
-  }
-
-  .left-panel {
-    grid-row: 1 / 2;
-  }
+  .account-container .right-panel { grid-row: 3 / 4; }
+  .account-container .left-panel  { grid-row: 1 / 2; }
 
   .image {
     width: 200px;
@@ -516,28 +527,23 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     transition-delay: 0.6s;
   }
 
-  .panel .panel-content {
+  .account-container .panel .panel-content {
     padding-right: 15%;
     transition: transform 0.9s ease-in-out;
     transition-delay: 0.8s;
   }
 
-  .panel h3 {
-    font-size: 1.2rem;
-  }
+  .account-container .panel h3 { font-size: 1.2rem; }
+  .account-container .panel p  { font-size: 0.7rem; padding: 0.5rem 0; }
 
-  .panel p {
-    font-size: 0.7rem;
-    padding: 0.5rem 0;
-  }
-
-  .btn.transparent {
+  .account-container .account-btn.transparent {
     width: 110px;
     height: 35px;
     font-size: 0.7rem;
   }
 
-  .account-container:before {
+  /* Circle repositioned for vertical layout */
+  .account-container::before {
     width: 1500px;
     height: 1500px;
     transform: translateX(-50%);
@@ -550,18 +556,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     pointer-events: none;
   }
 
-  .account-container.sign-up-mode:before {
+  .account-container.sign-up-mode::before {
     transform: translate(-50%, 100%);
     bottom: 32%;
     right: initial;
     z-index: 0;
     pointer-events: none;
-  }
-
-  /* Ensure mobile doesn't have white edges */
-  .account-container::after {
-    width: 100vw;
-    height: 100vh;
   }
 
   .account-container.sign-up-mode .left-panel .image,
@@ -585,59 +585,37 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   }
 }
 
-/* Signup/login styling - mobile version */
-
+/* ===================================================================
+ * MOBILE  (≤ 570px)
+ * =================================================================== */
 @media (max-width: 570px) {
-  form {
+  form.sign-in-form,
+  form.sign-up-form {
     padding: 0 1.5rem;
   }
 
-  .image {
-    display: none;
-  }
+  .image { display: none; }
 
-  .panel .panel-content {
-    padding: 0.5rem 1rem;
-  }
+  .account-container .panel .panel-content { padding: 0.5rem 1rem; }
+  .account-container .panel p { padding: 0.8rem 0 0 0; }
 
-  .container {
-    padding: 1.5rem;
-  }
+  .account-container .account-btn.transparent { font-size: 0.8rem; }
 
-  .panel p {
-    padding: 0.8rem 0 0 0;
-  }
+  .account-container .left-panel  { padding-top: 15.5%; }
+  .account-container .right-panel { padding: 2%; }
 
-  .btn.transparent {
-    font-size: 0.8rem;
-  }
-
-  .left-panel {
-    padding-top: 15.5%;
-  }
-
-  .right-panel {
-    padding: 2%;
-  }
-
-  .account-container:before {
+  .account-container::before {
     bottom: 70%;
     left: 50%;
     z-index: 0;
     pointer-events: none;
   }
 
-  .account-container.sign-up-mode:before {
+  .account-container.sign-up-mode::before {
     bottom: 23%;
     left: 50%;
     z-index: 0;
     pointer-events: none;
-  }
-
-  /* Ensure smallest mobile screens don't have white edges */
-  .account-container::after {
-    width: 100vw;
-    height: 100vh;
   }
 
   .account-container.sign-up-mode .signin-signup {
@@ -645,202 +623,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     transform: translate(-25%, 0);
   }
 }
-.panel .panel-content p {
-  color: #ffffff !important;
-}
 
-/* ========================================
-   CRITICAL: Override Global Dark Mode Styles
-   The adaptive-text.css forces dark mode globally
-   These overrides ensure auth page visibility
-   ======================================== */
-
-/* Reset specific dark mode overrides within auth container */
-.account-container {
-  isolation: isolate;
-}
-
-/* DEFENSIVE CSS - Ensure nothing can overlay the form */
-.account-container .panels-container,
-.account-container .panel,
-.account-container .forms-container,
-.account-container .signin-signup {
-  background: transparent !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  filter: none !important;
-}
-
-/* Force stacking so the form is always on top */
-.account-container .forms-container { 
-  position: relative; 
-  z-index: 15 !important; 
-}
-
-.account-container .signin-signup { 
-  z-index: 16 !important; 
-}
-
-.account-container .panels-container { 
-  z-index: 10 !important; 
-}
-
-.account-container .panel { 
-  z-index: 11 !important; 
-}
-
-/* If any overlay still captures clicks, set pointer events - but preserve panel functionality */
-.account-container .panels-container { 
-  /* Don't disable pointer events on panels-container as it contains the switching buttons */
-}
-
-/* Enable pointer events for panel buttons and content */
-.account-container .panel,
-.account-container .left-panel,
-.account-container .right-panel { 
-  /* Let the original CSS handle panel pointer events for proper switching */
-}
-
-/* Only enable pointer events for the active form */
-.account-container .signin-signup { 
-  pointer-events: auto !important; 
-}
-
-.account-container .sign-in-form { 
-  pointer-events: auto !important; 
-}
-
-.account-container .sign-in-form input,
-.account-container .sign-in-form .input-field { 
-  pointer-events: auto !important; 
-}
-
-/* Signup form should follow the original logic - none by default, auto when active */
-.account-container.sign-up-mode .sign-up-form { 
-  pointer-events: auto !important; 
-}
-
-.account-container.sign-up-mode .sign-up-form input,
-.account-container.sign-up-mode .sign-up-form .input-field { 
-  pointer-events: auto !important; 
-}
-
-/* Form elements - ensure visibility */
-.account-container .form-title {
-  color: #333333 !important;
-  font-size: 2.2rem !important;
-  font-weight: bold !important;
-}
-
-.account-container .input-field {
-  background-color: #ffffff !important;
-  border: none !important;
-  outline: none !important;
-  box-shadow: none !important;
-}
-
-.account-container .input-field input {
-  background: transparent !important;
-  color: #000000 !important;
-  border: none !important;
-  outline: none !important;
-  box-shadow: none !important;
-}
-
-.account-container .input-field input::placeholder {
-  color: #666666 !important;
-}
-
-.account-container .input-field i {
-  color: #333333 !important;
-}
-
-/* Buttons */
-.account-container .account-btn {
-  background-color: #5995fd !important;
-  color: #ffffff !important;
-  border: none !important;
-  pointer-events: auto !important;
-  position: relative !important;
-  z-index: 20 !important;
-  cursor: pointer !important;
-}
-
-.account-container .account-btn:hover {
-  background-color: #4d84e2 !important;
-  color: #ffffff !important;
-}
-
-.account-container .account-btn:disabled {
-  background-color: #7692c1 !important;
-  color: #ffffff !important;
-}
-
-/* Links */
-.account-container .forgot {
-  color: #333333 !important;
-  text-decoration: none !important;
-}
-
-.account-container .forgot:hover {
-  color: #5995fd !important;
-  text-decoration: underline !important;
-}
-
-/* Panel content - white text on gradient */
-.account-container .panel .panel-content,
-.account-container .panel .panel-content *,
-.account-container .panel h3,
-.account-container .panel p {
-  color: #ffffff !important;
-}
-
-/* Transparent buttons in panels */
-.account-container .account-btn.transparent {
-  background: transparent !important;
-  color: #ffffff !important;
-  border: 2px solid #ffffff !important;
-}
-
-.account-container .account-btn.transparent:hover {
-  background-color: #ffffff !important;
-  color: #ff6b6b !important;
-  border: 2px solid #ffffff !important;
-}
-
-/* Error and success messages */
-.account-container .sign-in-form p,
-.account-container .sign-up-form p {
-  color: #333333 !important;
-  background-color: rgb(218, 189, 189) !important;
-  border: 1px solid red !important;
-}
-
-.account-container .sign-in-form .loginSuccess {
-  color: #333333 !important;
-  background-color: rgb(61, 247, 14) !important;
-  border: 1px solid green !important;
-}
-
-/* Password strength indicator */
-.account-container .show-pass {
-  color: #000000 !important;
-  background: none !important;
-}
-
-/* Additional fixes for white edge issues */
-/* Ensure no global styles interfere with auth pages */
-body:has(.account-container) {
-  margin: 0 !important;
-  padding: 0 !important;
-  overflow: hidden !important;
-  background: linear-gradient(-45deg, #ff6b6b 0%, #feca57 50%, #ff9ff3 100%) !important;
-  background-attachment: fixed !important;
-  min-height: 100vh !important;
-  height: 100vh !important;
-}
-
-html:has(.account-container) {
+/* ===================================================================
+ * BODY / HTML / #root overrides when auth page is active
+ * =================================================================== */
+body:has(.account-container),
+html:has(.account-container),
+#root:has(.account-container) {
   margin: 0 !important;
   padding: 0 !important;
   overflow: hidden !important;
@@ -851,16 +640,10 @@ html:has(.account-container) {
 }
 
 #root:has(.account-container) {
-  margin: 0 !important;
-  padding: 0 !important;
-  overflow: hidden !important;
-  background: linear-gradient(-45deg, #ff6b6b 0%, #feca57 50%, #ff9ff3 100%) !important;
-  min-height: 100vh !important;
-  height: 100vh !important;
   width: 100vw !important;
 }
 
-/* Fallback for browsers that don't support :has() */
+/* Fallback for browsers without :has() */
 .auth-page-active {
   margin: 0 !important;
   padding: 0 !important;
@@ -881,24 +664,9 @@ html:has(.account-container) {
   width: 100vw !important;
 }
 
-/* Ensure the account container covers everything */
-.account-container::after {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: linear-gradient(-45deg, #ff6b6b 0%, #feca57 50%, #ff9ff3 100%);
-  z-index: -2;
-  pointer-events: none;
-}
-
-/* ========================================
-   FORGOT PASSWORD & RESET PASSWORD STYLES
-   ======================================== */
-
-/* Form subtitle for forgot/reset password pages */
+/* ===================================================================
+ * FORGOT PASSWORD / RESET PASSWORD
+ * =================================================================== */
 .form-subtitle {
   font-family: "Poppins", sans-serif;
   font-size: 1rem;
@@ -908,12 +676,12 @@ html:has(.account-container) {
   line-height: 1.4;
 }
 
-/* Error and success message styles */
-.error-message {
+.account-container .error-message {
   color: #333333 !important;
   padding: 10px;
   margin-bottom: 15px;
   background-color: #f8d7da !important;
+  background: #f8d7da !important;
   border: 1px solid #f5c6cb !important;
   border-radius: 5px;
   text-align: center;
@@ -921,11 +689,12 @@ html:has(.account-container) {
   font-family: "Poppins", sans-serif;
 }
 
-.success-message {
+.account-container .success-message {
   color: #333333 !important;
   padding: 10px;
   margin-bottom: 15px;
   background-color: #d4edda !important;
+  background: #d4edda !important;
   border: 1px solid #c3e6cb !important;
   border-radius: 5px;
   text-align: center;
@@ -933,7 +702,6 @@ html:has(.account-container) {
   font-family: "Poppins", sans-serif;
 }
 
-/* Auth links container */
 .auth-links {
   display: flex;
   flex-direction: column;
@@ -942,31 +710,17 @@ html:has(.account-container) {
   margin-top: 20px;
 }
 
-.auth-link {
+.account-container .auth-link {
   font-family: "Poppins", sans-serif;
   font-size: 14px;
   color: #333333 !important;
   text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-.auth-link:hover {
-  color: #5995fd !important;
-  text-decoration: underline;
-}
-
-/* Override for forgot/reset password forms */
-.account-container .error-message,
-.account-container .success-message {
-  color: #333333 !important;
-}
-
-.account-container .auth-link {
-  color: #333333 !important;
+  background: transparent !important;
 }
 
 .account-container .auth-link:hover {
   color: #5995fd !important;
+  text-decoration: underline;
 }
 
 .account-container .form-subtitle {
