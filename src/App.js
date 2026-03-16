@@ -386,6 +386,14 @@ const BlockedUsersSettings = lazyWithPreload(
   "settings-blocked-users"
 );
 
+const DisplaySettings = lazyWithPreload(
+  () =>
+    import(
+      /* webpackChunkName: "settings-display" */ "./pages/Settings/Display"
+    ),
+  "settings-display"
+);
+
 /* ---------- Contact Requests (lazy) ---------- */
 const ContactRequests = lazyWithPreload(
   () =>
@@ -579,7 +587,7 @@ const AppRoutes = () => (
             {/* Redirects for old settings URLs */}
             <Route path="profile" element={<Navigate to="../account" replace />} />
             <Route path="notifications" element={<Navigate to="../account" replace />} />
-            <Route path="display" element={<Navigate to="../account" replace />} />
+            <Route path="display" element={<DisplaySettings />} />
             <Route path="my-ads" element={<Navigate to="../account" replace />} />
             <Route path="payments" element={<Navigate to="../account" replace />} />
             <Route path="subscriptions" element={<Navigate to="../account" replace />} />

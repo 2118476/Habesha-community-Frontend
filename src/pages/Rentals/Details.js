@@ -529,28 +529,7 @@ export default function RentalDetails() {
           )}
         </aside>
 
-        {/* sticky bottom bar on mobile for quick contact/share */}
-        {!isOwner && ownerId && (
-          <div
-            className={styles.stickyBar}
-            role="region"
-            aria-label={t("rentals.quickActions")}
-          >
-            <button
-              className={`${buttonStyles.btn} ${styles.compactBtn} ${styles.compactPrimary}`}
-              onClick={() => openDM(dmPrefill("interest"))}
-            >
-              {t("rentals.contact")}
-            </button>
 
-            <button
-              className={`${buttonStyles.btn} ${styles.compactBtn}`}
-              onClick={handleShare}
-            >
-              Share
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );

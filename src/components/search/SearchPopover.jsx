@@ -601,7 +601,7 @@ export default function SearchPopover() {
         onClick={() => (open ? closeBox() : openBox())}
       >
         {!open ? (
-          <SearchIcon size={18} strokeWidth={2} />
+          <span className={styles.searchEmoji} aria-hidden="true">🔍</span>
         ) : (
           <XIcon size={18} strokeWidth={2} />
         )}

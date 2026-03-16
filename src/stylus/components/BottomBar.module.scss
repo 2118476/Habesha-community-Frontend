@@ -23,6 +23,11 @@
   align-items: center;
   gap: 2px;
   padding: 0.25rem 0;
+  /* reset for when .link is a <button> (Explore) */
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
 }
 
 .icon {

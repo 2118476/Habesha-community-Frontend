@@ -2,6 +2,7 @@ import { useState } from "react";
 // Use the shared axios instance rather than creating a new one.
 import api from '../../../api/axiosInstance';
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const useForm = (validateForm) => {
   const navigate = useNavigate();
@@ -72,7 +73,13 @@ const useForm = (validateForm) => {
             confirmPassword: '',
           });
           setErrors({});
-          // Redirect the user to the login page after registration
+          // Show success popup, then redirect to login
+          await Swal.fire({
+            icon: 'success',
+            title: 'Account Created!',
+            text: 'Your account has been registered successfully. Please sign in.',
+            confirmButtonColor: '#5995fd',
+          });
           navigate('/login');
         }
       } catch (error) {
@@ -88,6 +95,12 @@ const useForm = (validateForm) => {
         
         // Set error to display to user
         setErrors({ submit: errorMessage });
+        Swal.fire({
+          icon: 'error',
+          title: 'Registration Failed',
+          text: errorMessage,
+          confirmButtonColor: '#5995fd',
+        });
       }
     } else {
       setErrors(errors);

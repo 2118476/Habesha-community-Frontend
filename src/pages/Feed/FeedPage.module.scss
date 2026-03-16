@@ -400,195 +400,223 @@
   text-shadow: 0 1px 2px rgba(0,0,0,.45) !important;
 }
 
-/* Pill tabs — blue glass with animated hotspot and idle drift */
+/* Pill tabs — served on cups, spread across the hero */
 .heroTabsWrap {
   position: absolute; left: 0; right: 0;
-  bottom: max(clamp(54px, 10vh, 120px), calc(12px + var(--safe-b)));
+  bottom: max(clamp(40px, 8vh, 100px), calc(12px + var(--safe-b)));
   z-index: 3;
   max-width: 1280px; margin: 0 auto;
-  display: flex; flex-wrap: wrap; gap: 10px;
-  padding: 0 clamp(16px, 3vw, 28px);
+  display: flex; flex-wrap: wrap; gap: 14px 20px;
+  padding: 0 clamp(20px, 4vw, 40px);
+  justify-content: center;
   perspective: 900px;
   transform-style: preserve-3d;
   overflow: visible;
 }
 
-/* === Blue-glass, cursor + auto-reactive 3D pills === */
+/* === Warm ceramic-toned pills that sit on the cups === */
 .heroTabsWrap [role="tab"], .tab {
-  /* live hotspot + pointer/auto magnet & 3D tilt (JS updates these) */
   --gx: 50%;
   --gy: 50%;
   --mx: 0px;
   --my: 0px;
-  --rx: 0deg;   /* rotateX */
-  --ry: 0deg;   /* rotateY */
-  --elev: 0px;  /* translateZ */
+  --rx: 0deg;
+  --ry: 0deg;
+  --elev: 0px;
 
   appearance: none;
-  border: 1px solid var(--tab-glass-border);
+  position: relative;
+  padding: 13px 28px;
+  min-width: 140px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  text-align: center;
+  cursor: pointer;
+  overflow: hidden;
 
-  /* LAYERS:
-     1) radial hotspot that moves (JS updates --gx/--gy)
-     2) slow-drifting brand tint
-     3) base blue-glass gradient
-  */
-  background:
-    radial-gradient(180% 220% at var(--gx) var(--gy),
-      color-mix(in oklab, var(--brand) 46%, transparent) 0%,
-      color-mix(in oklab, var(--brand) 22%, transparent) 18%,
-      transparent 55%),
-    linear-gradient(135deg,
-      color-mix(in oklab, var(--brand) 22%, transparent) 0%,
-      color-mix(in oklab, var(--brand) 10%, transparent) 100%),
-    linear-gradient(135deg, var(--tab-glass-1) 0%, var(--tab-glass-2) 100%);
-  background-size: 180% 180%, 200% 200%, auto;
-  background-position: center, 0% 0%, 0 0;
-
-  /* Light mode: Dark text on light glassy background (for when tabs are on white page) */
-  color: var(--text-1, #0b1324);
-  text-shadow: none;
-  padding: 12px 16px;
-  border-radius: var(--radius-pill);
-  font-weight: 800; font-size: 13.5px; line-height: 1; cursor: pointer;
-
-  backdrop-filter: blur(10px) saturate(120%);
-  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  /* Warm frosted ceramic look */
+  background: rgba(255, 248, 240, 0.25);
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(60, 40, 20, 0.5);
 
   box-shadow:
-    0 1px 0 rgba(255,255,255,.18) inset,
-    0 6px 18px color-mix(in oklab, var(--tab-glass-glow) 28%, transparent);
+    0 4px 12px rgba(80, 50, 20, 0.15),
+    0 1px 0 rgba(255, 255, 255, 0.2) inset,
+    0 -2px 6px rgba(120, 80, 40, 0.08) inset;
 
-  position: relative;
-
-  /* perspective + 3D tilt + Z lift */
   transform: perspective(900px)
              translate(var(--mx), var(--my))
              rotateX(var(--rx)) rotateY(var(--ry))
              translateZ(var(--elev));
-  will-change: transform, background-position, box-shadow;
+  will-change: transform, box-shadow;
 
   transition:
-    transform .16s ease,
-    background-position .16s ease,
-    border-color .16s ease,
-    box-shadow .16s ease,
-    color .16s ease;
+    transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.3s ease,
+    border-color 0.3s ease,
+    background 0.3s ease;
 
-  /* idle drift of layer 2 */
-  animation: tab-drift 16s ease-in-out infinite alternate;
+  /* Staggered entrance — tabs rise up like steam from cups */
+  animation: tabServe 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
-@keyframes tab-drift {
-  0%   { background-position: center,   0% 0%,   0 0; }
-  100% { background-position: center, 100% 80%,  0 0; }
+
+.heroTabsWrap [role="tab"]:nth-child(1), .tab:nth-child(1) { animation-delay: 0.08s; }
+.heroTabsWrap [role="tab"]:nth-child(2), .tab:nth-child(2) { animation-delay: 0.16s; }
+.heroTabsWrap [role="tab"]:nth-child(3), .tab:nth-child(3) { animation-delay: 0.24s; }
+.heroTabsWrap [role="tab"]:nth-child(4), .tab:nth-child(4) { animation-delay: 0.32s; }
+.heroTabsWrap [role="tab"]:nth-child(5), .tab:nth-child(5) { animation-delay: 0.40s; }
+.heroTabsWrap [role="tab"]:nth-child(6), .tab:nth-child(6) { animation-delay: 0.48s; }
+
+@keyframes tabServe {
+  0% {
+    opacity: 0;
+    transform: perspective(900px) translateY(24px) scale(0.88) rotateX(8deg);
+  }
+  60% {
+    opacity: 1;
+    transform: perspective(900px) translateY(-4px) scale(1.02) rotateX(-1deg);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(900px) translateY(0) scale(1) rotateX(0deg);
+  }
 }
+
 .tabLabel { position: relative; z-index: 2; }
 
-/* sheen + inner ring */
-.tab::before,
+/* Warm light sweep on hover */
+.tab::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50px;
+  pointer-events: none;
+  background: linear-gradient(
+    110deg,
+    transparent 25%,
+    rgba(255, 245, 230, 0.35) 48%,
+    rgba(255, 255, 255, 0.15) 52%,
+    transparent 75%
+  );
+  transform: translateX(-120%);
+  transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .tab::after {
   content: "";
-  position: absolute; inset: 0;
-  border-radius: var(--radius-pill);
+  position: absolute;
+  inset: 0;
+  border-radius: 50px;
   pointer-events: none;
-}
-.tab::before {
-  background:
-    linear-gradient(90deg,
-      color-mix(in oklab, var(--brand) 85%, white) 0%,
-      transparent 55%);
-  transform: translateX(-30%) skewX(-12deg);
-  opacity: 0;
-  transition: opacity .18s ease, transform .18s ease;
-}
-.tab::after {
-  box-shadow:
-    inset 0 0 0 1px color-mix(in oklab, var(--brand) 22%, white 10%),
-    inset 0 -10px 20px color-mix(in oklab, var(--brand) 12%, transparent);
-  opacity: .85;
+  box-shadow: inset 0 0 0 1px rgba(255, 248, 240, 0.1);
 }
 
-/* hover/focus/selected */
+/* Hover: lift off the cup with warm glow */
 .heroTabsWrap [role="tab"]:hover,
-.heroTabsWrap [role="tab"]:focus-visible,
-.heroTabsWrap [role="tab"][aria-selected="true"],
-.tab:hover, .tab:focus-visible, .tab[aria-selected="true"] {
-  border-color: var(--tab-glass-border-2);
+.tab:hover {
+  background: rgba(255, 248, 240, 0.35);
+  border-color: rgba(255, 255, 255, 0.4);
   box-shadow:
-    0 1px 0 rgba(255,255,255,.22) inset,
-    0 10px 28px color-mix(in oklab, var(--tab-glass-glow) 36%, transparent),
-    0 0 0 3px color-mix(in oklab, var(--ring) 60%, transparent);
+    0 10px 28px rgba(80, 50, 20, 0.2),
+    0 0 24px rgba(200, 150, 80, 0.1),
+    0 1px 0 rgba(255, 255, 255, 0.25) inset;
   transform: perspective(900px)
-             translate(var(--mx), calc(var(--my) - 1px))
+             translate(var(--mx), calc(var(--my) - 6px))
              rotateX(var(--rx)) rotateY(var(--ry))
-             translateZ(calc(var(--elev) + 0.5px));
-}
-.tab:hover::before, .tab:focus-visible::before {
-  opacity: .85; transform: translateX(0) skewX(-12deg);
+             translateZ(calc(var(--elev) + 3px));
 }
 
-/* press feedback */
-.tab:active {
-  transform: perspective(900px)
-             translate(var(--mx), var(--my))
-             rotateX(var(--rx)) rotateY(var(--ry))
-             translateZ(var(--elev))
-             scale(.98);
+.tab:hover::before {
+  transform: translateX(120%);
 }
 
-/* Keyboard focus ring for a11y */
+/* Focus visible */
+.heroTabsWrap [role="tab"]:focus-visible,
 .tab:focus-visible {
   outline: none;
+  border-color: rgba(200, 150, 80, 0.6);
   box-shadow:
-    0 1px 0 rgba(255,255,255,.22) inset,
-    0 10px 28px color-mix(in oklab, var(--tab-glass-glow) 36%, transparent),
-    0 0 0 3px var(--focus);
+    0 10px 28px rgba(80, 50, 20, 0.2),
+    0 0 0 3px rgba(200, 150, 80, 0.3),
+    0 1px 0 rgba(255, 255, 255, 0.25) inset;
 }
 
-/* reduced motion */
+/* Selected state — warm golden accent */
+.heroTabsWrap [role="tab"][aria-selected="true"],
+.tab[aria-selected="true"] {
+  background: rgba(180, 130, 60, 0.3);
+  border-color: rgba(200, 160, 80, 0.45);
+  box-shadow:
+    0 6px 20px rgba(160, 110, 40, 0.2),
+    0 0 18px rgba(200, 150, 80, 0.1),
+    0 1px 0 rgba(255, 255, 255, 0.2) inset;
+}
+
+/* Press — settles back onto the cup */
+.tab:active {
+  transform: perspective(900px)
+             translate(var(--mx), calc(var(--my) + 1px))
+             rotateX(var(--rx)) rotateY(var(--ry))
+             translateZ(var(--elev))
+             scale(0.97);
+  transition-duration: 0.08s;
+}
+
+/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .heroTabsWrap [role="tab"], .tab {
     animation: none !important;
     transition: none !important;
     transform: none !important;
-    background-position: center, 50% 50%, 0 0 !important;
   }
 }
 
-/* fallback for browsers without color-mix */
-@supports not (color: color-mix(in oklab, red, blue)) {
+/* Fallback for no backdrop-filter */
+@supports not (backdrop-filter: blur(2px)) {
   .heroTabsWrap [role="tab"], .tab {
-    background:
-      radial-gradient(180% 220% at var(--gx) var(--gy),
-        rgba(10,132,255,.42) 0%,
-        rgba(10,132,255,.22) 18%,
-        transparent 55%),
-      linear-gradient(135deg, rgba(10,132,255,.22) 0%, rgba(10,132,255,.10) 100%),
-      linear-gradient(135deg, rgba(10,132,255,.26) 0%, rgba(10,132,255,.14) 100%);
-    box-shadow:
-      0 1px 0 rgba(255,255,255,.18) inset,
-      0 6px 18px rgba(10,132,255,.28);
-    border-color: rgba(10,132,255,.45);
+    background: rgba(60, 40, 20, 0.65);
   }
 }
 
-/* When tabs are inside hero with dark video background, use white text */
+/* White text on hero video */
 .heroStage ~ .heroTabsWrap [role="tab"],
 .heroStage ~ .heroTabsWrap .tab,
 .heroVideo ~ * .heroTabsWrap [role="tab"],
 .heroVideo ~ * .heroTabsWrap .tab {
   color: #ffffff;
-  text-shadow: 0 1px 2px rgba(0,0,0,.35);
+  text-shadow: 0 1px 4px rgba(60, 40, 20, 0.5);
 }
 
-/* Dark mode: Always use white text */
+/* Dark mode */
 :global([data-theme="dark"]) .heroTabsWrap [role="tab"],
 :global([data-theme="dark"]) .heroTabsWrap .tab,
 :global([data-theme="dark"]) .tab {
   color: #ffffff;
-  text-shadow: 0 1px 2px rgba(0,0,0,.35);
+  text-shadow: 0 1px 4px rgba(60, 40, 20, 0.5);
 }
 
-/* Mobile / portrait */
+/* Light mode on non-hero pages */
+:global([data-theme="light"]) .heroTabsWrap [role="tab"],
+:global([data-theme="light"]) .tab {
+  background: rgba(120, 80, 40, 0.08);
+  border-color: rgba(120, 80, 40, 0.12);
+  color: var(--text-1, #0b1324);
+  text-shadow: none;
+  box-shadow: 0 2px 8px rgba(80, 50, 20, 0.06);
+}
+:global([data-theme="light"]) .tab:hover {
+  background: rgba(120, 80, 40, 0.12);
+  border-color: rgba(120, 80, 40, 0.18);
+  box-shadow: 0 8px 24px rgba(80, 50, 20, 0.1);
+}
+
+/* Mobile */
 @media (max-width: 700px), (orientation: portrait) {
   .heroWrap { height: auto; margin-top: calc(-1 * (var(--page-pad) + var(--header-h))); }
   .hero     { position: relative; top: 0; height: auto; overflow: clip; }
@@ -596,13 +624,22 @@
   .heroVideo{ position: relative; width: 100%; height: auto; object-fit: contain; object-position: center top; background: transparent; transform: none !important; }
   .heroInner { top: max(calc(var(--header-h) + clamp(10px, 3vh, 18px)), var(--safe-t)); padding: 0 clamp(16px, 4vw, 24px); }
   
-  /* Mobile: tabs on dark hero background use white text */
   .heroStage ~ .heroTabsWrap [role="tab"],
   .heroStage ~ .heroTabsWrap .tab {
     color: #ffffff;
-    text-shadow: 0 1px 2px rgba(0,0,0,.35);
+    text-shadow: 0 1px 4px rgba(60, 40, 20, 0.5);
   }
-  .heroTabsWrap { bottom: max(clamp(80px, 7vh, 64px), var(--safe-b)); padding: 0 clamp(16px, 4vw, 24px); justify-content: center; }
+  .heroTabsWrap {
+    bottom: max(clamp(80px, 7vh, 64px), var(--safe-b));
+    padding: 0 clamp(16px, 4vw, 24px);
+    justify-content: center;
+    gap: 10px 14px;
+  }
+  .heroTabsWrap [role="tab"], .tab {
+    padding: 11px 20px;
+    min-width: 120px;
+    font-size: 13px;
+  }
   .title    { font-size: clamp(22px, 5.2vw, 34px); }
   .subtitle { font-size: clamp(13px, 3.7vw, 16px); }
   .heroGradientBottom { height: clamp(16px, 2vh, 32px); z-index: 2; }

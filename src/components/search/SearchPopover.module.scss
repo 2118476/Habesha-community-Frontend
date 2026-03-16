@@ -1,228 +1,107 @@
 /* ==========================================================================
-   SearchPopover.module.scss
-   - Inline glassy command-palette style search in the header
-   - Uses global design tokens (surface / on-surface / brand / radius / shadow)
-   - Plays nicely with hero header (video) + dark/light themes
-   - Keyboard shortcut hint pills + accessible focus states
+   SearchPopover.module.scss — Modern command-palette search
+   Spotlight / Raycast inspired, glassmorphism + clean typography
    ========================================================================== */
 
-/* ======= Local design tokens (built on top of global ones) ======= */
 :root {
-  /* Derive from global header height, but don’t override it */
   --search-header-h: var(--header-h, 64px);
-
-  --search-width-open: clamp(240px, 42vw, 520px);
-  --search-radius: var(--radius-pill, 999px);
-
+  --search-width-open: clamp(280px, 44vw, 540px);
+  --search-radius: 14px;
   --search-ink: var(--on-surface-1, #0b1220);
-  --search-ink-muted: color-mix(in oklab, var(--search-ink) 70%, transparent);
-
+  --search-ink-muted: color-mix(in oklab, var(--search-ink) 55%, transparent);
   --search-brand: var(--brand, #0a84ff);
-
-  --search-glass-bg-light: color-mix(
-    in oklab,
-    var(--surface-1, #ffffff) 78%,
-    transparent
-  );
-  --search-glass-bg-dark: color-mix(
-    in oklab,
-    #020617 70%,
-    transparent
-  );
-
-  --search-glass-border-light: color-mix(
-    in oklab,
-    var(--search-ink) 10%,
-    transparent
-  );
-  --search-glass-border-dark: color-mix(
-    in oklab,
-    #ffffff 26%,
-    transparent
-  );
-
-  --search-divider: color-mix(in oklab, var(--search-ink) 12%, transparent);
-  --search-ring: color-mix(in oklab, var(--search-brand) 55%, transparent);
-
-  --search-pop-max-w: min(480px, 90vw);
-
-  /* elevations */
-  --search-elev-shadow: var(
-    --shadow-lg,
-    0 14px 38px rgba(15, 23, 42, 0.18),
-    0 4px 10px rgba(15, 23, 42, 0.12)
-  );
+  --search-pop-max-w: min(520px, 92vw);
+  --search-ring: color-mix(in oklab, var(--search-brand) 50%, transparent);
 }
 
-/* --------------------------------- inline shell --------------------------------- */
+/* ===== Wrapper ===== */
 .wrap {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0;
   width: 44px;
-  transition: width 0.25s ease;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1000;
   outline: none !important;
-  isolation: isolate; /* ensure overlay layers render correctly */
+  isolation: isolate;
 }
 
 .wrap[data-open="true"] {
   width: var(--search-width-open);
 }
 
-.wrap:focus,
-.wrap:focus-within {
-  outline: none !important;
-  box-shadow: none !important;
-}
-
-/* --------------------------------- icon button --------------------------------- */
+/* ===== Trigger button ===== */
 .iconBtn {
-  width: 44px;
-  height: 44px;
-  min-width: 44px;
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
   display: grid;
   place-items: center;
-  
-  /* Stylish background with subtle gradient */
-  border: 1.5px solid rgba(10, 132, 255, 0.15) !important;
-  border-radius: 14px;
-  background: linear-gradient(135deg, 
-    rgba(10, 132, 255, 0.08) 0%,
-    rgba(10, 132, 255, 0.03) 50%,
-    transparent 100%
-  ) !important;
-  backdrop-filter: blur(8px) !important;
-  -webkit-backdrop-filter: blur(8px) !important;
-  box-shadow: 
-    0 4px 12px rgba(10, 132, 255, 0.12),
-    0 2px 6px rgba(10, 132, 255, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
-  
-  /* Use theme-aware foreground color */
-  color: var(--fg, var(--on-surface-1));
+  border: 0 !important;
+  border-radius: 12px;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  color: inherit;
   cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition:
-    transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
-    box-shadow 0.25s ease,
-    border-color 0.25s ease,
-    background 0.25s ease;
-  
-  /* Animated shimmer effect */
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, 
-      transparent 0%,
-      rgba(255, 255, 255, 0.1) 50%,
-      transparent 100%
-    );
-    transform: translateX(-100%);
-    transition: transform 0.6s ease;
-  }
+  transition: transform 0.15s ease, opacity 0.15s ease;
 }
 
 .iconBtn:hover {
-  transform: translateY(-2px) scale(1.08);
-  border-color: rgba(10, 132, 255, 0.3);
-  background: linear-gradient(135deg, 
-    rgba(10, 132, 255, 0.15) 0%,
-    rgba(10, 132, 255, 0.08) 50%,
-    rgba(10, 132, 255, 0.03) 100%
-  ) !important;
-  box-shadow: 
-    0 8px 24px rgba(10, 132, 255, 0.25),
-    0 4px 12px rgba(10, 132, 255, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
-  
-  &::before {
-    transform: translateX(100%);
-  }
+  transform: scale(1.1);
+  opacity: 0.85;
 }
 
 .iconBtn:active {
-  transform: translateY(-1px) scale(1.02);
-  transition-duration: 0.1s;
+  transform: scale(0.95);
 }
 
-/* “active” visual when the popover is open */
 .wrap[data-open="true"] .iconBtn {
-  border-color: var(--search-brand, #0a84ff);
-  background: linear-gradient(135deg, 
-    rgba(10, 132, 255, 0.2) 0%,
-    rgba(10, 132, 255, 0.12) 50%,
-    rgba(10, 132, 255, 0.05) 100%
-  ) !important;
-  box-shadow: 
-    0 6px 20px rgba(10, 132, 255, 0.3),
-    0 2px 8px rgba(10, 132, 255, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
-  transform: translateY(-1px) scale(1.05);
+  color: var(--search-brand);
 }
 
-/* Bigger, more prominent search icon */
 .iconBtn svg {
-  width: 26px;
-  height: 26px;
+  width: 20px;
+  height: 20px;
   display: block;
-  stroke-width: 2.2;
-  filter: drop-shadow(0 1px 2px rgba(10, 132, 255, 0.2));
-  transition: all 0.25s ease;
+  stroke-width: 2;
+  transition: color 0.15s ease;
 }
 
-.iconBtn:hover svg {
-  stroke-width: 2.5;
-  filter: drop-shadow(0 2px 4px rgba(10, 132, 255, 0.3));
+.searchEmoji {
+  font-size: 20px;
+  line-height: 1;
+  display: block;
 }
 
-/* Hero mode: white icon like all other header icons */
-:global(body[data-hero="true"]) :local(.iconBtn) {
-  color: rgba(255, 255, 255, 0.95) !important;
-  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.45)) !important;
-}
-
-/* Dark theme: light icon like all other header icons */
-:global([data-theme="dark"]) :local(.iconBtn) {
-  color: var(--on-surface-1, #e5e7eb) !important;
-}
-
-/* Scrolled state: use proper foreground color */
-:global(.header[data-scrolled="true"]) :local(.iconBtn) {
-  color: var(--on-surface-0, #0f172a) !important;
-  filter: none !important;
-}
-
-/* Dark theme scrolled: light icon */
-:global([data-theme="dark"]) :global(.header[data-scrolled="true"]) :local(.iconBtn) {
-  color: var(--on-surface-1, #f9fbff) !important;
-}
-
-/* transparent input, subtle underline */
+/* ===== Inline input ===== */
 .inlineInput {
   flex: 1 1 auto;
   min-width: 0;
-  background: transparent !important;
-  color: var(--search-ink);
-  caret-color: currentColor;
-  padding: 6px 8px;
+  height: 38px;
+  padding: 0 12px;
   font-size: 14px;
-  border: 0 !important;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--search-ink);
+  caret-color: var(--search-brand);
+  border: 1.5px solid color-mix(in oklab, var(--search-ink) 12%, transparent) !important;
+  border-radius: 12px;
+  background: color-mix(in oklab, var(--surface-1, #f5f7fb) 60%, transparent) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   outline: none !important;
   box-shadow: none !important;
-  border-bottom: 1px solid
-    color-mix(in oklab, var(--search-ink) 18%, transparent);
-
   opacity: 0;
   width: 0;
   pointer-events: none;
   transition:
-    opacity 0.18s ease,
-    width 0.25s ease,
-    border-color 0.18s ease;
+    opacity 0.2s ease,
+    width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.2s ease,
+    background 0.2s ease;
 }
 
 .inlineInput::-webkit-search-decoration,
@@ -238,304 +117,281 @@
   pointer-events: auto;
 }
 
-.wrap:focus-within .inlineInput {
-  border-bottom-color: var(--search-ring);
+.inlineInput:focus {
+  border-color: var(--search-brand) !important;
+  background: color-mix(in oklab, var(--surface-0, #fff) 80%, transparent) !important;
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--search-brand) 15%, transparent) !important;
 }
 
 .inlineInput::placeholder {
-  color: color-mix(in oklab, currentColor 55%, transparent);
+  color: var(--search-ink-muted);
+  font-weight: 400;
 }
 
-/* auto-contrast input on hero */
+/* Hero mode input */
 :global(body[data-hero="true"]) :local(.wrap) .inlineInput,
 :global(body[data-hero="true"]) :local(.wrap) .inlineInput::placeholder {
-  color: #ffffff !important;
-  caret-color: #ffffff !important;
-  border-bottom-color: color-mix(
-    in oklab,
-    #ffffff 45%,
-    transparent
-  ) !important;
+  color: #fff !important;
+  caret-color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+:global(body[data-hero="true"]) :local(.wrap) .inlineInput:focus {
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.12) !important;
 }
 
-/* dark theme input */
-:global([data-theme="dark"]) :local(.wrap) .inlineInput,
-:global([data-theme="dark"]) :local(.wrap) .inlineInput::placeholder {
+/* Dark theme input */
+:global([data-theme="dark"]) :local(.wrap) .inlineInput {
   color: var(--on-surface-1, #e5e7eb);
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+:global([data-theme="dark"]) :local(.wrap) .inlineInput:focus {
+  border-color: var(--search-brand) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+:global([data-theme="dark"]) :local(.wrap) .inlineInput::placeholder {
+  color: rgba(255, 255, 255, 0.4);
 }
 
-/* -------------------------------- centered popover -------------------------------- */
+/* ===== Popover overlay ===== */
 .centerWrap {
   position: fixed;
   inset: 0;
   z-index: 1100;
-  /* IMPORTANT: allow events so backdrop + pop are clickable */
   pointer-events: auto;
 }
 
 .backdrop {
   position: absolute;
   inset: 0;
-  background: transparent; /* fully transparent; we just use it to catch clicks */
+  background: rgba(0, 0, 0, 0.08);
   pointer-events: auto;
+  animation: fadeIn 0.15s ease both;
 }
 
-/* pop container */
+:global([data-theme="dark"]) :local(.backdrop) {
+  background: rgba(0, 0, 0, 0.25);
+}
+
+/* ===== Results dropdown ===== */
 .pop {
   position: absolute;
-  left: calc(50% + 20px);
+  left: 50%;
   transform: translateX(-50%);
-  top: calc(var(--search-header-h) + 10px);
-  
-  /* Responsive width that works on all screen sizes */
-  width: min(var(--search-pop-max-w), calc(100vw - 32px));
-  max-width: 480px;
-  
-  padding: 12px;
-  border-radius: 16px;
-  border: 1px solid var(--search-glass-border-light);
-  background: var(--search-glass-bg-light);
-  backdrop-filter: saturate(160%) blur(12px);
-  -webkit-backdrop-filter: saturate(160%) blur(12px);
-  box-shadow: var(--search-elev-shadow);
-  pointer-events: auto; /* clickable */
-  animation: popIn 0.14s ease-out both;
-  color: var(--on-surface-1, #0b1220);
-  
-  /* Ensure it doesn't overflow on narrow screens */
-  margin: 0 16px;
-  box-sizing: border-box;
+  top: calc(var(--search-header-h) + 8px);
+  width: var(--search-pop-max-w);
+  max-width: calc(100vw - 32px);
+  padding: 8px;
+  border-radius: var(--search-radius);
+  border: 1px solid color-mix(in oklab, var(--search-ink) 8%, transparent);
+  background: color-mix(in oklab, var(--surface-0, #fff) 92%, transparent);
+  backdrop-filter: saturate(180%) blur(24px);
+  -webkit-backdrop-filter: saturate(180%) blur(24px);
+  box-shadow:
+    0 24px 48px -12px rgba(0, 0, 0, 0.12),
+    0 8px 16px -4px rgba(0, 0, 0, 0.06),
+    0 0 0 1px rgba(0, 0, 0, 0.03);
+  pointer-events: auto;
+  animation: popIn 0.18s cubic-bezier(0.16, 1, 0.3, 1) both;
+  color: var(--search-ink);
 }
 
-/* stronger contrast over hero */
-:global(body[data-hero="true"]) :local(.pop) {
-  background: var(--search-glass-bg-dark);
-  border-color: var(--search-glass-border-dark);
-  color: #ffffff;
-}
-
-/* dark theme tuning */
+/* Dark theme dropdown */
 :global([data-theme="dark"]) :local(.pop) {
-  background: color-mix(
-    in oklab,
-    #020617 68%,
-    transparent
-  );
-  border-color: color-mix(
-    in oklab,
-    #ffffff 16%,
-    transparent
-  );
+  background: color-mix(in oklab, #0f172a 88%, transparent);
+  border-color: rgba(255, 255, 255, 0.08);
   color: var(--on-surface-1, #e5e7eb);
+  box-shadow:
+    0 24px 48px -12px rgba(0, 0, 0, 0.5),
+    0 8px 16px -4px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
-/* Fallback when blur is unsupported */
+/* Hero mode dropdown */
+:global(body[data-hero="true"]) :local(.pop) {
+  background: color-mix(in oklab, #0f172a 85%, transparent);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
 @supports not (backdrop-filter: blur(2px)) {
-  .pop {
-    background: var(--surface-2, rgba(15, 23, 42, 0.92));
-  }
+  .pop { background: var(--surface-0, #fff); }
+  :global([data-theme="dark"]) :local(.pop) { background: #0f172a; }
 }
 
-/* entrance */
 @keyframes popIn {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-6px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0) scale(1);
-  }
+  from { opacity: 0; transform: translateX(-50%) translateY(-8px) scale(0.97); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
 }
 
-/* top messages (transparent rows) */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ===== Status / hint / error messages ===== */
 .status,
 .hint,
 .error {
-  margin: 4px 2px 8px 2px;
-  padding: 8px 10px;
-  font-size: 13.5px;
+  padding: 12px 14px;
+  font-size: 13px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   border-radius: 10px;
-  background: transparent;
+  color: var(--search-ink-muted);
+  line-height: 1.5;
 }
 
-.hint,
-.status {
-  color: currentColor;
-}
-
-.hintIcon {
-  opacity: 0.85;
-}
+.hint { color: inherit; opacity: 0.6; }
+.hintIcon { opacity: 0.5; flex-shrink: 0; }
 
 .error {
-  color: #8a1620;
-  background: #ffe9eccc;
-  border: 1px solid
-    color-mix(in oklab, #8a1620 35%, transparent);
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.06);
+  border: 1px solid rgba(220, 38, 38, 0.12);
 }
 
-/* shortcut pill ("/" / Ctrl+K) */
 .shortcutPill {
   margin-left: auto;
-  padding: 3px 8px;
-  border-radius: 12px;
+  padding: 3px 10px;
+  border-radius: 8px;
   font-size: 11px;
-  border: 1px solid
-    color-mix(in oklab, currentColor 40%, transparent);
-  background: color-mix(
-    in oklab,
-    var(--surface-0, #f5f7fb) 65%,
-    transparent
-  );
-  opacity: 0.9;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border: 1px solid color-mix(in oklab, currentColor 20%, transparent);
+  background: color-mix(in oklab, currentColor 5%, transparent);
+  opacity: 0.7;
   white-space: nowrap;
 }
 
-/* list — single-line rows with separators */
+/* ===== Results list ===== */
 .list {
-  max-height: 56vh;
-  overflow: auto;
-  padding: 2px 0;
-  scrollbar-width: thin;
+  max-height: 52vh;
+  overflow-y: auto;
   overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-gutter: stable both-edges;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--search-ink) 12%, transparent) transparent;
 }
 
-.list::-webkit-scrollbar {
-  width: 8px;
-}
-
+.list::-webkit-scrollbar { width: 6px; }
 .list::-webkit-scrollbar-thumb {
-  background: color-mix(
-    in oklab,
-    var(--search-ink) 18%,
-    transparent
-  );
-  border-radius: 8px;
+  background: color-mix(in oklab, var(--search-ink) 12%, transparent);
+  border-radius: 6px;
 }
+.list::-webkit-scrollbar-track { background: transparent; }
 
-.list::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-/* subtle top/bottom fades */
-.list::before,
-.list::after {
-  content: "";
-  position: sticky;
-  display: block;
-  height: 10px;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.list::before {
-  top: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0.25),
-    transparent
-  );
-}
-
-.list::after {
-  bottom: 0;
-  background: linear-gradient(
-    0deg,
-    rgba(0, 0, 0, 0.25),
-    transparent
-  );
-}
-
+/* ===== Result item ===== */
 .item {
-  position: relative;
   display: grid;
-  grid-template-columns: 20px 1fr auto;
-  gap: 10px;
+  grid-template-columns: 32px 1fr auto;
+  gap: 12px;
   align-items: center;
   padding: 10px 12px;
-  min-height: 44px;
+  min-height: 48px;
   text-decoration: none;
   color: inherit;
   border-radius: 10px;
-  transition:
-    background-color 0.12s ease,
-    transform 0.08s ease;
-  background: transparent; /* single line look */
+  cursor: pointer;
+  transition: background-color 0.1s ease;
 }
 
-.item + .item {
-  border-top: 1px solid var(--search-divider);
-}
-
-/* hover/active */
 .item:hover {
-  background: color-mix(
-    in oklab,
-    var(--surface-0, #ffffff) 12%,
-    transparent
-  );
+  background: color-mix(in oklab, var(--search-brand) 6%, transparent);
 }
 
-:global(body[data-hero="true"]) :local(.item:hover),
 :global([data-theme="dark"]) :local(.item:hover) {
-  background: rgba(15, 23, 42, 0.4);
+  background: rgba(255, 255, 255, 0.06);
 }
 
-/* keyboard active */
+:global(body[data-hero="true"]) :local(.item:hover) {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Keyboard active */
 .active {
-  outline: 2px solid var(--search-ring);
-  outline-offset: 2px;
+  background: color-mix(in oklab, var(--search-brand) 8%, transparent);
+  outline: none;
 }
 
-/* pieces inside row */
+:global([data-theme="dark"]) :local(.active) {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ===== Item parts ===== */
 .leadingIcon {
-  width: 20px;
-  height: 20px;
+  width: 32px;
+  height: 32px;
   display: grid;
   place-items: center;
-  opacity: 0.95;
+  border-radius: 8px;
+  background: color-mix(in oklab, var(--search-brand) 8%, transparent);
+  color: var(--search-brand);
+  flex-shrink: 0;
+}
+
+:global([data-theme="dark"]) :local(.leadingIcon) {
+  background: rgba(10, 132, 255, 0.12);
+}
+
+.leadingIcon svg {
+  width: 16px;
+  height: 16px;
 }
 
 .title {
   min-width: 0;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  letter-spacing: -0.01em;
 }
 
 .metaRight {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  margin-left: 8px;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
 .badge {
   display: inline-block;
-  padding: 2px 8px;
+  padding: 3px 10px;
   font-size: 11px;
-  border-radius: 12px;
-  border: 1px solid
-    color-mix(in oklab, currentColor 24%, transparent);
-  background: color-mix(
-    in oklab,
-    currentColor 10%,
-    transparent
-  );
-  color: inherit;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border-radius: 8px;
+  background: color-mix(in oklab, var(--search-brand) 8%, transparent);
+  color: var(--search-brand);
+  text-transform: lowercase;
 }
 
-/* footer */
+:global([data-theme="dark"]) :local(.badge) {
+  background: rgba(10, 132, 255, 0.15);
+  color: #60a5fa;
+}
+
+.metaRight svg {
+  width: 14px;
+  height: 14px;
+  opacity: 0.35;
+  transition: opacity 0.1s ease, transform 0.1s ease;
+}
+
+.item:hover .metaRight svg {
+  opacity: 0.7;
+  transform: translateX(2px);
+}
+
+/* ===== Footer ===== */
 .footer {
-  margin-top: 10px;
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px solid color-mix(in oklab, var(--search-ink) 6%, transparent);
   display: flex;
   justify-content: flex-end;
 }
@@ -544,115 +400,70 @@
 .seeAll {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-radius: 12px;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 10px;
   text-decoration: none;
-  border: 1px solid
-    color-mix(in oklab, currentColor 32%, transparent);
-  background: color-mix(
-    in oklab,
-    currentColor 8%,
-    transparent
-  );
+  border: 0;
+  background: color-mix(in oklab, var(--search-brand) 8%, transparent);
   font-size: 12.5px;
-  color: inherit;
-  transition:
-    transform 0.12s ease,
-    border-color 0.15s ease,
-    box-shadow 0.15s ease,
-    background-color 0.15s ease;
+  font-weight: 600;
+  color: var(--search-brand);
+  cursor: pointer;
+  transition: background-color 0.12s ease, transform 0.1s ease;
 }
 
 .allBtn:hover,
 .seeAll:hover {
+  background: color-mix(in oklab, var(--search-brand) 14%, transparent);
   transform: translateY(-1px);
-  box-shadow: var(
-    --shadow-soft,
-    0 2px 8px rgba(15, 23, 42, 0.18)
-  );
 }
 
-/* ------- accessibility polish ------- */
+/* ===== Focus visible ===== */
 .item:focus-visible,
 .allBtn:focus-visible,
 .seeAll:focus-visible,
-.iconBtn:focus-visible,
-.inlineInput:focus-visible {
+.iconBtn:focus-visible {
   outline: 2px solid var(--search-ring);
-  outline-offset: 3px;
-  border-radius: 12px;
+  outline-offset: 2px;
 }
 
-/* Reduced motion */
+/* ===== Reduced motion ===== */
 @media (prefers-reduced-motion: reduce) {
-  .wrap {
-    transition: none;
-  }
-  .inlineInput {
-    transition: none;
-  }
-  .pop {
-    animation: none;
-  }
+  .wrap, .inlineInput, .pop { transition: none; }
+  .pop { animation: none; }
 }
 
-/* Mobile tweaks */
+/* ===== Mobile ===== */
 @media (max-width: 540px) {
   .wrap[data-open="true"] {
-    width: min(85vw, var(--search-width-open));
+    width: min(80vw, var(--search-width-open));
   }
-
   .pop {
-    /* Better mobile sizing and centering with slight right offset */
     width: calc(100vw - 24px);
     max-width: 420px;
+    left: 50%;
     margin: 0 12px;
-    left: calc(50% + 15px);
-    transform: translateX(-50%);
-    
-    /* Adjust padding for mobile */
-    padding: 10px;
+    padding: 6px;
   }
-
-  .title {
-    font-size: 13.5px;
-  }
-  
-  /* Ensure search input is properly sized on mobile */
-  .inlineInput {
-    font-size: 16px; /* Prevent zoom on iOS */
-  }
+  .inlineInput { font-size: 16px; }
+  .title { font-size: 13.5px; }
 }
 
-/* Extra small screens */
 @media (max-width: 380px) {
   .pop {
     width: calc(100vw - 16px);
     margin: 0 8px;
-    padding: 8px;
-    left: calc(50% + 10px);
+    padding: 6px;
   }
-  
   .wrap[data-open="true"] {
-    width: min(90vw, var(--search-width-open));
+    width: min(85vw, var(--search-width-open));
   }
 }
 
-/* High-contrast / forced-colors (Windows) */
+/* ===== High contrast / forced colors ===== */
 @media (forced-colors: active) {
-  .pop {
-    border: 1px solid CanvasText;
-    background: Canvas;
-  }
-  .item + .item {
-    border-top: 1px solid CanvasText;
-  }
-  .badge {
-    border-color: CanvasText;
-  }
-  .allBtn,
-  .seeAll {
-    border-color: CanvasText;
-  }
+  .pop { border: 1px solid CanvasText; background: Canvas; }
+  .badge { border: 1px solid CanvasText; }
+  .allBtn, .seeAll { border: 1px solid CanvasText; }
 }

@@ -1,6 +1,7 @@
 // FILE: src/pages/Settings/Display.js
 // src/pages/Settings/Display.js
 import React, { useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import useUserSettings from "./hooks/useUserSettings";
 import {
   applyTheme,
@@ -11,9 +12,21 @@ import styles from "../../stylus/sections/Settings.module.scss";
 
 const THEME_OPTIONS = ["LIGHT", "DARK", "SYSTEM", "HIGH_CONTRAST"];
 const FONT = ["SMALL", "DEFAULT", "LARGE"];
+const LANG_OPTIONS = [
+  { code: "en", label: "English" },
+  { code: "am", label: "አማርኛ" },
+];
 
 export default function DisplaySettings() {
   const { settings, update, saving } = useUserSettings();
+  const { i18n, t } = useTranslation();
+
+  const currentLang = i18n.resolvedLanguage || i18n.language || "en";
+
+  const handleLangChange = useCallback((code) => {
+    i18n.changeLanguage(code);
+    localStorage.setItem("ui.lang", code);
+  }, [i18n]);
 
   // Apply current settings to <html data-*> immediately when settings change
   useEffect(() => {
@@ -97,6 +110,35 @@ export default function DisplaySettings() {
         </div>
         <p className={styles.help}>
           Changes the base font size across the entire application.
+        </p>
+      </section>
+
+      {/* Language */}
+      <section className={styles.panel}>
+        <h2>{t("settings.display.language", "Language")}</h2>
+        <div
+          className={styles.pills}
+          role="radiogroup"
+          aria-label="Language selection"
+        >
+          {LANG_OPTIONS.map((opt) => {
+            const active = currentLang === opt.code;
+            return (
+              <button
+                key={opt.code}
+                type="button"
+                role="radio"
+                aria-checked={active}
+                className={`${styles.pill} ${active ? styles.active : ""}`}
+                onClick={() => handleLangChange(opt.code)}
+              >
+                {opt.label}
+              </button>
+            );
+          })}
+        </div>
+        <p className={styles.help}>
+          {t("settings.display.languageHelp", "Choose your preferred language for the interface.")}
         </p>
       </section>
 

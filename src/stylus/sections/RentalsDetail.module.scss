@@ -305,23 +305,7 @@
   &:hover { text-decoration: underline; }
 }
 
-/* Mobile sticky actions */
-.stickyBar {
-  position: sticky;
-  bottom: 0;
-  left: 0; right: 0;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 10px;
-  padding: 12px;
-  background: color-mix(in oklab, var(--r-surface-0) 88%, transparent);
-  border-top: 1px solid var(--r-line);
-  backdrop-filter: blur(8px);
-  margin-top: var(--s-6);
 
-  /* keep compact */
-  :global(.btn), .compactBtn { min-height: 36px !important; }
-}
 
 /* Small screens */
 @media (max-width: 480px) {

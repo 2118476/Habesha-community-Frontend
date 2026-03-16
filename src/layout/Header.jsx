@@ -24,13 +24,6 @@ import SearchPopover from "../components/search/SearchPopover";
 
 import styles from "./Header.module.scss";
 
-const getInitialTheme = () => {
-  // Read the persisted theme or fall back to dark when none is present.
-  const saved = localStorage.getItem("ui.theme");
-  if (saved === "dark" || saved === "light") return saved;
-  return "dark"; // Default to One UI 8 inspired dark mode
-};
-
 const firstString = (...vals) =>
   vals.find((v) => typeof v === "string" && v.trim().length > 0) || null;
 
@@ -97,7 +90,6 @@ export default function Header() {
   const unreadChats = useUnreadCount(15000); // threads with unread > 0
   const { t, i18n } = useTranslation();
 
-  const [theme, setTheme] = useState(getInitialTheme);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [imgErr, setImgErr] = useState(false);
@@ -113,12 +105,6 @@ export default function Header() {
   const displayName =
     user?.name || user?.displayName || user?.username || "You";
   const showImg = !!avatarUrl && !imgErr;
-
-  // Theme sync
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-    localStorage.setItem("ui.theme", theme);
-  }, [theme]);
 
   // Close user menu on outside click
   useEffect(() => {
@@ -206,9 +192,7 @@ export default function Header() {
             aria-label={`${t('nav.habesha')} ${t('nav.home')}`}
             title={t('nav.home')}
           >
-            <span className={styles.mark} aria-hidden>
-              HC
-            </span>
+            <span className={styles.logoEmoji} aria-hidden>🏠</span>
             <strong className={styles.brand}>{t('nav.habesha')}</strong>
           </Link>
         </div>
@@ -343,7 +327,7 @@ export default function Header() {
 
           <span className={styles.tip} title="Theme">
             <div className={styles.theme}>
-              <ThemeToggle onToggle={(next) => setTheme(next)} />
+              <ThemeToggle />
             </div>
           </span>
         </div>

@@ -72,6 +72,9 @@ export default function useUserSettings() {
       try {
         setSaving(true);
         await api.put("/api/users/me/settings", partial);
+      } catch (e) {
+        console.warn("Failed to save settings:", e?.response?.status || e?.message);
+        setError(e);
       } finally {
         setSaving(false);
       }

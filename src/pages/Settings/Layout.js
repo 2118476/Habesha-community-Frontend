@@ -19,6 +19,7 @@ const SettingsLayout = () => {
     { to: 'security', label: t('settings.security.title') },
     { to: 'blocked-users', label: t('settings.blockedUsers') },
     { to: 'contacts', label: t('settings.contactRequests.title') },
+    { to: 'display', label: t('settings.display.title', 'Display') },
   ];
 
   return (

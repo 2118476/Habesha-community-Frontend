@@ -107,6 +107,9 @@
   top: 0;
   left: 0;
   z-index: 10;
+  /* CRITICAL: let clicks pass through to the panels underneath;
+     the actual .signin-signup and form elements re-enable pointer-events */
+  pointer-events: none !important;
 }
 
 .signin-signup {
