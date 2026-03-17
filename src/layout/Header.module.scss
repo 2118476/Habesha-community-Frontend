@@ -38,8 +38,18 @@
     border-color 0.25s ease,
     box-shadow 0.25s ease,
     color 0.25s ease,
+    transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
     -webkit-backdrop-filter 0.25s ease,
     backdrop-filter 0.25s ease;
+  will-change: transform;
+}
+
+/* Mobile: slide header up when scrolling down */
+@media (max-width: 800px) {
+  .header[data-hidden="true"] {
+    transform: translateY(-100%);
+    pointer-events: none;
+  }
 }
 
 /* ================= Layout rows ================ */

@@ -1,30 +1,51 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import styles from '../stylus/components/BottomBar.module.scss';
 
-/**
- * BottomBar displays a fixed navigation bar on small devices with
- * quick access to the most common destinations: home, explore,
- * create post, saved items and account settings. It only appears
- * below a certain viewport width via CSS media queries.
- *
- * The "Explore" button dispatches a synthetic "/" keydown event so
- * the existing SearchPopover (mounted in the Header) opens — no
- * duplicate search component needed.
- */
+const SCROLL_THRESHOLD = 8; // px of scroll before toggling
+
 const BottomBar = () => {
   const { t } = useTranslation();
+  const [hidden, setHidden] = useState(false);
+  const lastY = useRef(0);
+  const ticking = useRef(false);
+
+  useEffect(() => {
+    const onScroll = () => {
+      if (ticking.current) return;
+      ticking.current = true;
+      requestAnimationFrame(() => {
+        const y = window.scrollY;
+        const delta = y - lastY.current;
+        if (delta > SCROLL_THRESHOLD) setHidden(true);   // scrolling down
+        else if (delta < -SCROLL_THRESHOLD) setHidden(false); // scrolling up
+        lastY.current = y;
+        ticking.current = false;
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // Reset on route change (AppShell dispatches 'routechange')
+  useEffect(() => {
+    const reset = () => { setHidden(false); lastY.current = 0; };
+    window.addEventListener('routechange', reset);
+    return () => window.removeEventListener('routechange', reset);
+  }, []);
 
   const openSearch = useCallback(() => {
-    // SearchPopover listens for "/" keydown on document when no input is focused
     document.dispatchEvent(
       new KeyboardEvent('keydown', { key: '/', bubbles: true })
     );
   }, []);
 
   return (
-    <nav className={styles.bar}>
+    <nav
+      className={`${styles.bar} ${hidden ? styles.barHidden : ''}`}
+      aria-hidden={hidden}
+    >
       <NavLink
         to="/app/home"
         className={({ isActive }) =>

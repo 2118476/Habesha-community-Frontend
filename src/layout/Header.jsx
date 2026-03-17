@@ -92,7 +92,9 @@ export default function Header() {
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [headerHidden, setHeaderHidden] = useState(false);
   const [imgErr, setImgErr] = useState(false);
+  const lastScrollY = useRef(0);
 
   const menuRef = useRef(null);
   const firstItemRef = useRef(null);
@@ -140,12 +142,32 @@ export default function Header() {
     window.dispatchEvent(new CustomEvent("app:toggle-drawer"));
   }, []);
 
-  // Scroll state (glassy header after threshold)
+  // Scroll state (glassy header after threshold + hide on scroll down for mobile)
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
+    const THRESHOLD = 8;
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const y = window.scrollY;
+        setScrolled(y > 12);
+        const delta = y - lastScrollY.current;
+        if (delta > THRESHOLD) setHeaderHidden(true);
+        else if (delta < -THRESHOLD) setHeaderHidden(false);
+        lastScrollY.current = y;
+        ticking = false;
+      });
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    // Reset on route change
+    const reset = () => { setHeaderHidden(false); lastScrollY.current = 0; };
+    window.addEventListener("routechange", reset);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("routechange", reset);
+    };
   }, []);
 
   const onMenuKeyDown = (e) => {
@@ -170,7 +192,7 @@ export default function Header() {
   const notifCount = Number(counts?.notifications ?? 0) || 0;
 
   return (
-    <header className={styles.header} data-scrolled={scrolled}>
+    <header className={styles.header} data-scrolled={scrolled} data-hidden={headerHidden || undefined}>
       <div className={styles.row}>
         {/* Left: menu + logo */}
         <div className={styles.left}>
