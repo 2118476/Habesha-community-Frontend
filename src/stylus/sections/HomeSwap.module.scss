@@ -270,15 +270,16 @@
   text-decoration: none;
   cursor: pointer;
 
-  background: var(--hs-surface);
-  color: var(--hs-brand); /* Blue text for chips */
-  border: 1px solid var(--hs-brand); /* Blue border for chips */
-  border-radius: 24px;
+  background: var(--hs-surface) !important;
+  color: var(--hs-brand) !important;
+  border: 1px solid var(--hs-brand) !important;
+  border-radius: 24px !important;
   font-weight: 500;
 
   &:hover { 
-    background: var(--hs-brand);
-    color: #ffffff;
+    background: var(--hs-brand) !important;
+    color: #ffffff !important;
+    border-color: var(--hs-brand) !important;
   }
   &:focus-visible {
     outline: 3px solid rgba(10,132,255,.28);
@@ -432,12 +433,20 @@
     color: #666666 !important;
   }
   
-  /* Links should remain blue */
+  /* Links and chip buttons should remain blue */
   .wrap a,
   .page a,
   .wrap .link,
-  .page .link {
+  .page .link,
+  .wrap button.chip,
+  .page button.chip {
     color: #0ea5e9 !important;
+  }
+
+  /* Chip hover: white text on brand background */
+  .wrap .chip:hover,
+  .page .chip:hover {
+    color: #ffffff !important;
   }
   
   /* Primary buttons should keep white text */

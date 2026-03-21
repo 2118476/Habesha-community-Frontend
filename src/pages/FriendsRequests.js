@@ -1,11 +1,13 @@
 // src/pages/FriendsRequests.jsx
 import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import api from "../api/axiosInstance";
 import { toast } from "react-toastify";
 import buttonStyles from "../stylus/components/Button.module.scss";
 import styles from "../stylus/sections/Friends.module.scss";
 import Avatar from "../components/Avatar";
 import ProfileLink from "../components/ProfileLink";
+import prettyTime from "../utils/prettyTime";
 
 /** ---- Config ---- */
 const REFRESH_MS = 15000; // auto refresh lists
@@ -16,20 +18,7 @@ const safe = (v, f) => (v == null ? f : v);
 const toList = (x) => (Array.isArray(x) ? x : []);
 const cx = (...c) => c.filter(Boolean).join(" ");
 
-const timeAgo = (iso) => {
-  if (!iso) return "";
-  const d = new Date(iso);
-  const diff = Date.now() - d.getTime();
-  const s = Math.floor(diff / 1000);
-  if (s < 60) return `${s}s ago`;
-  const m = Math.floor(s / 60);
-  if (m < 60) return `${m}m ago`;
-  const h = Math.floor(m / 60);
-  if (h < 24) return `${h}h ago`;
-  const days = Math.floor(h / 24);
-  if (days < 7) return `${days}d ago`;
-  return d.toLocaleDateString();
-};
+/* timeAgo replaced by shared prettyTime util for i18n */
 
 const avatarOf = (u) =>
   (typeof u?.avatar === "string" && u.avatar) ||
@@ -93,6 +82,7 @@ function reducer(state, action) {
 
 /** ---- Row components ---- */
 function IncomingCard({ req, onAccept, onDecline }) {
+  const { t } = useTranslation();
   const sender = {
     id: safe(req.senderId, req.requesterId),
     name: safe(req.senderName, req.requesterName) || "User",
@@ -108,7 +98,7 @@ function IncomingCard({ req, onAccept, onDecline }) {
           <ProfileLink userId={sender.id}>{sender.name}</ProfileLink>
         </div>
         <div className={styles.cardMeta}>
-          <span>sent {timeAgo(req.createdAt)}</span>
+          <span>sent {prettyTime(req.createdAt, t)}</span>
           {req.mutualCount > 0 && <span className={styles.dot}>•</span>}
           {req.mutualCount > 0 && <span>{req.mutualCount} mutual</span>}
         </div>
@@ -134,6 +124,7 @@ function IncomingCard({ req, onAccept, onDecline }) {
 }
 
 function OutgoingCard({ req, onCancel }) {
+  const { t } = useTranslation();
   const target = {
     id: safe(req.receiverId, req.targetId),
     name: safe(req.receiverName, req.targetName) || "User",
@@ -150,7 +141,7 @@ function OutgoingCard({ req, onCancel }) {
           <ProfileLink userId={target.id}>{target.name}</ProfileLink>
         </div>
         <div className={styles.cardMeta}>
-          <span>sent {timeAgo(req.createdAt)}</span>
+          <span>sent {prettyTime(req.createdAt, t)}</span>
           {req.status && (
             <>
               <span className={styles.dot}>•</span>

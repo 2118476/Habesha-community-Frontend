@@ -1,4 +1,13 @@
 {
+  "time": {
+    "justNow": "Just now",
+    "minutes": "{{count}}m",
+    "hours": "{{count}}h",
+    "days": "{{count}}d",
+    "weeks": "{{count}}w",
+    "months": "{{count}}mo",
+    "years": "{{count}}y"
+  },
   "nav": {
     "openNavigation": "Open navigation",
     "home": "Home",
@@ -932,6 +941,24 @@
     "display": "Display",
     "language": "Language",
     "theme": "Theme",
+    "displaySection": {
+      "title": "Display & Accessibility",
+      "theme": "Theme",
+      "themeLight": "Light",
+      "themeDark": "Dark",
+      "themeSystem": "System",
+      "themeHighContrast": "High Contrast",
+      "themeHelp": "System follows your OS setting. High-contrast boosts contrast for readability.",
+      "fontSize": "Font size",
+      "fontSmall": "Small",
+      "fontDefault": "Default",
+      "fontLarge": "Large",
+      "fontSizeHelp": "Changes the base font size across the entire application.",
+      "language": "Language",
+      "languageHelp": "Choose your preferred language for the interface.",
+      "saving": "Saving…",
+      "loading": "Loading display settings..."
+    },
     "blockedUsers": "Blocked Users",
     "subscriptions": "Subscriptions",
     "payments": "Payments",
@@ -1237,7 +1264,7 @@
       "placeholder": "Share anything on your mind, {{name}}...",
       "placeholderAria": "Start a new post",
       "createAd": "Create Ad",
-      "addPhoto": "Photo/Video",
+      "addPhoto": "Sell Something",
       "moreOptions": "More Options"
     },
     "a11y": {

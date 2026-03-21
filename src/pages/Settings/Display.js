@@ -1,5 +1,4 @@
 // FILE: src/pages/Settings/Display.js
-// src/pages/Settings/Display.js
 import React, { useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import useUserSettings from "./hooks/useUserSettings";
@@ -23,12 +22,24 @@ export default function DisplaySettings() {
 
   const currentLang = i18n.resolvedLanguage || i18n.language || "en";
 
+  const themeLabels = {
+    LIGHT: t("settings.displaySection.themeLight", "Light"),
+    DARK: t("settings.displaySection.themeDark", "Dark"),
+    SYSTEM: t("settings.displaySection.themeSystem", "System"),
+    HIGH_CONTRAST: t("settings.displaySection.themeHighContrast", "High Contrast"),
+  };
+
+  const fontLabels = {
+    SMALL: t("settings.displaySection.fontSmall", "Small"),
+    DEFAULT: t("settings.displaySection.fontDefault", "Default"),
+    LARGE: t("settings.displaySection.fontLarge", "Large"),
+  };
+
   const handleLangChange = useCallback((code) => {
     i18n.changeLanguage(code);
     localStorage.setItem("ui.lang", code);
   }, [i18n]);
 
-  // Apply current settings to <html data-*> immediately when settings change
   useEffect(() => {
     if (!settings) return;
     applyTheme(settings.theme);
@@ -36,7 +47,6 @@ export default function DisplaySettings() {
   }, [settings]);
 
   const onRadioActivate = useCallback((setter) => (e) => {
-    // Allow Enter/Space when focused on a pill “radio”
     if (e.type === "keydown" && e.key !== "Enter" && e.key !== " ") return;
     if (e.preventDefault) e.preventDefault();
     setter();
@@ -44,21 +54,23 @@ export default function DisplaySettings() {
 
   if (!settings) return (
     <div className={styles.panel}>
-      <SectionLoader message="Loading display settings..." />
+      <SectionLoader message={t("settings.displaySection.loading", "Loading display settings...")} />
     </div>
   );
 
   return (
     <div className={styles.page}>
-      <h1 className={styles.title}>Display & Accessibility</h1>
+      <h1 className={styles.title}>
+        {t("settings.displaySection.title", "Display & Accessibility")}
+      </h1>
 
       {/* Theme */}
       <section className={styles.panel}>
-        <h2>Theme</h2>
+        <h2>{t("settings.displaySection.theme", "Theme")}</h2>
         <div
           className={styles.pills}
           role="radiogroup"
-          aria-label="Theme selection"
+          aria-label={t("settings.displaySection.theme", "Theme")}
         >
           {THEME_OPTIONS.map((opt) => {
             const active = settings.theme === opt;
@@ -72,24 +84,23 @@ export default function DisplaySettings() {
                 onClick={() => update({ theme: opt })}
                 onKeyDown={onRadioActivate(() => update({ theme: opt }))}
               >
-                {opt.replace("_", " ")}
+                {themeLabels[opt] || opt}
               </button>
             );
           })}
         </div>
         <p className={styles.help}>
-          <strong>System</strong> follows your OS setting.{" "}
-          <strong>High-contrast</strong> boosts contrast for readability.
+          {t("settings.displaySection.themeHelp", "System follows your OS setting. High-contrast boosts contrast for readability.")}
         </p>
       </section>
 
       {/* Font size */}
       <section className={styles.panel}>
-        <h2>Font size</h2>
+        <h2>{t("settings.displaySection.fontSize", "Font size")}</h2>
         <div
           className={styles.pills}
           role="radiogroup"
-          aria-label="Font size"
+          aria-label={t("settings.displaySection.fontSize", "Font size")}
         >
           {FONT.map((opt) => {
             const active = settings.fontScale === opt;
@@ -103,23 +114,23 @@ export default function DisplaySettings() {
                 onClick={() => update({ fontScale: opt })}
                 onKeyDown={onRadioActivate(() => update({ fontScale: opt }))}
               >
-                {opt.toLowerCase()}
+                {fontLabels[opt] || opt.toLowerCase()}
               </button>
             );
           })}
         </div>
         <p className={styles.help}>
-          Changes the base font size across the entire application.
+          {t("settings.displaySection.fontSizeHelp", "Changes the base font size across the entire application.")}
         </p>
       </section>
 
       {/* Language */}
       <section className={styles.panel}>
-        <h2>{t("settings.display.language", "Language")}</h2>
+        <h2>{t("settings.displaySection.language", "Language")}</h2>
         <div
           className={styles.pills}
           role="radiogroup"
-          aria-label="Language selection"
+          aria-label={t("settings.displaySection.language", "Language")}
         >
           {LANG_OPTIONS.map((opt) => {
             const active = currentLang === opt.code;
@@ -138,7 +149,7 @@ export default function DisplaySettings() {
           })}
         </div>
         <p className={styles.help}>
-          {t("settings.display.languageHelp", "Choose your preferred language for the interface.")}
+          {t("settings.displaySection.languageHelp", "Choose your preferred language for the interface.")}
         </p>
       </section>
 
@@ -147,7 +158,7 @@ export default function DisplaySettings() {
         aria-live="polite"
         aria-atomic="true"
       >
-        {saving ? "Saving…" : " "}
+        {saving ? t("settings.displaySection.saving", "Saving…") : " "}
       </div>
     </div>
   );

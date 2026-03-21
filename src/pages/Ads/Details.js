@@ -18,6 +18,8 @@ import ImageCarousel from "../../components/ImageCarousel.jsx";
 import api from "../../api/axiosInstance";
 import { getAdWithPhotos } from "../../api/ads";
 import useAuth from "../../hooks/useAuth";
+import { useTranslation } from "react-i18next";
+import prettyTime from "../../utils/prettyTime";
 import { makeApiUrl } from "../../api/httpUrl";
 
 /* -------------------------------------------------
@@ -121,32 +123,7 @@ function likeSummaryText(likeCount, liked) {
   return String(likeCount);
 }
 
-/* "3m", "2h", "1d", etc. */
-function prettyTime(dateish) {
-  const d = dateish ? new Date(dateish) : null;
-  if (!d || isNaN(+d)) return "Just now";
-  const sec = Math.max(0, (Date.now() - d.getTime()) / 1000);
-
-  if (sec < 60) return "Just now";
-
-  const mins = Math.floor(sec / 60);
-  if (mins < 60) return `${mins}m`;
-
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h`;
-
-  const days = Math.floor(hrs / 24);
-  if (days < 7) return `${days}d`;
-
-  const weeks = Math.floor(days / 7);
-  if (weeks < 5) return `${weeks}w`;
-
-  const months = Math.floor(days / 30);
-  if (months < 12) return `${months}mo`;
-
-  const years = Math.floor(days / 365);
-  return `${years}y`;
-}
+/* "3m", "2h", "1d", etc. — uses shared util */
 
 /* -------------------------------------------------
    Component
@@ -155,6 +132,7 @@ export default function AdDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user: currentUser } = useAuth() || {};
+  const { t } = useTranslation();
 
   // Ad data
   const [ad, setAd] = useState(null);
@@ -342,7 +320,7 @@ export default function AdDetails() {
     ad?.created_on ||
     ad?.timestamp;
 
-  const postedAgo = prettyTime(postedAtRaw);
+  const postedAgo = prettyTime(postedAtRaw, t);
 
   /* --- posterPreview fetch (/users/{posterId}) --- */
   useEffect(() => {
@@ -1017,7 +995,7 @@ export default function AdDetails() {
         </button>
 
         <button
-          className={styles.postActionBtn}
+          className={`${styles.postActionBtn} ${showAllComments ? styles.postActionActive : ''}`}
           onClick={() => {
             setShowAllComments(true);
           }}
@@ -1151,7 +1129,8 @@ export default function AdDetails() {
                         {prettyTime(
                           newestCommentDisplay.createdAt ||
                             newestCommentDisplay.createdDate ||
-                            newestCommentDisplay.created_on
+                            newestCommentDisplay.created_on,
+                          t
                         )}
                       </span>
                     </div>

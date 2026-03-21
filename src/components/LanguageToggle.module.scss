@@ -8,37 +8,36 @@
   border: 1px solid var(--border-soft, rgba(148, 163, 184, 0.32));
   border-radius: 12px;
   background: transparent;
-  color: inherit;
   font-size: 13px;
   font-weight: 600;
+}
+
+.lang {
+  appearance: none;
+  -webkit-appearance: none;
+  background: none;
+  border: none;
+  padding: 2px 4px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  font-size: 13px;
+  font-weight: 600;
+  color: inherit;
+  opacity: 0.6;
+  transition: opacity 0.15s ease;
 
   &:hover {
-    background: color-mix(
-      in oklab,
-      var(--surface-2, #eef1f7) 50%,
-      transparent
-    );
-    border-color: var(--border-medium, rgba(148, 163, 184, 0.48));
-  }
-
-  &:focus {
-    outline: 2px solid var(--accent-primary, #2563eb);
-    outline-offset: 2px;
+    opacity: 1;
   }
 }
 
-.current {
+.active {
+  opacity: 1;
   font-weight: 700;
+  color: #2563eb !important;
 }
 
 .separator {
-  opacity: 0.6;
+  opacity: 0.5;
   margin: 0 1px;
-}
-
-.next {
-  opacity: 0.7;
-  font-weight: 500;
+  pointer-events: none;
 }

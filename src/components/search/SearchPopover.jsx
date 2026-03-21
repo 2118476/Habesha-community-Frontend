@@ -6,6 +6,7 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
+import { createPortal } from "react-dom";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Search as SearchIcon,
@@ -437,24 +438,19 @@ export default function SearchPopover() {
     setBusy(false);
   }, []);
 
+  const popRef = useRef(null);
+
   /* ----- close when clicking outside / pressing Escape ----- */
   useEffect(() => {
     if (!open) return;
-    const onDown = (e) => {
-      if (!wrapRef.current?.contains(e.target)) {
-        closeBox();
-      }
-    };
     const onKey = (e) => {
       if (e.key === "Escape") {
         e.stopPropagation();
         closeBox();
       }
     };
-    document.addEventListener("pointerdown", onDown, { passive: true });
     document.addEventListener("keydown", onKey);
     return () => {
-      document.removeEventListener("pointerdown", onDown);
       document.removeEventListener("keydown", onKey);
     };
   }, [open, closeBox]);
@@ -607,33 +603,34 @@ export default function SearchPopover() {
         )}
       </button>
 
-      <input
-        ref={inputRef}
-        type="search"
-        className={styles.inlineInput}
-        placeholder="Search rentals, swaps, services, ads…"
-        value={q}
-        onChange={(e) => {
-          setQ(e.target.value);
-          setActive(-1);
-        }}
-        onKeyDown={onKeyDown}
-        aria-autocomplete="list"
-        aria-controls="search-pop-list"
-        aria-activedescendant={active >= 0 ? `search-opt-${active}` : undefined}
-      />
-
-      {open && (
+      {open && createPortal(
         <div className={styles.centerWrap} aria-hidden="false">
           <div className={styles.backdrop} onMouseDown={closeBox} />
           <div
+            ref={popRef}
             className={styles.pop}
             role="dialog"
             aria-label="Search results"
             aria-modal="true"
             data-search-pop="true"
-            onMouseDown={(e) => e.stopPropagation()}
           >
+            <div className={styles.popInputRow}>
+              <input
+                ref={inputRef}
+                type="search"
+                className={styles.popInput}
+                placeholder="Search rentals, swaps, services, ads…"
+                value={q}
+                onChange={(e) => {
+                  setQ(e.target.value);
+                  setActive(-1);
+                }}
+                onKeyDown={onKeyDown}
+                aria-autocomplete="list"
+                aria-controls="search-pop-list"
+                aria-activedescendant={active >= 0 ? `search-opt-${active}` : undefined}
+              />
+            </div>
             {busy && <div className={styles.status}>Searching…</div>}
 
             {!busy && err && <div className={styles.error}>{err}</div>}
@@ -771,7 +768,7 @@ export default function SearchPopover() {
             )}
           </div>
         </div>
-      )}
+      , document.body)}
     </div>
   );
 }

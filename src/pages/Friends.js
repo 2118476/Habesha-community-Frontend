@@ -69,7 +69,6 @@ const TABS = [
   { id: "incoming", label: "Incoming" },
   { id: "outgoing", label: "Outgoing" },
   { id: "suggestions", label: "Suggestions" },
-  { id: "search", label: "Search" },
 ];
 
 /* optional icons (falls back to text) */
@@ -573,7 +572,6 @@ export default function FriendsPage() {
           <Tab id="incoming" label="Incoming" icon={UserPlus} />
           <Tab id="outgoing" label="Outgoing" icon={UserMinus} />
           <Tab id="suggestions" label="Suggestions" icon={Users} />
-          <Tab id="search" label="Search" icon={UserSearch} />
         </div>
 
         {/* Big search */}

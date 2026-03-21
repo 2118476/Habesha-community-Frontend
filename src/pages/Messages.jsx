@@ -14,6 +14,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import api from "../api/axiosInstance";
 import useAuth from "../hooks/useAuth";
+import prettyTime from "../utils/prettyTime";
 
 import styles from "../stylus/sections/Messages.module.scss";
 import buttonStyles from "../stylus/components/Button.module.scss";
@@ -70,17 +71,7 @@ const dateLabel = (iso, t) => {
   return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
 };
 
-const timeAgo = (iso, t) => {
-  if (!iso) return "";
-  const s = Math.max(0, (Date.now() - new Date(iso).getTime()) / 1000);
-  if (s < 60) return `${Math.floor(s)}s ${t('messages.ago')}`;
-  const m = s / 60;
-  if (m < 60) return `${Math.floor(m)}m ${t('messages.ago')}`;
-  const h = m / 60;
-  if (h < 24) return `${Math.floor(h)}h ${t('messages.ago')}`;
-  const d = h / 24;
-  return `${Math.floor(d)}d ${t('messages.ago')}`;
-};
+/* timeAgo replaced by shared prettyTime util for i18n */
 
 /** Normalize server shapes + include system/meta for event cards */
 function normalizeMessage(raw) {
@@ -124,9 +115,6 @@ function normalizeMessage(raw) {
 /* ============================ local metadata ============================ */
 const LS = {
   PINNED: "messages.pinned",
-  STARRED: "messages.starred",
-  ARCHIVED: "messages.archived",
-  SNOOZED: "messages.snoozed.map", // { id: ts }
   PREFS: "messages.prefs",
   PANE_W: "messages.pane.width",
 };
@@ -179,9 +167,6 @@ function ThreadItem({
   active,
   onClick,
   onTogglePin,
-  onToggleStar,
-  onToggleArchive,
-  onToggleSnooze,
   selectionMode,
   selected,
   onToggleSelect,
@@ -194,11 +179,6 @@ function ThreadItem({
         active ? styles.friendItemActive : "",
         data.unread > 0 ? styles.friendItemUnread : "",
         data.pinned ? styles.friendItemPinned : "",
-        data.starred ? styles.friendItemStarred : "",
-        data.archived ? styles.friendItemArchived : "",
-        data.snoozedUntil && Date.now() < data.snoozedUntil
-          ? styles.friendItemSnoozed
-          : "",
       ].join(" ")}
       onClick={onClick}
     >
@@ -230,9 +210,7 @@ function ThreadItem({
             <ProfileLink userId={data.id}>{data.name}</ProfileLink>
           </span>
           <span className={styles.friendTime}>
-            {data.snoozedUntil && Date.now() < data.snoozedUntil
-              ? t('messages.snoozed')
-              : fmtClockOrDate(data.lastAt)}
+            {fmtClockOrDate(data.lastAt)}
           </span>
         </div>
         <div className={styles.friendBottom}>
@@ -241,19 +219,9 @@ function ThreadItem({
             {data.unread > 0 && (
               <span className={styles.badge}>{capCount(data.unread)}</span>
             )}
-            {data.starred && (
-              <span className={styles.starGlyph} title={t('messages.starred')}>
-                ★
-              </span>
-            )}
             {data.pinned && (
               <span className={styles.pinGlyph} title={t('messages.pinned')}>
                 📌
-              </span>
-            )}
-            {data.snoozedUntil && Date.now() < data.snoozedUntil && (
-              <span className={styles.snoozeGlyph} title={t('messages.snoozed')}>
-                ⏰
               </span>
             )}
           </div>
@@ -274,44 +242,6 @@ function ThreadItem({
           aria-label={data.pinned ? t('messages.unpinConversation') : t('messages.pinConversation')}
         >
           📌
-        </button>
-        <button
-          className={`${styles.iconBtn} ${
-            data.starred ? styles.iconBtnActive : ""
-          }`}
-          title={data.starred ? t('messages.unstar') : t('messages.star')}
-          onClick={() => onToggleStar(data.id)}
-          aria-label={data.starred ? t('messages.unstarConversation') : t('messages.starConversation')}
-        >
-          ★
-        </button>
-        <button
-          className={`${styles.iconBtn} ${
-            data.archived ? styles.iconBtnActiveDanger : ""
-          }`}
-          title={data.archived ? t('messages.unarchive') : t('messages.archive')}
-          onClick={() => onToggleArchive(data.id)}
-          aria-label={
-            data.archived ? t('messages.unarchiveConversation') : t('messages.archiveConversation')
-          }
-        >
-          🗂️
-        </button>
-        <button
-          className={`${styles.iconBtn} ${
-            data.snoozedUntil && Date.now() < data.snoozedUntil
-              ? styles.iconBtnActive
-              : ""
-          }`}
-          title={
-            data.snoozedUntil && Date.now() < data.snoozedUntil
-              ? t('messages.unsnooze')
-              : t('messages.snooze8h')
-          }
-          onClick={() => onToggleSnooze(data.id)}
-          aria-label={t('messages.toggleSnooze')}
-        >
-          ⏰
         </button>
       </div>
     </li>
@@ -507,12 +437,9 @@ export default function Messages() {
   const [query, setQuery] = useState("");
   const searchRef = useRef(null);
 
-  const [filter, setFilter] = useState("all"); // all | unread | pinned | snoozed | archived
+  const [filter, setFilter] = useState("all"); // all | unread | pinned
 
   const [pinned, setPinned] = useState(() => lsGetSet(LS.PINNED));
-  const [starred, setStarred] = useState(() => lsGetSet(LS.STARRED));
-  const [archived, setArchived] = useState(() => lsGetSet(LS.ARCHIVED));
-  const [snoozed, setSnoozed] = useState(() => lsGetMap(LS.SNOOZED)); // id -> ts
 
   const [prefs, setPrefs] = useState(() => ({
     compact: !!lsGetPrefs().compact,
@@ -669,7 +596,6 @@ export default function Messages() {
         : data?.items ?? data?.content ?? [];
       const norm = listRaw.map((t) => {
         const id = String(t.userId ?? t.id ?? t.partnerId);
-        const snoozeUntil = Number(snoozed.get(id) || 0);
         return {
           id,
           name: t.userName || t.name || t('messages.unknown'),
@@ -678,9 +604,6 @@ export default function Messages() {
           lastAt: t.lastAt || t.lastTime || null,
           unread: Number(t.unread || t.unreadCount || 0),
           pinned: pinned.has(id),
-          starred: starred.has(id),
-          archived: archived.has(id),
-          snoozedUntil: snoozeUntil > 0 ? snoozeUntil : null,
         };
       });
 
@@ -710,7 +633,7 @@ export default function Messages() {
     } finally {
       setLoadingThreads(false);
     }
-  }, [kickCounts, pinned, starred, archived, snoozed]);
+  }, [kickCounts, pinned]);
 
   useEffect(() => {
     loadThreads();
@@ -851,17 +774,8 @@ export default function Messages() {
   const filteredSortedThreads = useMemo(() => {
     let list = threads.slice();
 
-    const now = Date.now();
-    const isSnoozedActive = (t) => t.snoozedUntil && now < t.snoozedUntil;
-
-    if (filter !== "archived") list = list.filter((t) => !t.archived);
-
-    if (prefs.hideRead && filter === "all") list = list.filter((t) => t.unread > 0);
-
-    if (filter === "unread") list = list.filter((t) => t.unread > 0 && !isSnoozedActive(t));
-    if (filter === "pinned") list = list.filter((t) => t.pinned && !isSnoozedActive(t));
-    if (filter === "archived") list = list.filter((t) => t.archived);
-    if (filter === "snoozed") list = list.filter((t) => isSnoozedActive(t));
+    if (filter === "unread") list = list.filter((t) => t.unread > 0);
+    if (filter === "pinned") list = list.filter((t) => t.pinned);
 
     const q = query.trim().toLowerCase();
     if (q) {
@@ -872,36 +786,26 @@ export default function Messages() {
       });
     }
 
-    // Default sort: pinned top (except archived view), then by recent activity
+    // Default sort: pinned top, then by recent activity
     list.sort((a, b) => {
-      if (filter !== "archived") {
-        if (a.pinned && !b.pinned) return -1;
-        if (!a.pinned && b.pinned) return 1;
-      }
-      // Always sort by recent activity (most recent first)
+      if (a.pinned && !b.pinned) return -1;
+      if (!a.pinned && b.pinned) return 1;
       const at = a.lastAt ? new Date(a.lastAt).getTime() : 0;
       const bt = b.lastAt ? new Date(b.lastAt).getTime() : 0;
       return bt - at;
     });
 
     return list;
-  }, [threads, filter, query, prefs.hideRead]);
+  }, [threads, filter, query]);
 
   const counts = useMemo(() => {
-    const now = Date.now();
     const total = threads.length;
-    const unread = threads.filter((t) => t.unread > 0 && !t.archived).length;
-    const pinnedCount = threads.filter((t) => t.pinned && !t.archived).length;
-    const archivedCount = threads.filter((t) => t.archived).length;
-    const snoozedCount = threads.filter(
-      (t) => t.snoozedUntil && now < t.snoozedUntil
-    ).length;
+    const unread = threads.filter((t) => t.unread > 0).length;
+    const pinnedCount = threads.filter((t) => t.pinned).length;
     return {
       total,
       unread,
       pinned: pinnedCount,
-      archived: archivedCount,
-      snoozed: snoozedCount,
     };
   }, [threads]);
 
@@ -926,57 +830,8 @@ export default function Messages() {
     });
   };
 
-  const onToggleStar = (id) => {
-    setStarred((prev) => {
-      const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
-      lsSaveSet(LS.STARRED, next);
-      setThreads((list) =>
-        list.map((t) => (t.id === id ? { ...t, starred: next.has(id) } : t))
-      );
-      return next;
-    });
-  };
-
-  const onToggleArchive = (id) => {
-    setArchived((prev) => {
-      const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
-      lsSaveSet(LS.ARCHIVED, next);
-      setThreads((list) =>
-        list.map((t) => (t.id === id ? { ...t, archived: next.has(id) } : t))
-      );
-      return next;
-    });
-  };
-
-  const setSnoozeForHours = (id, hours) => {
-    setSnoozed((prev) => {
-      const next = new Map(prev);
-      if (!hours) {
-        next.delete(id); // unsnooze
-      } else {
-        const until = Date.now() + hours * 60 * 60 * 1000;
-        next.set(id, until);
-      }
-      lsSaveMap(LS.SNOOZED, next);
-      setThreads((list) =>
-        list.map((t) =>
-          t.id === id ? { ...t, snoozedUntil: next.get(id) || null } : t
-        )
-      );
-      return next;
-    });
-  };
-
-  const onToggleSnooze = (id) => {
-    const until = Number(snoozed.get(id) || 0);
-    if (until && Date.now() < until) setSnoozeForHours(id, 0);
-    else setSnoozeForHours(id, 8);
-  };
-
   const markAllRead = async () => {
-    const targets = threads.filter((t) => t.unread > 0 && !t.archived);
+    const targets = threads.filter((t) => t.unread > 0);
     if (!targets.length) {
       toast.info(t('messages.allCaughtUp'));
       return;
@@ -1058,7 +913,7 @@ export default function Messages() {
     if (d.online === true || d.status === "online") return t('messages.online');
     const last =
       d.lastSeen || d.lastActive || d.lastLogin || d.updatedAt || d.lastSeenAt;
-    if (last) return `${t('messages.lastSeen')} ${timeAgo(last, t)}`;
+    if (last) return `${t('messages.lastSeen')} ${prettyTime(last, t)}`;
     return "";
   }, [selectedDetails, t]);
 
@@ -1226,7 +1081,6 @@ export default function Messages() {
       <aside
         className={[
           styles.threads,
-          prefs.compact ? styles.threadsCompact : "",
           !showThreads ? styles.mobileHidden : "",
         ].join(" ")}
       >
@@ -1279,30 +1133,6 @@ export default function Messages() {
                         <button className={styles.menuItem} onClick={refresh}>
                           ↻ {t('common.refresh')}
                         </button>
-                        <button className={styles.menuItem} onClick={markAllRead}>
-                          ✅ Mark all read
-                        </button>
-                        <button
-                          className={styles.menuItem}
-                          onClick={toggleSelectionMode}
-                        >
-                          ☑️ {selectionMode ? "Exit select" : "Bulk select"}
-                        </button>
-                      </div>
-
-                      <div className={styles.menuGroup}>
-                        <button
-                          className={styles.menuItem}
-                          onClick={() => togglePref("compact")}
-                        >
-                          {prefs.compact ? "☑︎" : "☐"} Compact list
-                        </button>
-                        <button
-                          className={styles.menuItem}
-                          onClick={() => togglePref("hideRead")}
-                        >
-                          {prefs.hideRead ? "☑︎" : "☐"} Hide read (All)
-                        </button>
                       </div>
 
                       <div className={styles.menuGroup}>
@@ -1323,34 +1153,6 @@ export default function Messages() {
                           onClick={() => setFilter("pinned")}
                         >
                           • Filter: Pinned ({counts.pinned})
-                        </button>
-                        <button
-                          className={styles.menuItem}
-                          onClick={() => setFilter("snoozed")}
-                        >
-                          • Filter: Snoozed ({counts.snoozed})
-                        </button>
-                        <button
-                          className={styles.menuItem}
-                          onClick={() => setFilter("archived")}
-                        >
-                          • Filter: Archived ({counts.archived})
-                        </button>
-                      </div>
-
-                      <div className={styles.menuGroup}>
-                        <button
-                          className={styles.menuItem}
-                          onClick={() => {
-                            setPaneW("");
-                            localStorage.removeItem(LS.PANE_W);
-                            document.documentElement.style.removeProperty(
-                              "--threads-w"
-                            );
-                            toast.success(t('messages.layoutReset'));
-                          }}
-                        >
-                          🧹 Reset layout
                         </button>
                       </div>
                     </div>
@@ -1380,7 +1182,7 @@ export default function Messages() {
                 role="tablist"
                 aria-label="Filters"
               >
-                {["all", "unread", "pinned", "snoozed", "archived"].map((k) => (
+                {["all", "unread", "pinned"].map((k) => (
                   <button
                     key={k}
                     role="tab"
@@ -1415,9 +1217,6 @@ export default function Messages() {
                     selectionMode ? onToggleSelect(t.id) : selectThread(t)
                   }
                   onTogglePin={onTogglePin}
-                  onToggleStar={onToggleStar}
-                  onToggleArchive={onToggleArchive}
-                  onToggleSnooze={onToggleSnooze}
                   selectionMode={selectionMode}
                   selected={isSelected}
                   onToggleSelect={onToggleSelect}
@@ -1429,14 +1228,10 @@ export default function Messages() {
           <div className={styles.threadsEmpty}>
             {query
               ? "No matches for your search."
-              : filter === "archived"
-              ? "No archived conversations."
               : filter === "pinned"
               ? "No pinned conversations yet."
               : filter === "unread"
               ? "No unread conversations."
-              : filter === "snoozed"
-              ? "No snoozed conversations."
               : "No conversations yet — start one from a profile!"}
           </div>
         )}
@@ -1521,7 +1316,7 @@ export default function Messages() {
                       <button
                         className={styles.menuItem}
                         onClick={() =>
-                          window.open(`/app/u/${selected.id}`, "_blank")
+                          window.open(`/app/profile/${selected.id}`, "_blank")
                         }
                       >
                         👤 View profile
@@ -1537,67 +1332,9 @@ export default function Messages() {
                       >
                         {pinned.has(selected.id) ? "📌 Unpin" : "📌 Pin"}
                       </button>
-                      <button
-                        className={styles.menuItem}
-                        onClick={() =>
-                          setSnoozeForHours(selected.id, 8)
-                        }
-                      >
-                        ⏰ Snooze 8h
-                      </button>
-                      <button
-                        className={styles.menuItem}
-                        onClick={() =>
-                          setSnoozeForHours(selected.id, 24)
-                        }
-                      >
-                        ⏰ Snooze 1 day
-                      </button>
-                      <button
-                        className={styles.menuItem}
-                        onClick={() =>
-                          setSnoozeForHours(selected.id, 24 * 7)
-                        }
-                      >
-                        ⏰ Snooze 1 week
-                      </button>
-                      <button
-                        className={styles.menuItem}
-                        onClick={() => setSnoozeForHours(selected.id, 0)}
-                      >
-                        ⏰ Unsnooze
-                      </button>
                     </div>
 
                     <div className={styles.menuGroup}>
-                      <button
-                        className={styles.menuItem}
-                        onClick={() => onToggleArchive(selected.id)}
-                      >
-                        {archived.has(selected.id)
-                          ? "🗂️ Unarchive"
-                          : "🗂️ Archive"}
-                      </button>
-                      <button className={styles.menuItem} onClick={exportConversation}>
-                        ⬇️ Export (.txt)
-                      </button>
-                    </div>
-
-                    <div className={styles.menuGroup}>
-                      <button
-                        className={styles.menuItem}
-                        onClick={() => {
-                          toast.info("Marked unread (local)");
-                          setThreads((prev) =>
-                            prev.map((t) =>
-                              t.id === selected.id ? { ...t, unread: 1 } : t
-                            )
-                          );
-                          kickCounts();
-                        }}
-                      >
-                        🔔 Mark unread (local)
-                      </button>
                       <button
                         className={`${styles.menuItem} ${styles.menuDanger}`}
                         onClick={() => toast.success("Reported (placeholder)")}

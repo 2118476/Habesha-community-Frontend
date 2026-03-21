@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
+import prettyTime from "../../utils/prettyTime";
 
 import styles from "../../stylus/sections/Ads.module.scss";
 import buttonStyles from "../../stylus/components/Button.module.scss";
@@ -217,31 +219,7 @@ function deriveAuthorFromRaw(raw) {
    Time helpers
 -------------------------------------------------- */
 
-function prettyTime(dateish) {
-  const d = dateish ? new Date(dateish) : null;
-  if (!d || isNaN(+d)) return "Just now";
-  const sec = Math.max(0, (Date.now() - d.getTime()) / 1000);
-
-  if (sec < 60) return "Just now";
-
-  const mins = Math.floor(sec / 60);
-  if (mins < 60) return `${mins}m`;
-
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h`;
-
-  const days = Math.floor(hrs / 24);
-  if (days < 7) return `${days}d`;
-
-  const weeks = Math.floor(days / 7);
-  if (weeks < 5) return `${weeks}w`;
-
-  const months = Math.floor(days / 30);
-  if (months < 12) return `${months}mo`;
-
-  const years = Math.floor(days / 365);
-  return `${years}y`;
-}
+/* prettyTime — uses shared util */
 
 /* -------------------------------------------------
    Permissions
@@ -449,7 +427,7 @@ export default function CommentsThread({
 }) {
   const navigate = useNavigate();
   const { user: currentUser } = useAuth() || {};
-
+  const { t } = useTranslation();
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [replyTargetId, setReplyTargetId] = useState(null);
@@ -736,7 +714,7 @@ export default function CommentsThread({
               </span>
 
               <span className={styles.replyTimestamp}>
-                {prettyTime(reply.createdAt)}
+                {prettyTime(reply.createdAt, t)}
               </span>
 
               {/* Reply button (reply to TOP comment, not nested deeper) */}
@@ -820,7 +798,7 @@ export default function CommentsThread({
                 </span>
 
                 <span className={styles.commentTimestamp}>
-                  {prettyTime(c.createdAt)}
+                  {prettyTime(c.createdAt, t)}
                 </span>
 
                 {replyCount > 0 && (

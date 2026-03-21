@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { apiBase } from "../../api/httpUrl"; // ✅ normalized axios baseURL
+import prettyTime from "../../utils/prettyTime";
 
 const FALLBACK_AVATAR = "/images/avatar.png";
 const FALLBACK_PIXEL =
@@ -19,25 +20,7 @@ function firstImage(it) {
   return it?.imageUrl || it?.firstPhotoUrl || null;
 }
 
-/* Friendly relative time like "3h" / "2d" */
-function prettyTime(dateish) {
-  const d = dateish ? new Date(dateish) : null;
-  if (!d || isNaN(+d)) return "Just now";
-  const sec = Math.max(0, (Date.now() - d.getTime()) / 1000);
-  if (sec < 60) return "Just now";
-  const mins = Math.floor(sec / 60);
-  if (mins < 60) return `${mins}m`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h`;
-  const days = Math.floor(hrs / 24);
-  if (days < 7) return `${days}d`;
-  const weeks = Math.floor(days / 7);
-  if (weeks < 5) return `${weeks}w`;
-  const months = Math.floor(days / 30);
-  if (months < 12) return `${months}mo`;
-  const years = Math.floor(days / 365);
-  return `${years}y`;
-}
+/* Friendly relative time — uses shared util */
 
 export default function AdsPostItem({ item }) {
   const { t } = useTranslation();
@@ -57,7 +40,7 @@ export default function AdsPostItem({ item }) {
   // 🔹 Profile link (adjust to your routes)
   const profileHref = posterId ? `/app/profile/${posterId}` : "#";
 
-  const whenText = prettyTime(item?.createdAt || item?.createdDate || item?.created_on);
+  const whenText = prettyTime(item?.createdAt || item?.createdDate || item?.created_on, t);
 
   return (
     <article style={{ padding: "14px 0" }}>

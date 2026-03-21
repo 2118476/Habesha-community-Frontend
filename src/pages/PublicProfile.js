@@ -13,6 +13,7 @@ import { makeApiUrl } from "../api/httpUrl";
 import { getRentalCoverUrl } from "../api/rentals";
 import { toast } from "react-toastify";
 import useAuth from "../hooks/useAuth";
+import prettyTime from "../utils/prettyTime";
 
 import styles from "../stylus/sections/PublicProfile.module.scss";
 import Avatar from "../components/Avatar";
@@ -69,18 +70,7 @@ const fmtDateTime = (iso) => {
     return String(iso);
   }
 };
-const timeAgo = (iso) => {
-  if (!iso) return null;
-  const d = new Date(iso).getTime();
-  const diff = Date.now() - d;
-  const mins = Math.floor(diff / 60000);
-  if (mins < 1) return "just now";
-  if (mins < 60) return `${mins}m ago`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  const days = Math.floor(hrs / 24);
-  return `${days}d ago`;
-};
+/* timeAgo replaced by shared prettyTime util for i18n */
 const isOnline = (lastSeenIso) => {
   if (!lastSeenIso) return false;
   const diff = Date.now() - new Date(lastSeenIso).getTime();
@@ -1039,7 +1029,7 @@ export default function PublicProfile() {
   const lastSeenText = isOnline(profile.lastSeenAt)
     ? "Online"
     : profile.lastSeenAt
-    ? `Last seen ${timeAgo(profile.lastSeenAt)}`
+    ? `Last seen ${prettyTime(profile.lastSeenAt, t)}`
     : null;
 
   const counts = {

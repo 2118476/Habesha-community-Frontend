@@ -152,11 +152,23 @@
   position: relative;
   inline-size: clamp(88px, 11vw, 120px);
   block-size: clamp(88px, 11vw, 120px);
+  aspect-ratio: 1 / 1;
   border-radius: 50%;
   background-color: var(--surface-2);
   border: 2px solid var(--surface-1);
   box-shadow: var(--shadow-soft);
   overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* Force avatar image inside wrapper to be a perfect circle */
+.avatarWrapOuter img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: 50% !important;
+  aspect-ratio: 1 / 1 !important;
+  display: block;
 }
 .presenceDot {
   position: absolute;

@@ -507,11 +507,8 @@ export default function FeedPageTabbedEnterprise() {
    * =================================================================== */
 
   useEffect(() => {
-    const currentTab = TABS.find((tab) => tab.key === activeTab);
-    if (currentTab) {
-      document.title = `${currentTab.label} - Habesha Community`;
-    }
-  }, [activeTab, TABS]);
+    document.title = 'Home - Habesha Community';
+  }, []);
 
   /* ===================================================================
    * RENDER
@@ -531,6 +528,46 @@ export default function FeedPageTabbedEnterprise() {
     );
   }
 
+  /* Helper to render a horizontal scroll section */
+  const renderSection = (title, items, type, linkTo, icon) => (
+    <section className={styles.dashSection} data-reveal="up">
+      <header className={styles.dashSectionHeader}>
+        <h2 className={styles.dashSectionTitle}>
+          {icon && <span className={styles.dashSectionIcon}>{icon}</span>}
+          {title}
+        </h2>
+        <Link to={linkTo} className={styles.viewAllBtn}>
+          {t('feed.viewAll')}
+          <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M8 4l8 8-8 8" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </Link>
+      </header>
+      <div className={styles.dashScrollRow}>
+        {items.length > 0 ? (
+          items.slice(0, 3).map((item, idx) => {
+            const imgSrc = imgOf(item);
+            const key = item?.id || item?._id || idx;
+            return (
+              <FeedItemCard
+                key={key}
+                item={item}
+                kind={type}
+                index={idx}
+                imgSrc={imgSrc}
+                role="listitem"
+              />
+            );
+          })
+        ) : (
+          <div className={styles.emptyInline}>
+            {t('empty.noResults', 'No items yet')}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+
   return (
     <ErrorBoundary>
       <div className={styles.feedPageTabbed}>
@@ -542,131 +579,99 @@ export default function FeedPageTabbedEnterprise() {
             <p className={styles.heroSubtitle}>
               {t('feed.welcomeMessage')}
             </p>
-            {/* Test Notification Button */}
-            <button 
-              onClick={testNotificationWithClick}
-              style={{
-                marginTop: '16px',
-                padding: '12px 20px',
-                backgroundColor: '#0a84ff',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontSize: '14px',
-                fontWeight: '600'
-              }}
-            >
-              🔔 Test Notifications with onClick Handlers
-            </button>
           </div>
         </section>
 
-        {/* Tabs Navigation */}
-        <div className={styles.tabsContainer} data-reveal="up">
-          <div className={styles.tabsWrapper} role="tablist" aria-label="Feed categories">
-            {TABS.map((tab, index) => (
-              <button
-                key={tab.key}
-                className={`${styles.tabButton} ${activeTab === tab.key ? styles.tabButtonActive : ""}`}
-                onClick={() => handleTabChange(tab.key)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    handleTabChange(tab.key);
-                  }
-                }}
-                aria-selected={activeTab === tab.key}
-                aria-controls={`tabpanel-${tab.key}`}
-                aria-label={`${tab.label} - ${tab.description}. Press ${index + 1} for quick access`}
-                role="tab"
-                tabIndex={activeTab === tab.key ? 0 : -1}
-              >
-                <span className={styles.tabIcon} aria-hidden="true">{tab.icon}</span>
-                <span className={styles.tabLabel}>{tab.label}</span>
-              </button>
-            ))}
-          </div>
-          <div className={styles.tabsHint}>
-            {t('feed.tabsHint', 'Use arrow keys or 1-5 to switch tabs')}
-          </div>
-        </div>
-
-        {/* Content Area */}
+        {/* Dashboard Grid: 2-column layout */}
         <main className={styles.mainContent}>
           {loading ? (
             <div className={styles.tabContent}>
               <SkeletonGrid count={8} />
             </div>
           ) : (
-            <>
-              {/* Current Tab Content */}
-              <section
-                className={styles.tabContent}
-                id={`tabpanel-${activeTab}`}
-                role="tabpanel"
-                aria-labelledby={`tab-${activeTab}`}
-                data-reveal="up"
-              >
-                {currentItems.length > 0 ? (
-                  <>
-                    <div className={styles.cardsGrid} data-reveal="list-up">
-                      {currentItems.map((item, idx) => {
-                        const imgSrc = imgOf(item);
-                        const key = item?.id || item?._id || idx;
-                        return (
-                          <FeedItemCard
-                            key={key}
-                            item={item}
-                            kind={currentType}
-                            index={idx}
-                            imgSrc={imgSrc}
-                            role="listitem"
-                          />
-                        );
-                      })}
-                    </div>
-
-                    {/* Load More Indicator */}
-                    {loadingMore && (
-                      <div className={styles.loadingMore}>
-                        <div className={styles.spinner} />
-                        <p>{t('common.loading')}</p>
-                      </div>
-                    )}
-
-                    {/* End of Results */}
-                    {!hasMore && currentItems.length > 0 && (
-                      <div className={styles.endMessage}>
-                        {t('feed.endOfResults', "You've reached the end")}
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <div className={styles.emptyState}>
-                    <div className={styles.emptyIcon}>📭</div>
-                    <p>{emptyMessage}</p>
-                    <Link to="/app/feed" className={styles.emptyAction}>
-                      {t('feed.exploreOtherCategories', 'Explore other categories')}
-                    </Link>
-                  </div>
-                )}
-              </section>
-
-              {/* Ads Section - Always Visible */}
-              <AdsSection ads={ads} t={t} />
-
-              {/* Enterprise Notification Demo Section */}
-              {activeTab === "rental" && (
-                <section className={styles.notificationDemo} data-reveal="up">
-                  <div className={styles.demoHeader}>
-                    <h2>🚀 Enterprise Notification System</h2>
-                    <p>Experience our modern, high-level notification system with glassmorphism design and enterprise features.</p>
-                  </div>
-                  <NotificationDemo />
-                </section>
+            <div className={styles.dashGrid}>
+              {/* Left column: Rentals */}
+              {renderSection(
+                t('rentals.rentals'),
+                rentals,
+                'rental',
+                '/app/rentals',
+                '🏠'
               )}
-            </>
+
+              {/* Right column: Home Swap */}
+              {renderSection(
+                t('homeSwap.homeSwap'),
+                homeSwap,
+                'home_swap',
+                '/app/homeswap',
+                '🔄'
+              )}
+
+              {/* Left column: Services */}
+              {renderSection(
+                t('services.services'),
+                services,
+                'service',
+                '/app/services',
+                '🛠️'
+              )}
+
+              {/* Right column: Travel */}
+              {renderSection(
+                t('sidebar.travel', 'Travel'),
+                travel,
+                'travel',
+                '/app/travel',
+                '✈️'
+              )}
+
+              {/* Full-width: Events */}
+              <section className={styles.dashSectionFull} data-reveal="up">
+                <header className={styles.dashSectionHeader}>
+                  <h2 className={styles.dashSectionTitle}>
+                    <span className={styles.dashSectionIcon}>🎉</span>
+                    {t('sidebar.events', 'Events')}
+                  </h2>
+                  <Link to="/app/events" className={styles.viewAllBtn}>
+                    {t('feed.viewAll')}
+                    <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M8 4l8 8-8 8" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </Link>
+                </header>
+                <div className={styles.dashScrollRow}>
+                  {events.length > 0 ? (
+                    events.slice(0, 4).map((item, idx) => {
+                      const imgSrc = imgOf(item);
+                      const key = item?.id || item?._id || idx;
+                      return (
+                        <FeedItemCard
+                          key={key}
+                          item={item}
+                          kind="events"
+                          index={idx}
+                          imgSrc={imgSrc}
+                          role="listitem"
+                        />
+                      );
+                    })
+                  ) : (
+                    <div className={styles.emptyInline}>
+                      {t('empty.noResults', 'No items yet')}
+                    </div>
+                  )}
+                </div>
+              </section>
+            </div>
+          )}
+
+          {/* Load More Indicator */}
+          {loadingMore && (
+            <div className={styles.loadingMore}>
+              <div className={styles.spinner} />
+              <p>{t('common.loading')}</p>
+            </div>
           )}
         </main>
       </div>

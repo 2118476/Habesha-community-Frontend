@@ -8,6 +8,7 @@ import { fetchFeed } from "../../api/feed";
 import styles from "./FeedPage.module.scss";
 import { mountSectionReveals, mountHeroParallax } from "../../utils/scrollMotion";
 import { apiBase, makeApiUrl } from "../../api/httpUrl";
+import prettyTime from "../../utils/prettyTime";
 
 /* NEW: wire actions */
 import api from "../../api/axiosInstance";
@@ -116,26 +117,7 @@ const getDisplayName = (it) =>
 const getCreatedAt = (it) =>
   it?.createdAt || it?.postedAt || it?.created_date || it?.createdDate || it?.timestamp || null;
 
-const formatRelative = (dateish) => {
-  if (!dateish) return "";
-  const d = new Date(dateish);
-  if (Number.isNaN(d.getTime())) return "";
-  const diff = Date.now() - d.getTime();
-  const sec = Math.max(1, Math.floor(diff / 1000));
-  if (sec < 60) return `${sec}s`;
-  const min = Math.floor(sec / 60);
-  if (min < 60) return `${min}m`;
-  const hr = Math.floor(min / 60);
-  if (hr < 24) return `${hr}h`;
-  const day = Math.floor(hr / 24);
-  if (day < 7) return `${day}d`;
-  const wk = Math.floor(day / 7);
-  if (wk < 5) return `${wk}w`;
-  const mo = Math.floor(day / 30);
-  if (mo < 12) return `${mo}mo`;
-  const yr = Math.floor(day / 365);
-  return `${yr}y`;
-};
+/* formatRelative replaced by shared prettyTime util for i18n */
 
 const TABS = [
   { key: "rental", labelKey: "feed.tabs.homeRentals" },
@@ -227,186 +209,51 @@ function useRovingTabs() {
 /* ===================== small components ===================== */
 function PeekStrip({ items = [], ariaLabel }) {
   const { t } = useTranslation();
-  const reduced = useReducedMotion();
-  const rootRef = useRef(null);
-  const finePointer =
-    typeof window !== "undefined"
-      ? !!window.matchMedia && window.matchMedia("(pointer: fine)").matches
-      : false;
-
-  // Autopause marquee when off-screen
-  useEffect(() => {
-    const root = rootRef.current;
-    if (!root) return;
-    if (reduced) {
-      root.dataset.auto = "off";
-      return;
-    }
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) root.dataset.auto = e.isIntersecting ? "on" : "off";
-      },
-      { threshold: 0.01, rootMargin: "0px 0px -10% 0px" }
-    );
-    io.observe(root);
-    return () => io.disconnect();
-  }, [reduced]);
-
-  // 3D tilt on hover (transform-only)
-  const handleMove = useCallback(
-    (e) => {
-      if (!finePointer) return;
-      const item = e.currentTarget;
-      const r = item.getBoundingClientRect();
-      const x = e.clientX - r.left;
-      const y = e.clientY - r.top;
-      const px = x / r.width - 0.5;
-      const py = y / r.height - 0.5;
-      const rx = (-py * 6).toFixed(2) + "deg";
-      const ry = (px * 6).toFixed(2) + "deg";
-      item.style.setProperty("--tilt-x", rx);
-      item.style.setProperty("--tilt-y", ry);
-      item.style.setProperty("--tilt-scale", 1.02);
-    },
-    [finePointer]
-  );
-
-  const handleLeave = useCallback((e) => {
-    const item = e.currentTarget;
-    item.style.setProperty("--tilt-x", "0deg");
-    item.style.setProperty("--tilt-y", "0deg");
-    item.style.setProperty("--tilt-scale", 1);
-  }, []);
 
   if (!items.length) return <div className={styles.emptyInline}>{t('feed.nothingYet')}</div>;
 
-  // loop a small set for the marquee illusion
-  const base = items.slice(0, Math.max(3, items.length));
-  const loop = base.concat(base);
+  const visible = items.slice(0, 6);
 
   return (
-    <div
-      ref={rootRef}
-      className={styles.peekStrip}
-      role="list"
-      aria-label={ariaLabel}
-      data-auto="on"
-    >
-      <div className={styles.peekTrack}>
-        {loop.map((it, i) => {
-          const id = it?.id ?? it?._id ?? it?.listingId ?? it?.publicId ?? `x${i}`;
-          const key = `peek-${id}-${i}`;
-          const href = detailsPath(it?.type, id);
-          const title = (it?.title || "").trim() || "Untitled";
-          const location = it?.location || "";
-          const src = toSrc(imgOf(it)) || FALLBACK_PIXEL;
-          const isService = (it?.type || "").toLowerCase().includes("service");
-          
-          // Enhanced service details
-          const serviceDetails = isService ? {
-            category: it?.category || "",
-            description: it?.description || "",
-            estimatedTime: it?.estimatedTime || it?.estimated_time || it?.duration || "",
-            basePrice: it?.basePrice || it?.base_price || it?.price || "",
-            deliveryType: it?.deliveryType || it?.delivery_type || it?.serviceType || "",
-            rating: it?.rating || it?.averageRating || "",
-            reviewCount: it?.reviewCount || it?.review_count || it?.totalReviews || 0
-          } : {};
-          
-          return (
-            <Link
-              key={key}
-              to={href}
-              className={`${styles.peekItem} ${isService ? styles.peekItemService : ''}`}
-              role="listitem"
-              onMouseMove={handleMove}
-              onMouseLeave={handleLeave}
-              onMouseEnter={handleMove}
-            >
-              <div className={styles.peekThumb}>
+    <div className={styles.cardGrid} role="list" aria-label={ariaLabel}>
+      {visible.map((it, i) => {
+        const id = it?.id ?? it?._id ?? it?.listingId ?? it?.publicId ?? `x${i}`;
+        const key = `card-${id}-${i}`;
+        const href = detailsPath(it?.type, id);
+        const title = (it?.title || "").trim() || "Untitled";
+        const location = it?.location || "";
+        const rawSrc = imgOf(it);
+        const src = toSrc(rawSrc);
+        const hasImage = !!src && src !== FALLBACK_PIXEL;
+        const isService = (it?.type || "").toLowerCase().includes("service");
+        const price = it?.basePrice || it?.base_price || it?.price || "";
+        const category = it?.category || "";
+
+        return (
+          <Link key={key} to={href} className={styles.card} role="listitem">
+            <div className={styles.cardImage}>
+              {hasImage ? (
                 <img
                   src={src}
                   alt={title}
                   loading="lazy"
                   decoding="async"
-                  onError={(e) => (e.currentTarget.src = FALLBACK_PIXEL)}
+                  onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.nextSibling.style.display = 'flex'; }}
                 />
-                {isService && (
-                  <div className={styles.peekOverlay}>
-                    <div className={styles.peekOverlayContent}>
-                      <div className={styles.peekServiceHeader}>
-                        <div className={styles.peekServiceIcon}>🛠️</div>
-                        {serviceDetails.category && (
-                          <div className={styles.peekServiceCategory}>
-                            {serviceDetails.category}
-                          </div>
-                        )}
-                      </div>
-                      
-                      <div className={styles.peekOverlayTitle} title={title}>
-                        {title.length > 35 ? title.slice(0, 32) + "…" : title}
-                      </div>
-                      
-                      {serviceDetails.description && (
-                        <div className={styles.peekServiceDescription}>
-                          {serviceDetails.description.length > 60 
-                            ? serviceDetails.description.slice(0, 57) + "…" 
-                            : serviceDetails.description}
-                        </div>
-                      )}
-                      
-                      <div className={styles.peekServiceDetails}>
-                        {serviceDetails.basePrice && (
-                          <div className={styles.peekServicePrice}>
-                            £{serviceDetails.basePrice}
-                          </div>
-                        )}
-                        
-                        {serviceDetails.estimatedTime && (
-                          <div className={styles.peekServiceTime}>
-                            ⏱️ {serviceDetails.estimatedTime}
-                          </div>
-                        )}
-                      </div>
-                      
-                      {serviceDetails.deliveryType && (
-                        <div className={styles.peekServiceDelivery}>
-                          📍 {serviceDetails.deliveryType}
-                        </div>
-                      )}
-                      
-                      {location && (
-                        <div className={styles.peekOverlayLoc}>
-                          📍 {location}
-                        </div>
-                      )}
-                      
-                      {serviceDetails.rating && (
-                        <div className={styles.peekServiceRating}>
-                          ⭐ {serviceDetails.rating} 
-                          {serviceDetails.reviewCount > 0 && (
-                            <span className={styles.peekReviewCount}>
-                              ({serviceDetails.reviewCount})
-                            </span>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
+              ) : null}
+              <div className={styles.cardPlaceholder} style={hasImage ? { display: 'none' } : undefined}>
+                <span>{isService ? '🛠️' : '🏠'}</span>
               </div>
-              {!isService && (
-                <div className={styles.peekMeta}>
-                  <div className={styles.peekTitle} title={title}>
-                    {title.length > 60 ? title.slice(0, 57) + "…" : title}
-                  </div>
-                  {location && <div className={styles.peekLoc}>{location}</div>}
-                </div>
-              )}
-            </Link>
-          );
-        })}
-      </div>
+              {price && <div className={styles.cardBadge}>£{price}</div>}
+            </div>
+            <div className={styles.cardInfo}>
+              <div className={styles.cardTitle}>{title}</div>
+              {location && <div className={styles.cardSub}>{location}</div>}
+              {isService && category && <div className={styles.cardTag}>{category}</div>}
+            </div>
+          </Link>
+        );
+      })}
     </div>
   );
 }
@@ -471,17 +318,8 @@ function PostStatusBox({ user, onPostClick, onPostSuccess }) {
           onClick={handleCreateAd}
           aria-label={t('feed.postStatus.addPhoto')}
         >
-          <span className={styles.postStatusIcon}>📷</span>
+          <span className={styles.postStatusIcon}>🏷️</span>
           <span>{t('feed.postStatus.addPhoto')}</span>
-        </button>
-        
-        <button 
-          className={styles.postStatusAction}
-          onClick={() => onPostClick && onPostClick()}
-          aria-label={t('feed.postStatus.moreOptions')}
-        >
-          <span className={styles.postStatusIcon}>➕</span>
-          <span>{t('feed.postStatus.moreOptions')}</span>
         </button>
       </div>
     </div>
@@ -896,7 +734,7 @@ function AdsFeedTimeline({ items = [] }) {
         const avatar =
           toSrc(getAvatarUrl(userId)) || FALLBACK_PIXEL;
         const name = getDisplayName(it);
-        const when = formatRelative(getCreatedAt(it));
+        const when = prettyTime(getCreatedAt(it), t);
         
         // Build comprehensive post content for ads
         const buildAdContent = (ad) => {
@@ -1047,22 +885,21 @@ function AdsFeedTimeline({ items = [] }) {
                 </button>
                 {when && (
                   <span className={styles.postWhen} title={getCreatedAt(it) || ""}>
-                    {when} {t('feed.ago')}
+                    {when}
                   </span>
                 )}
               </div>
             </header>
 
-            {/* Text body and Media - Enhanced layout for text-only posts */}
+            {/* Text body and Media */}
             {(body || it?.title || it?.category) && !media ? (
-              /* Text-only post: Display content in prominent card format */
+              /* Text-only post */
               <Link 
                 to={href} 
-                className={`${styles.postTextCard} ${(body || it?.title || '').length < 100 ? styles.postTextCardShort : ''}`}
+                className={styles.postBodyLink}
                 aria-label={t('feed.a11y.openPostDetails')}
               >
-                <div className={styles.postTextCardContent}>
-                  <div className={styles.postTextIcon}>💭</div>
+                <div className={styles.postBody}>
                   {shortBody || it?.title || it?.category || t('feed.communityPost', 'Community Post')}
                   {longBody && (
                     <span className={styles.postMore}>
@@ -1101,22 +938,10 @@ function AdsFeedTimeline({ items = [] }) {
             )}
 
             {/* Counters */}
-            <div
-              style={{
-                display: "flex",
-                gap: 12,
-                color: "var(--text-2)",
-                fontSize: 12.5,
-                paddingTop: 6,
-              }}
-            >
-              <span aria-label={t('feed.a11y.likesCount', { count: st.likeCount })}>👍 {formatCount(st.likeCount)}</span>
-              <span aria-label={t('feed.a11y.commentsCount', { count: st.commentsCount })}>
-                💬 {formatCount(st.commentsCount)}
-              </span>
-              <span aria-label={t('feed.a11y.sharesCount', { count: st.sharesCount })}>
-                ↗ {formatCount(st.sharesCount)}
-              </span>
+            <div className={styles.postCounters}>
+              <span aria-label={t('feed.a11y.likesCount', { count: st.likeCount })}>{formatCount(st.likeCount)} {st.likeCount === 1 ? 'like' : 'likes'}</span>
+              <span aria-label={t('feed.a11y.commentsCount', { count: st.commentsCount })}>{formatCount(st.commentsCount)} {st.commentsCount === 1 ? 'comment' : 'comments'}</span>
+              <span aria-label={t('feed.a11y.sharesCount', { count: st.sharesCount })}>{formatCount(st.sharesCount)} {st.sharesCount === 1 ? 'share' : 'shares'}</span>
             </div>
 
             {/* Actions */}
@@ -1124,55 +949,39 @@ function AdsFeedTimeline({ items = [] }) {
               className={styles.postActions}
               role="group"
               aria-label={t('feed.a11y.postActions')}
-              style={{ gap: 8 }}
             >
               <button
                 type="button"
-                className={styles.viewAllBtn}
+                className={`${styles.postActionBtn} ${st.liked ? styles.postActionBtnActive : ''}`}
                 aria-pressed={st.liked ? "true" : "false"}
                 onClick={() => toggleLike(it, idx)}
                 title={st.liked ? t('feed.unlike') : t('feed.like')}
               >
-                {st.liked ? `♥ ${t('feed.like')}` : `♡ ${t('feed.like')}`} · {formatCount(st.likeCount)}
+                {st.liked ? '♥' : '♡'} {t('feed.like')}
               </button>
 
               <button
                 type="button"
-                className={styles.viewAllBtn}
+                className={`${styles.postActionBtn} ${openComments[id] ? styles.postActionBtnActive : ''}`}
                 onClick={() => {
                   setOpenComments((o) => ({ ...o, [id]: !o[id] }));
                   if (!openComments[id]) {
-                    // Optional: prefetch comments list so the thread feels instant
                     ensureCommentsLoaded(it, idx);
                   }
                 }}
                 title={t('feed.comments')}
               >
-                💬 {t('feed.comment')} · {formatCount(st.commentsCount)}
+                💬 {t('feed.comment')}
               </button>
 
               <button
                 type="button"
-                className={styles.viewAllBtn}
+                className={styles.postActionBtn}
                 onClick={() => sharePost(it, idx)}
                 title={t('feed.share')}
               >
-                ↗ {t('feed.share')} · {formatCount(st.sharesCount)}
+                ↗ {t('feed.share')}
               </button>
-
-              <Link to={href} className={styles.viewAllBtn} aria-label={t('feed.openPost')}>
-                {t('common.open')}
-                <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
-                  <path
-                    d="M8 4l8 8-8 8"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </Link>
             </div>
 
             {/* Comments */}
@@ -1725,20 +1534,6 @@ export default function FeedPage() {
         </div>
       </section>
 
-      {/* ===== Subheader (shows after hero) ===== */}
-      <div className={`${styles.subHeader} ${subActive ? styles.isActive : ""}`}>
-        <div className={styles.subInner}>
-          <div className={styles.subTitle}>{t('feed.explore')}</div>
-          <div className={styles.subTabs} role="tablist" aria-label="Quick categories">
-            {TABS.map((tab) => (
-              <button key={`sub-${tab.key}`} onClick={() => onTabClick(tab.key)}>
-                {t(tab.labelKey)}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
       {/* ===== Rentals ===== */}
       <section
         className={`${styles.sectionRow} feedSection section--rentals`}
@@ -1773,6 +1568,8 @@ export default function FeedPage() {
         </header>
         <PeekStrip items={rentals} ariaLabel={`Latest rentals (${rentals.length})`} />
       </section>
+
+      <hr className={styles.sectionDivider} aria-hidden="true" />
 
       {/* ===== Home Swap ===== */}
       <section
@@ -1812,6 +1609,8 @@ export default function FeedPage() {
         />
       </section>
 
+      <hr className={styles.sectionDivider} aria-hidden="true" />
+
       {/* ===== Services ===== */}
       <section
         className={`${styles.sectionRow} feedSection section--services`}
@@ -1846,6 +1645,8 @@ export default function FeedPage() {
         </header>
         <PeekStrip items={services} ariaLabel={`Latest services (${services.length})`} />
       </section>
+
+      <hr className={styles.sectionDivider} aria-hidden="true" />
 
       {/* ===== Ads (wired inline timeline) ===== */}
       <section

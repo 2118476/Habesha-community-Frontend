@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useAuth from "../hooks/useAuth";
 import { NavLink, useLocation } from "react-router-dom";
@@ -7,6 +7,7 @@ import {
   Wrench, Plane, Repeat, Home, Megaphone, Settings,
   User, ShieldCheck, Shield, X,
 } from "lucide-react";
+import { avatarSrcFrom } from "../utils/avatar";
 import styles from "./MobileNav.module.scss";
 
 function LinkItem({ to, icon: Icon, label, onClose }) {
@@ -40,6 +41,8 @@ export default function MobileNav({ open, onClose }) {
 
   const displayName = user?.name || user?.displayName || user?.username || "User";
   const initials = displayName.split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
+  const avatarUrl = avatarSrcFrom(user);
+  const [imgFailed, setImgFailed] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -70,7 +73,18 @@ export default function MobileNav({ open, onClose }) {
         {/* Header with profile + close */}
         <div className={styles.topRow}>
           <div className={styles.profile}>
-            <div className={styles.avatar}>{initials}</div>
+            <div className={styles.avatar}>
+              {avatarUrl && !imgFailed ? (
+                <img
+                  src={avatarUrl}
+                  alt={displayName}
+                  onError={() => setImgFailed(true)}
+                  style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }}
+                />
+              ) : (
+                initials
+              )}
+            </div>
             <div className={styles.profileInfo}>
               <div className={styles.profileName}>{displayName}</div>
               <div className={styles.profileRole}>{normalizedRoles[0] || "Member"}</div>

@@ -660,11 +660,13 @@
 }
 
 /* active "Liked" state turns blue like FB */
+.postActionBtn.postActionActive,
 .postActionActive {
-  color: var(--ads-ring);
+  color: #2563eb !important;
+  background: rgba(37, 99, 235, 0.08) !important;
 
   .actionIcon {
-    color: var(--ads-ring);
+    color: #2563eb !important;
   }
 }
 

@@ -2,10 +2,12 @@
 // src/pages/Feed/FeedPageGlass.jsx
 import React, { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import useAuth from "../../hooks/useAuth";
 import { fetchFeed } from "../../api/feed";
 import styles from "./FeedPageGlass.module.scss";
 import { makeApiUrl } from "../../api/httpUrl";
+import prettyTime from "../../utils/prettyTime";
 
 const FALLBACK_PIXEL =
   "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
@@ -63,18 +65,7 @@ const getDetailPath = (item) => {
   return "#";
 };
 
-const formatTimeAgo = (dateString) => {
-  if (!dateString) return "";
-  const date = new Date(dateString);
-  const now = new Date();
-  const seconds = Math.floor((now - date) / 1000);
-  
-  if (seconds < 60) return "Just now";
-  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
-  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
-  if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`;
-  return date.toLocaleDateString();
-};
+/* formatTimeAgo replaced by shared prettyTime util for i18n */
 
 const getUserAvatar = (userId) => {
   if (!userId) return FALLBACK_PIXEL;
@@ -112,6 +103,7 @@ const useScrollReveal = () => {
 export default function FeedPageGlass() {
   const navigate = useNavigate();
   const { user } = useAuth() || {};
+  const { t } = useTranslation();
   const [activeCategory, setActiveCategory] = useState("all");
   const [feedData, setFeedData] = useState({});
   const [loading, setLoading] = useState(true);
@@ -316,7 +308,7 @@ export default function FeedPageGlass() {
                     <div className={styles.feedItemMeta}>
                       <div className={styles.feedItemAuthor}>{authorName}</div>
                       <div className={styles.feedItemTime}>
-                        {formatTimeAgo(createdAt)}
+                        {prettyTime(createdAt, t)}
                         {location && ` • ${location}`}
                       </div>
                     </div>
@@ -401,7 +393,7 @@ export default function FeedPageGlass() {
                         {item?.title || "Untitled"}
                       </div>
                       <div className={styles.widgetItemSubtitle}>
-                        {formatTimeAgo(item?.createdAt || item?.postedAt)}
+                        {prettyTime(item?.createdAt || item?.postedAt, t)}
                       </div>
                     </div>
                   </Link>

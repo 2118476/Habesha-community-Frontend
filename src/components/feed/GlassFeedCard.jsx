@@ -2,8 +2,10 @@
 // src/components/feed/GlassFeedCard.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import styles from "../../pages/Feed/FeedPageGlass.module.scss";
 import { makeApiUrl } from "../../api/httpUrl";
+import prettyTime from "../../utils/prettyTime";
 
 const FALLBACK_PIXEL =
   "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
@@ -26,18 +28,7 @@ const CATEGORY_LABELS = {
   events: "Event",
 };
 
-const formatTimeAgo = (dateString) => {
-  if (!dateString) return "";
-  const date = new Date(dateString);
-  const now = new Date();
-  const seconds = Math.floor((now - date) / 1000);
-  
-  if (seconds < 60) return "Just now";
-  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
-  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
-  if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`;
-  return date.toLocaleDateString();
-};
+/* formatTimeAgo replaced by shared prettyTime util for i18n */
 
 const getUserAvatar = (userId) => {
   if (!userId) return FALLBACK_PIXEL;
@@ -52,6 +43,7 @@ export default function GlassFeedCard({
   className = "" 
 }) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   
   const imageUrl = item?.imageUrl;
   const detailPath = item?.detailPath || "#";
@@ -129,7 +121,7 @@ export default function GlassFeedCard({
           <div className={styles.feedItemMeta}>
             <div className={styles.feedItemAuthor}>{authorName}</div>
             <div className={styles.feedItemTime}>
-              {formatTimeAgo(createdAt)}
+              {prettyTime(createdAt, t)}
               {location && ` • ${location}`}
             </div>
           </div>

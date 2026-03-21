@@ -1,33 +1,26 @@
 // src/pages/HomeSwap/HomeSwapEdit.jsx
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import useAuth from "../../hooks/useAuth";
-import { getHomeSwap } from "../../api/homeswap";
-import { updateHomeSwap } from "../../api/homeswap";
+import { getHomeSwap, updateHomeSwap } from "../../api/homeswap";
 
 import formStyles from "../../stylus/components/Form.module.scss";
 import buttonStyles from "../../stylus/components/Button.module.scss";
 import styles from "../../stylus/sections/HomeSwap.module.scss";
 import { PageLoader } from "../../components/ui/PageLoader/PageLoader";
 
-/**
- * Edit HomeSwap screen.
- *
- * This page loads an existing home swap post, checks that the current user
- * is allowed to edit it (owner only) and allows editing of the basic
- * fields: title, location, description, home type and bedrooms.  On save
- * it issues a PUT to the backend via the `/api/home-swap/{id}` endpoint and
- * navigates back to the details page.  The UI mirrors the create form
- * found in HomeSwapPost.jsx and Rentals editing UX.
- */
+const MAX_PHOTOS = 6;
+const MAX_FILE_MB = 10;
+
 export default function HomeSwapEdit() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
 
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
     title: "",
     location: "",
@@ -37,6 +30,13 @@ export default function HomeSwapEdit() {
   });
   const [errorMsg, setErrorMsg] = useState("");
 
+  // Photo state
+  const [existingPhotos, setExistingPhotos] = useState([]); // from server: { id, url }
+  const [removePhotoIds, setRemovePhotoIds] = useState([]); // IDs to remove
+  const [newPhotos, setNewPhotos] = useState([]);            // File[]
+  const [newPreviews, setNewPreviews] = useState([]);        // blob URLs
+  const fileRef = useRef(null);
+
   // Fetch existing post on mount
   useEffect(() => {
     let cancelled = false;
@@ -45,8 +45,7 @@ export default function HomeSwapEdit() {
         setLoading(true);
         const data = await getHomeSwap(id);
         if (cancelled) return;
-        // Permission check: only owner may edit.  The backend will also enforce
-        // but we provide a client hint to prevent confusion.
+
         const ownerId = data?.userId ?? data?.ownerId ?? null;
         const meId = user?.id ?? user?.userId ?? user?._id ?? null;
         const sameUser =
@@ -63,6 +62,10 @@ export default function HomeSwapEdit() {
           homeType: data?.homeType ?? data?.home_type ?? "entire",
           bedrooms: data?.bedrooms != null ? String(data.bedrooms) : "1",
         });
+        // Load existing photos
+        if (data?.photos && Array.isArray(data.photos)) {
+          setExistingPhotos(data.photos.map((p) => ({ id: p.id, url: p.url })));
+        }
       } catch (e) {
         const msg =
           e?.response?.data?.message ||
@@ -77,34 +80,78 @@ export default function HomeSwapEdit() {
         if (!cancelled) setLoading(false);
       }
     })();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, user]);
 
-  // Form field handlers
+  // Build previews for new photos
+  useEffect(() => {
+    const urls = newPhotos.map((f) => URL.createObjectURL(f));
+    setNewPreviews(urls);
+    return () => urls.forEach((u) => URL.revokeObjectURL(u));
+  }, [newPhotos]);
+
   const setField = (key) => (e) => {
-    const { value } = e.target;
-    setForm((prev) => ({ ...prev, [key]: value }));
+    setForm((prev) => ({ ...prev, [key]: e.target.value }));
   };
+
+  const visibleExisting = existingPhotos.filter((p) => !removePhotoIds.includes(p.id));
+  const totalPhotos = visibleExisting.length + newPhotos.length;
 
   const canSubmit = useMemo(() => {
     return !!form.title.trim() && !!form.location.trim();
   }, [form.title, form.location]);
 
+  const onRemoveExisting = (photoId) => {
+    setRemovePhotoIds((prev) => [...prev, photoId]);
+  };
+
+  const onUndoRemove = (photoId) => {
+    setRemovePhotoIds((prev) => prev.filter((pid) => pid !== photoId));
+  };
+
+  const onPickFiles = (e) => {
+    const files = Array.from(e.target.files || []).filter(Boolean);
+    if (!files.length) return;
+
+    if (totalPhotos + files.length > MAX_PHOTOS) {
+      toast.warn(`Maximum ${MAX_PHOTOS} photos allowed`);
+      if (fileRef.current) fileRef.current.value = "";
+      return;
+    }
+    for (const f of files) {
+      if (!f.type?.startsWith?.("image/")) {
+        toast.error("Only image files are allowed");
+        if (fileRef.current) fileRef.current.value = "";
+        return;
+      }
+      if (f.size > MAX_FILE_MB * 1024 * 1024) {
+        toast.error(`Max file size is ${MAX_FILE_MB}MB`);
+        if (fileRef.current) fileRef.current.value = "";
+        return;
+      }
+    }
+    setNewPhotos((prev) => [...prev, ...files]);
+    if (fileRef.current) fileRef.current.value = "";
+  };
+
+  const onRemoveNew = (idx) => {
+    setNewPhotos((arr) => arr.filter((_, i) => i !== idx));
+  };
+
   async function onSubmit(e) {
     e.preventDefault();
-    if (!canSubmit) return;
+    if (!canSubmit || submitting) return;
+    setSubmitting(true);
     try {
-      await updateHomeSwap(id, {
+      const payload = {
         title: form.title.trim(),
         location: form.location.trim(),
         description: form.description?.trim() || "",
         homeType: form.homeType,
         bedrooms: String(form.bedrooms ?? "1"),
-        // availableFrom and availableTo could be passed here if the backend stores them
-      });
+      };
+      await updateHomeSwap(id, payload, newPhotos, removePhotoIds);
       toast.success("Home swap updated");
       navigate(`/app/home-swap/${id}`);
     } catch (err) {
@@ -115,6 +162,8 @@ export default function HomeSwapEdit() {
         "Update failed";
       setErrorMsg(msg);
       toast.error(msg);
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -123,7 +172,7 @@ export default function HomeSwapEdit() {
       <PageLoader message="Loading home swap..." />
     </div>
   );
-  if (errorMsg) return <div style={{ padding: 16 }}>{errorMsg}</div>;
+  if (errorMsg && !form.title) return <div style={{ padding: 16 }}>{errorMsg}</div>;
 
   return (
     <div className={`${formStyles.wrap} ${styles.wrap}`}>
@@ -131,30 +180,17 @@ export default function HomeSwapEdit() {
       <form onSubmit={onSubmit} className={formStyles.form} noValidate>
         <label>
           Title*
-          <input
-            value={form.title}
-            onChange={setField("title")}
-            required
-            disabled={false}
-          />
+          <input value={form.title} onChange={setField("title")} required disabled={submitting} />
         </label>
 
         <label>
           Location*
-          <input
-            value={form.location}
-            onChange={setField("location")}
-            required
-            disabled={false}
-          />
+          <input value={form.location} onChange={setField("location")} required disabled={submitting} />
         </label>
 
         <label>
           Home type
-          <select
-            value={form.homeType}
-            onChange={setField("homeType")}
-          >
+          <select value={form.homeType} onChange={setField("homeType")} disabled={submitting}>
             <option value="entire">Entire place</option>
             <option value="room">Private room</option>
           </select>
@@ -162,36 +198,93 @@ export default function HomeSwapEdit() {
 
         <label>
           Bedrooms
-          <input
-            type="number"
-            min="0"
-            value={form.bedrooms}
-            onChange={setField("bedrooms")}
-          />
+          <input type="number" min="0" value={form.bedrooms} onChange={setField("bedrooms")} disabled={submitting} />
         </label>
 
         <label>
           Description
-          <textarea
-            rows={4}
-            value={form.description}
-            onChange={setField("description")}
-          />
+          <textarea rows={4} value={form.description} onChange={setField("description")} disabled={submitting} />
         </label>
 
+        {/* ---- Photos section ---- */}
+        <div className={`${formStyles.field} ${styles.field}`}>
+          <div>Photos (max {MAX_PHOTOS})</div>
+
+          {/* Existing photos */}
+          {existingPhotos.length > 0 && (
+            <div className={styles.thumbGrid}>
+              {existingPhotos.map((photo) => {
+                const isMarkedForRemoval = removePhotoIds.includes(photo.id);
+                return (
+                  <div key={photo.id} className={styles.thumb} style={isMarkedForRemoval ? { opacity: 0.4 } : {}}>
+                    <img src={photo.url} alt="Existing photo" />
+                    {isMarkedForRemoval ? (
+                      <button
+                        type="button"
+                        className={buttonStyles.sm}
+                        onClick={() => onUndoRemove(photo.id)}
+                        disabled={submitting}
+                      >
+                        Undo
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        className={buttonStyles.sm}
+                        onClick={() => onRemoveExisting(photo.id)}
+                        disabled={submitting}
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* New photo previews */}
+          {newPreviews.length > 0 && (
+            <div className={styles.thumbGrid}>
+              {newPreviews.map((src, i) => (
+                <div key={`new-${i}`} className={styles.thumb}>
+                  <img src={src} alt={`New photo ${i + 1}`} />
+                  <button
+                    type="button"
+                    className={buttonStyles.sm}
+                    onClick={() => onRemoveNew(i)}
+                    disabled={submitting}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {totalPhotos < MAX_PHOTOS && (
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={onPickFiles}
+              aria-label="Add photos"
+              disabled={submitting}
+            />
+          )}
+        </div>
+
         <div className={`${formStyles.actions} ${styles.actions}`} style={{ marginTop: 16 }}>
-          <button
-            type="submit"
-            className={buttonStyles.primary}
-            disabled={!canSubmit}
-          >
-            Save
+          <button type="submit" className={buttonStyles.primary} disabled={!canSubmit || submitting}>
+            {submitting ? "Saving..." : "Save"}
           </button>
           <button
             type="button"
             className={buttonStyles.secondary}
             onClick={() => navigate(-1)}
             style={{ marginLeft: 8 }}
+            disabled={submitting}
           >
             Cancel
           </button>

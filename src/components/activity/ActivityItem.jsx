@@ -1,33 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import ProfileChip from "../ProfileChip";
+import prettyTime from "../../utils/prettyTime";
 
 // ---- helpers (outside component = no hooks) ----
 const clamp = (s, max) =>
   typeof s === "string" && s.length > max ? s.slice(0, max - 1) + "…" : s;
 
-const formatAgo = (iso) => {
-  if (!iso) return "";
-  try {
-    const d = new Date(iso);
-    const diffMs = Date.now() - d.getTime();
-    if (diffMs < 0) return d.toLocaleString();
-    const sec = Math.floor(diffMs / 1000);
-    const min = Math.floor(sec / 60);
-    const hr = Math.floor(min / 60);
-    const day = Math.floor(hr / 24);
-    if (sec < 45) return "just now";
-    if (min < 2) return "1 min ago";
-    if (min < 60) return `${min} mins ago`;
-    if (hr < 2) return "1 hour ago";
-    if (hr < 24) return `${hr} hours ago`;
-    if (day < 2) return "yesterday";
-    if (day < 7) return `${day} days ago`;
-    return d.toLocaleString();
-  } catch {
-    return "";
-  }
-};
+/* formatAgo replaced by shared prettyTime util for i18n */
 
 const TYPE_LABEL = {
   EVENT_CREATED: "event created",
@@ -41,13 +22,14 @@ const TYPE_LABEL = {
 };
 
 function ActivityItem({ item, showMessage = true, onSelect = () => {}, newSince, forceUnread }) {
+  const { t } = useTranslation();
   if (!item) return null;
 
   const entity = String(item.entityType || "").toLowerCase();
   const type = String(item.type || "");
   const typeLabel = TYPE_LABEL[type] || type.replace(/_/g, " ").toLowerCase();
 
-  const whenAgo = formatAgo(item.createdAt);
+  const whenAgo = prettyTime(item?.createdAt, t);
 
   const baseTitle =
     item.title || (item.entityType ? `${item.entityType} #${item.entityId}` : "");
