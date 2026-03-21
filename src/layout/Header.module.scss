@@ -81,6 +81,14 @@
   flex: 1 1 auto;
 }
 
+/* On mobile, don't let search eat all the space */
+@media (max-width: 600px) {
+  .searchIconWrap {
+    flex: 0 0 auto;
+    min-width: 36px;
+  }
+}
+
 /* ================= Logo ================= */
 .logo {
   display: inline-flex;
@@ -221,20 +229,20 @@
   flex-shrink: 0;
 }
 
-/* On narrow screens, allow horizontal scroll but pull the
-   user-menu OUT of the scrollable area so its dropdown
-   isn't clipped by overflow. */
+/* On narrow screens, keep all icons visible and let the
+   user-menu dropdown escape the container. */
 @media (max-width: 600px) {
   .right {
-    overflow-x: auto;
-    overflow-y: visible;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    /* Clip only the horizontal overflow, not vertical */
-    clip-path: inset(-200px -0px -200px -0px);
+    overflow: visible;
+    flex-wrap: nowrap;
+    gap: 6px;
   }
-  .right::-webkit-scrollbar {
+  .right > * {
+    flex-shrink: 1;
+  }
+
+  /* Hide the display name next to avatar to save space */
+  .name {
     display: none;
   }
 }
@@ -298,6 +306,17 @@
   padding: 6px;
   /* Use subtle shadow token for dropdown */
   box-shadow: var(--shadow-subtle);
+  z-index: 100;
+}
+
+/* On mobile, make sure dropdown doesn't go off-screen */
+@media (max-width: 600px) {
+  .menuList {
+    position: fixed;
+    right: 8px;
+    top: calc(var(--header-h) + 4px);
+    left: auto;
+  }
 }
 
 .menuList a,
@@ -353,6 +372,14 @@
     display: grid;
   }
   .brand {
+    display: none;
+  }
+}
+
+/* On small mobile, hide language/theme toggles from header
+   (accessible via mobile drawer instead) to keep icons visible */
+@media (max-width: 480px) {
+  .right > .tip {
     display: none;
   }
 }
