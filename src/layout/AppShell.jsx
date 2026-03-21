@@ -6,7 +6,6 @@ import Header from "./Header";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 import BottomBar from "../components/BottomBar";
-import QuickActionsFab from "../components/QuickActionsFab";
 import MobileNav from "./MobileNav";
 
 import styles from "./AppShell.module.scss";
@@ -144,7 +143,6 @@ export default function AppShell() {
         </main>
       </div>
 
-      {QuickActionsFab ? <QuickActionsFab /> : null}
       {BottomBar ? <BottomBar /> : null}
 
       <Footer />

@@ -67,13 +67,13 @@ const BottomBar = () => {
       </button>
 
       <NavLink
-        to="/app/rentals"
+        to="/app/notifications"
         className={({ isActive }) =>
           `${styles.link} ${isActive ? styles.active : ''}`
         }
       >
-        <span className={styles.icon}>➕</span>
-        <span className={styles.label}>{t('bottomBar.post')}</span>
+        <span className={styles.icon}>🔔</span>
+        <span className={styles.label}>{t('bottomBar.notifications')}</span>
       </NavLink>
       <NavLink
         to="/app/messages"
