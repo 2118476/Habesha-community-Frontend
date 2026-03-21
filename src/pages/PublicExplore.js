@@ -127,13 +127,6 @@ const PublicExplore = () => {
           >
             Sign In
           </button>
-          <button
-            onClick={() => navigate('/register')}
-            className={styles.registerBtn}
-            type="button"
-          >
-            Register
-          </button>
         </div>
       </header>
 

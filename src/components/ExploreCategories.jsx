@@ -114,7 +114,7 @@ function Card({ item, index }) {
         "--bg-image": `url("${item.imageUrl}")`,
       }}
     >
-      <div className={styles.content} style={{ color: ink }}>
+      <div className={styles.content} style={{ color: "#ffffff" }}>
         <h3 className={styles.title}>{item.title}</h3>
         <p className={styles.desc}>{item.description}</p>
       </div>

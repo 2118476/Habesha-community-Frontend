@@ -306,15 +306,16 @@ form.sign-up-form {
 /* ---------- buttons ---------- */
 .account-container .account-btn {
   width: 200px;
-  background-color: #5995fd !important;
-  background: #5995fd !important;
+  background-color: #ffffff !important;
+  background: #ffffff !important;
   border: none !important;
   outline: none !important;
   height: 49px;
   border-radius: 49px;
-  color: #ffffff !important;
+  color: #5995fd !important;
+  -webkit-text-fill-color: #5995fd !important;
   text-transform: uppercase;
-  font-weight: 600;
+  font-weight: 700;
   margin: 10px 0;
   cursor: pointer !important;
   transition: 0.5s;
@@ -324,9 +325,10 @@ form.sign-up-form {
 }
 
 .account-container .account-btn:hover {
-  background-color: #4d84e2 !important;
-  background: #4d84e2 !important;
-  color: #ffffff !important;
+  background-color: #f0f4ff !important;
+  background: #f0f4ff !important;
+  color: #4d84e2 !important;
+  -webkit-text-fill-color: #4d84e2 !important;
 }
 
 .account-container .account-btn:disabled {
@@ -339,18 +341,20 @@ form.sign-up-form {
 .account-container .account-btn.transparent {
   background: transparent !important;
   background-color: transparent !important;
-  border: 2px solid #ffffff !important;
+  border: 2px solid #5995fd !important;
   width: 130px;
   height: 41px;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 1rem;
-  color: #ffffff !important;
+  color: #5995fd !important;
+  -webkit-text-fill-color: #5995fd !important;
 }
 
 .account-container .account-btn.transparent:hover {
-  background-color: #ffffff !important;
-  background: #ffffff !important;
-  color: #4481eb !important;
+  background-color: #5995fd !important;
+  background: #5995fd !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
 }
 
 /* ---------- forgot password link ---------- */
@@ -498,14 +502,16 @@ form.sign-up-form {
  * =================================================================== */
 @media (max-width: 870px) {
   .account-container {
-    min-height: 800px;
-    height: 100vh;
+    min-height: 100vh;
+    height: auto;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
   }
 
   .signin-signup {
     width: 100%;
-    top: 95%;
-    transform: translate(-50%, -87%);
+    top: 50%;
+    transform: translate(-50%, -50%);
     transition: 1s 0.8s ease-in-out;
   }
 
@@ -594,8 +600,11 @@ form.sign-up-form {
   }
 
   .account-container.sign-up-mode .signin-signup {
-    top: 5%;
-    transform: translate(-50%, 0);
+    top: 50%;
+    transform: translate(-50%, -50%);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    max-height: 90vh;
   }
 }
 
@@ -633,8 +642,9 @@ form.sign-up-form {
   }
 
   .account-container.sign-up-mode .signin-signup {
-    top: 9.5%;
-    transform: translate(-25%, 0);
+    top: 50%;
+    transform: translate(-50%, -50%);
+    max-height: 92vh;
   }
 }
 
@@ -646,11 +656,9 @@ html:has(.account-container),
 #root:has(.account-container) {
   margin: 0 !important;
   padding: 0 !important;
-  overflow: hidden !important;
   background: linear-gradient(-45deg, #ff6b6b 0%, #feca57 50%, #ff9ff3 100%) !important;
   background-attachment: fixed !important;
   min-height: 100vh !important;
-  height: 100vh !important;
 }
 
 #root:has(.account-container) {
@@ -661,20 +669,16 @@ html:has(.account-container),
 .auth-page-active {
   margin: 0 !important;
   padding: 0 !important;
-  overflow: hidden !important;
   background: linear-gradient(-45deg, #ff6b6b 0%, #feca57 50%, #ff9ff3 100%) !important;
   background-attachment: fixed !important;
   min-height: 100vh !important;
-  height: 100vh !important;
 }
 
 .auth-page-active #root {
   margin: 0 !important;
   padding: 0 !important;
-  overflow: hidden !important;
   background: linear-gradient(-45deg, #ff6b6b 0%, #feca57 50%, #ff9ff3 100%) !important;
   min-height: 100vh !important;
-  height: 100vh !important;
   width: 100vw !important;
 }
 
@@ -781,10 +785,10 @@ html:has(.account-container),
   }
 
   /* Allow the sign-up form to scroll on mobile */
-  .account-container.sign-up-mode .signin-signup {
+  .account-container .signin-signup {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    max-height: 85vh;
+    max-height: 90vh;
   }
 
   .account-container.sign-up-mode form.sign-up-form {
@@ -793,8 +797,8 @@ html:has(.account-container),
 }
 
 @media (max-width: 570px) {
-  .account-container.sign-up-mode .signin-signup {
-    max-height: 88vh;
+  .account-container .signin-signup {
+    max-height: 92vh;
   }
 }
 
