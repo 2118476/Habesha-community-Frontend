@@ -34,7 +34,10 @@ export default function ThemeToggle() {
     setTheme((prev) => {
       const next = prev === "light" ? "dark" : "light";
       document.documentElement.dataset.theme = next;
-      try { localStorage.setItem("ui.theme", next); } catch (_) {}
+      try {
+        localStorage.setItem("ui.theme", next);
+        localStorage.setItem("theme", next);
+      } catch (_) {}
       return next;
     });
   }, []);

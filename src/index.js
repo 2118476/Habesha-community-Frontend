@@ -18,14 +18,20 @@ import './utils/scrollReveal';
 // Initialize i18n BEFORE rendering
 import './i18n';
 
+// Hero text overrides — loaded last to ensure highest cascade priority
+import './styles/hero-overrides.css';
+
 // Initialize theme - LIGHT MODE IS DEFAULT
 const initializeTheme = () => {
-  const savedTheme = localStorage.getItem('theme');
+  // Check both localStorage keys (legacy "theme" and current "ui.theme")
+  const savedTheme = localStorage.getItem('ui.theme') || localStorage.getItem('theme');
   
-  // Force light as default if no preference
+  // Default to light if no saved preference
   const finalTheme = savedTheme === 'dark' ? 'dark' : 'light';
   
   document.documentElement.setAttribute('data-theme', finalTheme);
+  // Sync both keys so ThemeToggle and Settings stay consistent
+  localStorage.setItem('ui.theme', finalTheme);
   localStorage.setItem('theme', finalTheme);
 };
 

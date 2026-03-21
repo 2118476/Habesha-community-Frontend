@@ -1,0 +1,33 @@
+/* ==========================================================================
+   Hero text overrides — MUST be white on the landing page hero.
+   This file is imported last in index.js to ensure maximum cascade priority.
+   ========================================================================== */
+
+/* Landing page hero — all text white, always */
+.hero-white-text,
+.hero-white-text *,
+.hero-white-text h1,
+.hero-white-text p,
+.hero-white-text button,
+.hero-white-text a {
+  color: #ffffff !important;
+}
+
+/* Navbar over hero — all text white when transparent */
+.nav-hero-white,
+.nav-hero-white *,
+.nav-hero-white a,
+.nav-hero-white button,
+.nav-hero-white .brand {
+  color: #ffffff !important;
+  text-shadow: 0 2px 10px rgba(0,0,0,.45);
+}
+
+/* Keep the brand gradient on the logo */
+.nav-hero-white .brand {
+  background: linear-gradient(90deg, #2563eb, #22c55e);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent !important;
+  text-shadow: none;
+}

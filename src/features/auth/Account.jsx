@@ -156,6 +156,16 @@ function Account({ initialSignUp = false, redirect = "/app/home" }) {
           <div className="signin-signup">
             {/* Signin/login form */}
             <form className="sign-in-form" noValidate onSubmit={handleLoginSubmit}>
+              <div className="back-to-home-row">
+                <button
+                  type="button"
+                  className="back-to-home-btn"
+                  onClick={() => navigate("/")}
+                  aria-label="Back to home"
+                >
+                  ← Back
+                </button>
+              </div>
               <h2 className="form-title">Sign in</h2>
 
               {/* Inline error */}
@@ -199,6 +209,16 @@ function Account({ initialSignUp = false, redirect = "/app/home" }) {
 
             {/* Signup form */}
             <form className="sign-up-form" noValidate onSubmit={handleSubmit}>
+              <div className="back-to-home-row">
+                <button
+                  type="button"
+                  className="back-to-home-btn"
+                  onClick={() => navigate("/")}
+                  aria-label="Back to home"
+                >
+                  ← Back
+                </button>
+              </div>
               <h2 className="form-title">Sign up</h2>
 
               {/* Display submit error if any */}

@@ -99,7 +99,8 @@ const PublicExplore = () => {
         className={[
           styles.navbar,
           solidNav ? styles.navbarSolid : styles.navbarTransparent,
-        ].join(' ')}
+          !solidNav ? 'nav-hero-white' : '',
+        ].filter(Boolean).join(' ')}
         role="banner"
       >
         <div
@@ -109,7 +110,7 @@ const PublicExplore = () => {
           tabIndex={0}
           onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && navigate('/')}
         >
-          Habesha Community
+          Habesha
         </div>
 
         <nav className={styles.navLinks} aria-label="Primary">
@@ -139,12 +140,12 @@ const PublicExplore = () => {
       <main className={styles.container}>
         {/* Hero: background image is provided via CSS var (--hero-bg) */}
         <section
-          className={styles.hero}
+          className={`${styles.hero} hero-white-text`}
           ref={heroRef}
-          style={{ '--hero-bg': heroBg, '--hero-ink': heroInk }}
+          style={{ '--hero-bg': heroBg }}
         >
-          <h1 style={{ color: 'var(--hero-ink)' }}>Welcome to Our Community</h1>
-          <p style={{ color: 'var(--hero-ink)' }}>
+          <h1>Welcome to Our Community</h1>
+          <p>
             Connect with Ethiopians and Habesha friends across the UK. Find
             housing, services, events and travel buddies—built specifically for
             you.
@@ -161,11 +162,6 @@ const PublicExplore = () => {
               onClick={() => navigate('/login')}
               className={styles.secondaryCta}
               type="button"
-              style={{
-                color: 'var(--hero-ink)',
-                borderColor: hexToRgba(heroInk, 0.28),
-                background: hexToRgba(heroInk, 0.08),
-              }}
             >
               Sign In
             </button>

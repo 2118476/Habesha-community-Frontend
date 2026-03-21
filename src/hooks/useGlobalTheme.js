@@ -17,7 +17,7 @@ export default function useGlobalTheme() {
 
     // No token → apply defaults silently, skip the network call entirely.
     if (!token) {
-      applyTheme("SYSTEM");
+      applyTheme("LIGHT");
       applyFontScale("DEFAULT");
       applyDensity("COMFORTABLE");
       applyReducedMotion(false);
@@ -31,7 +31,7 @@ export default function useGlobalTheme() {
         if (!mounted) return;
 
         if (data) {
-          applyTheme(data.theme || "SYSTEM");
+          applyTheme(data.theme || "LIGHT");
           applyFontScale(data.fontScale || "DEFAULT");
           applyDensity(data.density || "COMFORTABLE");
           applyReducedMotion(data.reducedMotion || false);
@@ -39,7 +39,7 @@ export default function useGlobalTheme() {
       } catch {
         // Settings unavailable — fall back to defaults quietly.
         if (mounted) {
-          applyTheme("SYSTEM");
+          applyTheme("LIGHT");
           applyFontScale("DEFAULT");
           applyDensity("COMFORTABLE");
           applyReducedMotion(false);

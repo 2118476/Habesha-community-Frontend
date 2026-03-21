@@ -97,7 +97,7 @@ const ResetPassword = () => {
   if (!token) {
     return (
       <div className="body">
-        <div className="account-container">
+        <div className="account-container auth-centered">
           <div className="jebena"></div>
           <div className="forms-container">
             <div className="signin-signup">
@@ -124,7 +124,7 @@ const ResetPassword = () => {
 
   return (
     <div className="body">
-      <div className="account-container">
+      <div className="account-container auth-centered">
         <div className="jebena"></div>
         <div className="forms-container">
           <div className="signin-signup">

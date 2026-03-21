@@ -26,7 +26,7 @@ export function clearSystemThemeListener() {
  */
 export function applyTheme(theme) {
   if (typeof window === "undefined") return;
-  const val = (theme || "SYSTEM").toUpperCase();
+  const val = (theme || "LIGHT").toUpperCase();
   clearSystemThemeListener();
 
   const setTheme = (t) => {
@@ -36,8 +36,10 @@ export function applyTheme(theme) {
     try {
       if (t === null || t === undefined) {
         localStorage.removeItem("ui.theme");
+        localStorage.removeItem("theme");
       } else {
         localStorage.setItem("ui.theme", t);
+        localStorage.setItem("theme", t);
       }
     } catch (_) {
       /* ignore storage issues */
