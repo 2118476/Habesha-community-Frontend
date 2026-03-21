@@ -11,6 +11,7 @@
 .hero-white-text button,
 .hero-white-text a {
   color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
 }
 
 /* Navbar over hero — all text white when transparent */
