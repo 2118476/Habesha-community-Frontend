@@ -49,8 +49,8 @@
   },
   "bottomBar": {
     "home": "Home",
-    "explore": "Explore",
     "notifications": "Alerts",
+    "language": "E/አ",
     "messages": "Messages",
     "account": "Account"
   },

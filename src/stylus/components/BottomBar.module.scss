@@ -43,6 +43,19 @@
   font-size: 1.2rem;
 }
 
+.langIcon {
+  font-size: 1rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  line-height: 1;
+}
+
+.langActive {
+  color: var(--primary, #2563eb);
+}
+
 .active {
   color: var(--primary);
 }
