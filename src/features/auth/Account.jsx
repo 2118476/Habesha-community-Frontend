@@ -251,14 +251,16 @@ function Account({ initialSignUp = false, redirect = "/app/home" }) {
               <div className="input-field">
                 <i className="fas fa-calendar-alt"></i>
                 <input
-                  className="date"
+                  className={`date ${values.dob ? 'has-value' : ''}`}
                   type="date"
                   name="dob"
                   max={today}
                   value={values.dob}
                   onChange={handleChange}
                   placeholder="Date of Birth*"
+                  title="Date of Birth"
                 />
+                {!values.dob && <span className="date-placeholder">Date of Birth*</span>}
               </div>
               {errors ? errors.dob && showErrors && <p>{errors.dob}</p> : ""}
 
