@@ -116,7 +116,7 @@
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
-  left: 75%;
+  left: 50%;
   width: 50%;
   transition: 1s 0.7s ease-in-out;
   display: grid;
@@ -477,7 +477,7 @@ form.sign-up-form {
 }
 
 .account-container.sign-up-mode .signin-signup {
-  left: 25%;
+  left: 50%;
 }
 
 .account-container.sign-up-mode .right-panel .image,

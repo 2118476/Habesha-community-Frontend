@@ -42,7 +42,7 @@
   position: absolute;
   top: 55%;
   transform: translate(-50%, -50%);
-  left: 75%;
+  left: 50%;
   width: 50%;
   transition: 1s 0.7s ease-in-out;
   display: grid;
@@ -393,7 +393,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .account-container.sign-up-mode .signin-signup {
-  left: 25%;
+  left: 50%;
 }
 
 /* Sliding animation - when clicking on the sign up button, the signup form appears */
