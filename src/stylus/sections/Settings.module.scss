@@ -73,20 +73,41 @@
 /* ===================== Samsung-style mobile settings ===================== */
 
 .mobileSettingsWrap {
-  padding: 8px 0;
+  padding: 0;
+  min-height: 80vh;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(28px) saturate(160%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  animation: settingsFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes settingsFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .mobileSettingsTitle {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
-  padding: 12px 20px 8px;
+  padding: 20px 20px 12px;
   margin: 0;
-  color: var(--on-surface-0);
+  color: rgba(255, 255, 255, 0.95);
+  letter-spacing: 0.2px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  animation: settingsTitleIn 0.4s 0.1s ease both;
+}
+
+@keyframes settingsTitleIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .mobileSettingsList {
   display: flex;
   flex-direction: column;
+  padding: 6px 8px 24px;
   gap: 2px;
 }
 
@@ -94,17 +115,49 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 14px 20px;
+  padding: 13px 14px;
   text-decoration: none;
-  color: var(--on-surface-0);
-  transition: background 0.12s ease;
+  color: rgba(255, 255, 255, 0.7);
+  border-radius: 12px;
   border: none;
   background: transparent;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  animation: settingsItemSlide 0.35s ease both;
 }
 
+/* Stagger each item */
+.mobileSettingsItem:nth-child(1) { animation-delay: 0.08s; }
+.mobileSettingsItem:nth-child(2) { animation-delay: 0.14s; }
+.mobileSettingsItem:nth-child(3) { animation-delay: 0.20s; }
+.mobileSettingsItem:nth-child(4) { animation-delay: 0.26s; }
+.mobileSettingsItem:nth-child(5) { animation-delay: 0.32s; }
+.mobileSettingsItem:nth-child(6) { animation-delay: 0.38s; }
+
+@keyframes settingsItemSlide {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Hover glow */
+.mobileSettingsItem::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.08), rgba(37, 99, 235, 0.06));
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.mobileSettingsItem:hover::before,
+.mobileSettingsItem:active::before {
+  opacity: 1;
+}
 .mobileSettingsItem:hover,
 .mobileSettingsItem:active {
-  background: var(--surface-2, #f1f5f9);
+  color: rgba(255, 255, 255, 0.95);
+  transform: translateX(4px);
 }
 
 .mobileSettingsIcon {
@@ -113,9 +166,16 @@
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  background: color-mix(in oklch, var(--primary, #2563eb) 10%, transparent);
-  color: var(--primary, #2563eb);
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(37, 99, 235, 0.15));
+  color: #c4b5fd;
   flex-shrink: 0;
+  border: 1px solid rgba(124, 58, 237, 0.12);
+  transition: all 0.2s ease;
+}
+
+.mobileSettingsItem:hover .mobileSettingsIcon {
+  box-shadow: 0 0 16px rgba(124, 58, 237, 0.25);
+  color: #a78bfa;
 }
 
 .mobileSettingsText {
@@ -127,51 +187,162 @@
 }
 
 .mobileSettingsLabel {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
-  color: var(--on-surface-0);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .mobileSettingsDesc {
-  font-size: 13px;
-  color: var(--on-surface-2, #64748b);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.38);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .mobileSettingsChevron {
-  color: var(--on-surface-3, #94a3b8);
+  color: rgba(255, 255, 255, 0.25);
   flex-shrink: 0;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.mobileSettingsItem:hover .mobileSettingsChevron {
+  color: rgba(255, 255, 255, 0.5);
+  transform: translateX(2px);
 }
 
 /* Mobile sub-page with back button */
 .mobileSubPage {
-  min-height: 100%;
+  min-height: 80vh;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(28px) saturate(160%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  animation: settingsFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .mobileBackBtn {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 16px;
+  padding: 14px 16px;
   background: transparent;
   border: none;
-  border-bottom: 1px solid var(--border-1, #e5e7eb);
-  color: var(--primary, #2563eb);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  color: #c4b5fd;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   width: 100%;
   text-align: left;
+  transition: all 0.15s ease;
 }
 
+.mobileBackBtn:hover,
 .mobileBackBtn:active {
-  background: var(--surface-2, #f1f5f9);
+  background: rgba(124, 58, 237, 0.08);
+  color: #a78bfa;
 }
 
 .mobileSubContent {
   padding: clamp(12px, 3vw, 20px);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Force sub-page form elements to be readable on glass background */
+.mobileSubContent h1,
+.mobileSubContent h2,
+.mobileSubContent h3 {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.mobileSubContent label {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.mobileSubContent input,
+.mobileSubContent select,
+.mobileSubContent textarea {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.mobileSubContent input:focus,
+.mobileSubContent select:focus,
+.mobileSubContent textarea:focus {
+  border-color: rgba(124, 58, 237, 0.5);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+}
+
+/* ---- Light mode adjustments for settings ---- */
+:root:not([data-theme="dark"]) {
+  .mobileSettingsWrap {
+    background: rgba(255, 255, 255, 0.6);
+  }
+  .mobileSettingsTitle {
+    color: rgba(15, 23, 42, 0.9);
+    border-bottom-color: rgba(0, 0, 0, 0.06);
+  }
+  .mobileSettingsItem {
+    color: rgba(15, 23, 42, 0.65);
+  }
+  .mobileSettingsItem:hover,
+  .mobileSettingsItem:active {
+    color: rgba(15, 23, 42, 0.9);
+  }
+  .mobileSettingsIcon {
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(37, 99, 235, 0.08));
+    color: #6d28d9;
+    border-color: rgba(124, 58, 237, 0.1);
+  }
+  .mobileSettingsItem:hover .mobileSettingsIcon {
+    color: #7c3aed;
+    box-shadow: 0 0 12px rgba(124, 58, 237, 0.15);
+  }
+  .mobileSettingsLabel {
+    color: rgba(15, 23, 42, 0.85);
+  }
+  .mobileSettingsDesc {
+    color: rgba(15, 23, 42, 0.4);
+  }
+  .mobileSettingsChevron {
+    color: rgba(15, 23, 42, 0.2);
+  }
+  .mobileSettingsItem:hover .mobileSettingsChevron {
+    color: rgba(15, 23, 42, 0.4);
+  }
+  .mobileSubPage {
+    background: rgba(255, 255, 255, 0.6);
+  }
+  .mobileBackBtn {
+    color: #6d28d9;
+    border-bottom-color: rgba(0, 0, 0, 0.06);
+  }
+  .mobileBackBtn:hover,
+  .mobileBackBtn:active {
+    background: rgba(124, 58, 237, 0.06);
+    color: #7c3aed;
+  }
+  .mobileSubContent {
+    color: var(--on-surface-0);
+  }
+  .mobileSubContent h1,
+  .mobileSubContent h2,
+  .mobileSubContent h3 {
+    color: var(--on-surface-0);
+  }
+  .mobileSubContent label {
+    color: var(--on-surface-1);
+  }
+  .mobileSubContent input,
+  .mobileSubContent select,
+  .mobileSubContent textarea {
+    background: var(--surface-0, #fff);
+    border-color: var(--border-1, #e5e7eb);
+    color: var(--on-surface-0);
+  }
 }
 
 /* Card baseline */
