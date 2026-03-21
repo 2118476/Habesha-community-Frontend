@@ -88,15 +88,21 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
+.mobileSettingsHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  animation: settingsTitleIn 0.4s 0.1s ease both;
+}
+
 .mobileSettingsTitle {
   font-size: 20px;
   font-weight: 700;
-  padding: 20px 20px 12px;
   margin: 0;
   color: rgba(255, 255, 255, 0.95);
   letter-spacing: 0.2px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  animation: settingsTitleIn 0.4s 0.1s ease both;
 }
 
 @keyframes settingsTitleIn {
@@ -225,24 +231,39 @@
 .mobileBackBtn {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 14px 16px;
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
   color: #c4b5fd;
-  font-size: 15px;
-  font-weight: 600;
   cursor: pointer;
-  width: 100%;
-  text-align: left;
-  transition: all 0.15s ease;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
 }
 
 .mobileBackBtn:hover,
 .mobileBackBtn:active {
-  background: rgba(124, 58, 237, 0.08);
+  background: rgba(124, 58, 237, 0.12);
+  border-color: rgba(124, 58, 237, 0.2);
   color: #a78bfa;
+}
+
+/* Sub-page back button is full-width with text */
+.mobileSubPage > .mobileBackBtn {
+  width: 100%;
+  height: auto;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 14px 16px;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: transparent;
+  font-size: 15px;
+  font-weight: 600;
 }
 
 .mobileSubContent {
@@ -283,6 +304,8 @@
   }
   .mobileSettingsTitle {
     color: rgba(15, 23, 42, 0.9);
+  }
+  .mobileSettingsHeader {
     border-bottom-color: rgba(0, 0, 0, 0.06);
   }
   .mobileSettingsItem {
@@ -318,12 +341,18 @@
   }
   .mobileBackBtn {
     color: #6d28d9;
-    border-bottom-color: rgba(0, 0, 0, 0.06);
+    border-color: rgba(0, 0, 0, 0.08);
+    background: rgba(0, 0, 0, 0.04);
   }
   .mobileBackBtn:hover,
   .mobileBackBtn:active {
-    background: rgba(124, 58, 237, 0.06);
+    background: rgba(124, 58, 237, 0.08);
     color: #7c3aed;
+  }
+  .mobileSubPage > .mobileBackBtn {
+    background: transparent;
+    border-color: transparent;
+    border-bottom-color: rgba(0, 0, 0, 0.06);
   }
   .mobileSubContent {
     color: var(--on-surface-0);

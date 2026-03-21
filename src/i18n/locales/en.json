@@ -51,8 +51,8 @@
     "home": "Home",
     "notifications": "Alerts",
     "language": "E/አ",
-    "messages": "Messages",
-    "account": "Account"
+    "settings": "Settings",
+    "messages": "Messages"
   },
   "footer": {
     "help": "Help",

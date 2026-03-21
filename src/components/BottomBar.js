@@ -49,13 +49,13 @@ const BottomBar = () => {
       aria-hidden={hidden}
     >
       <NavLink
-        to="/app/settings/account"
+        to="/app/settings"
         className={({ isActive }) =>
           `${styles.link} ${isActive ? styles.active : ''}`
         }
       >
-        <span className={styles.icon}>👤</span>
-        <span className={styles.label}>{t('bottomBar.account')}</span>
+        <span className={styles.icon}>⚙️</span>
+        <span className={styles.label}>{t('bottomBar.settings')}</span>
       </NavLink>
 
       <button

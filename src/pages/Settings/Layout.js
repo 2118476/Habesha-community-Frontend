@@ -50,7 +50,17 @@ const SettingsLayout = () => {
   if (showMobileList) {
     return (
       <div className={styles.mobileSettingsWrap}>
-        <h1 className={styles.mobileSettingsTitle}>{t('settings.settings')}</h1>
+        <div className={styles.mobileSettingsHeader}>
+          <button
+            type="button"
+            className={styles.mobileBackBtn}
+            onClick={() => navigate(-1)}
+            aria-label={t('common.back')}
+          >
+            <ArrowLeft size={20} strokeWidth={2} />
+          </button>
+          <h1 className={styles.mobileSettingsTitle}>{t('settings.settings')}</h1>
+        </div>
         <nav className={styles.mobileSettingsList} aria-label={t('settings.settings')}>
           {links.map(({ to, label, icon: Icon, desc }) => (
             <NavLink
