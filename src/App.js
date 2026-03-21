@@ -403,6 +403,13 @@ const ContactRequests = lazyWithPreload(
   "settings-contacts"
 );
 
+/* Settings index: on desktop redirect to account, on mobile show the list */
+function SettingsIndex() {
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 700;
+  if (!isMobile) return <Navigate to="account" replace />;
+  return null; // Layout.js renders the mobile list when at index
+}
+
 /* ---------- 404 ---------- */
 const NotFound = lazyWithPreload(
   () =>
@@ -577,7 +584,7 @@ const AppRoutes = () => (
 
           {/* Settings (nested) */}
           <Route path="settings" element={<SettingsLayout />}>
-            <Route index element={<Navigate to="account" replace />} />
+            <Route index element={<SettingsIndex />} />
             <Route path="account" element={<AccountSettings />} />
             <Route path="privacy" element={<PrivacySettings />} />
             <Route path="security" element={<SecuritySettings />} />
