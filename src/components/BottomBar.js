@@ -69,7 +69,9 @@ const BottomBar = () => {
           <span>/</span>
           <span className={!isEn ? styles.langActive : ''}>አ</span>
         </span>
-        <span className={styles.label}>{t('bottomBar.language')}</span>
+        <span className={`${styles.label} ${styles.langActive}`}>
+          {isEn ? 'Eng' : 'አማ'}
+        </span>
       </button>
 
       <NavLink

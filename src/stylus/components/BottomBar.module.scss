@@ -1,68 +1,159 @@
+/* ============================================================
+   BottomBar — modern floating glassmorphism nav
+   ============================================================ */
+
 .bar {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%) translateY(0);
+  width: calc(100% - 24px);
+  max-width: 420px;
   display: flex;
   justify-content: space-around;
-  background: var(--surface-1);
-  color: var(--on-surface-1);
-  border-top: 1px solid var(--border-soft);
-  padding: 0.25rem 0;
+  align-items: center;
+  /* Frosted glass */
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 4px 2px;
   z-index: 100;
-  /* Smooth slide transition */
-  transform: translateY(0);
-  transition: transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.2),
+    0 1px 3px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition:
+    transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
+    opacity 0.3s ease;
   will-change: transform;
 }
 
-/* Hidden state — slides below viewport */
+/* Hidden state */
 .barHidden {
-  transform: translateY(100%);
+  transform: translateX(-50%) translateY(calc(100% + 20px));
+  opacity: 0;
   pointer-events: none;
 }
 
+/* ---- Links ---- */
 .link {
   flex: 1;
   text-align: center;
   text-decoration: none;
-  color: inherit;
-  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  padding: 0.25rem 0;
+  gap: 1px;
+  padding: 5px 0 3px;
   background: none;
   border: none;
   cursor: pointer;
   font-family: inherit;
+  border-radius: 14px;
+  transition: color 0.2s ease, transform 0.15s ease;
+  position: relative;
 }
 
+.link:active {
+  transform: scale(0.92);
+}
+
+/* ---- Icons ---- */
 .icon {
-  font-size: 1.2rem;
+  font-size: 16px;
+  line-height: 1;
+  filter: grayscale(0.6);
+  transition: filter 0.2s ease;
 }
 
-.langIcon {
-  font-size: 1rem;
-  font-weight: 700;
-  display: inline-flex;
-  align-items: center;
-  gap: 1px;
+.label {
+  display: block;
   line-height: 1;
 }
 
+/* ---- Language toggle ---- */
+.langIcon {
+  font-size: 13px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.45);
+}
+
 .langActive {
-  color: var(--primary, #2563eb);
+  color: #a78bfa;
 }
 
+/* ---- Active state ---- */
 .active {
-  color: var(--primary);
+  color: #c4b5fd;
 }
 
-/* Hide on larger screens */
+.active .icon {
+  filter: grayscale(0);
+}
+
+/* Active dot indicator */
+.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7c3aed, #2563eb);
+  box-shadow: 0 0 6px rgba(124, 58, 237, 0.5);
+}
+
+/* ---- Light mode ---- */
+:root:not([data-theme="dark"]) .bar {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 8px 32px rgba(15, 23, 42, 0.1),
+    0 1px 3px rgba(15, 23, 42, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+:root:not([data-theme="dark"]) .link {
+  color: rgba(15, 23, 42, 0.4);
+}
+
+:root:not([data-theme="dark"]) .active {
+  color: #6d28d9;
+}
+
+:root:not([data-theme="dark"]) .langIcon {
+  color: rgba(15, 23, 42, 0.35);
+}
+
+:root:not([data-theme="dark"]) .langActive {
+  color: #7c3aed;
+}
+
+:root:not([data-theme="dark"]) .active::after {
+  background: linear-gradient(135deg, #7c3aed, #2563eb);
+}
+
+/* ---- Hide on desktop ---- */
 @media (min-width: 800px) {
   .bar {
     display: none;
   }
+}
+
+/* ---- Reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+  .bar { transition: none; }
+  .link { transition: none; }
 }
