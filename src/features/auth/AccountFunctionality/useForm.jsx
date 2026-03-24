@@ -1,32 +1,20 @@
 import { useState } from "react";
-// Use the shared axios instance rather than creating a new one.
 import api from '../../../api/axiosInstance';
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 const useForm = (validateForm) => {
   const navigate = useNavigate();
-  //fields in sign up form
-  //values set to empty
+
   const [values, setValues] = useState({
-    firstName: "",
-    lastName: "",
-    dob: "",
-    country: "",
-    phone: "",
+    fullName: "",
     email: "",
     password: "",
-    confirmPassword: "",
   });
 
-  //this is used to check errors for the sign up form
   const [errors, setErrors] = useState({});
 
-  // take user to login after registration.  We no longer use a
-  // separate confirmation screen so this helper is unused.
-
   const handleChange = (e) => {
-    //get the value from user input
     const { name, value } = e.target;
     setValues({
       ...values,
@@ -36,64 +24,40 @@ const useForm = (validateForm) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    //check the values in the signup form
-    const errors = validateForm(values);
-    
-    if (Object.keys(errors).length === 0) {
-      const { firstName, lastName, country, phone, email, password } = values;
-      // Map the registration values from the E‑Learning form to the
-      // Habesha registration request.  The backend expects a single
-      // name field, a city rather than country and a fixed role.  We
-      // default the role to USER for all registrations via this form.
+
+    const validationErrors = validateForm(values);
+
+    if (Object.keys(validationErrors).length === 0) {
       const registration = {
-        name: `${firstName} ${lastName}`.trim(),
-        email: email,
-        phone: phone,
-        city: country, // Backend expects 'city' field
-        password: password,
-        role: 'USER',
+        name: values.fullName.trim(),
+        email: values.email,
+        password: values.password,
       };
-      
+
       try {
-        // Use the unified /auth/register endpoint.  The shared
-        // axios instance will prefix the baseURL automatically.
         const res = await api.post('/auth/register', registration);
-        
+
         if (res.status === 200 || res.status === 201) {
-          // Reset form values after successful registration
-          setValues({
-            firstName: '',
-            lastName: '',
-            dob: '',
-            country: '',
-            phone: '',
-            email: '',
-            password: '',
-            confirmPassword: '',
-          });
+          setValues({ fullName: '', email: '', password: '' });
           setErrors({});
-          // Show success popup, then redirect to login
           await Swal.fire({
             icon: 'success',
-            title: 'Account Created!',
-            text: 'Your account has been registered successfully. Please sign in.',
+            title: 'Check Your Email',
+            text: 'We sent a verification link to your email. Please verify to activate your account.',
             confirmButtonColor: '#5995fd',
           });
           navigate('/login');
         }
       } catch (error) {
-        // Enhanced error handling with user feedback
-        console.error('❌ Registration failed:', error);
-        
+        console.error('Registration failed:', error);
+
         let errorMessage = 'Registration failed. Please try again.';
         if (error.response?.data?.message) {
           errorMessage = error.response.data.message;
         } else if (error.message) {
           errorMessage = error.message;
         }
-        
-        // Set error to display to user
+
         setErrors({ submit: errorMessage });
         Swal.fire({
           icon: 'error',
@@ -103,7 +67,7 @@ const useForm = (validateForm) => {
         });
       }
     } else {
-      setErrors(errors);
+      setErrors(validationErrors);
     }
   };
 

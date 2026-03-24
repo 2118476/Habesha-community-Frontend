@@ -109,6 +109,14 @@ const Register = lazyWithPreload(
   "auth-register"
 );
 
+const VerifyEmail = lazyWithPreload(
+  () =>
+    import(
+      /* webpackChunkName: "auth-verify-email" */ "./pages/Auth/VerifyEmail"
+    ),
+  "auth-verify-email"
+);
+
 /* Password reset (lazy) */
 const ForgotPassword = lazyWithPreload(
   () =>
@@ -486,6 +494,7 @@ const AppRoutes = () => (
         {/* Auth */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
         {/* Password reset */}
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPasswordNew />} />

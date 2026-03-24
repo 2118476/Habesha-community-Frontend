@@ -13,7 +13,6 @@ function Account({ initialSignUp = false, redirect = "/app/home" }) {
   const { handleChange, values, handleSubmit, errors, showErrors } =
     useForm(validateSignUpForm);
 
-  const today = new Date().toISOString().slice(0, 10);
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [disabled, setDisabled] = useState(false);
   const [email, setEmail] = useState("");
@@ -228,65 +227,13 @@ function Account({ initialSignUp = false, redirect = "/app/home" }) {
                 <i className="fas fa-user"></i>
                 <input
                   type="text"
-                  name="firstName"
-                  value={values.firstName}
+                  name="fullName"
+                  value={values.fullName}
                   onChange={handleChange}
-                  placeholder="First Name*"
+                  placeholder="Full Name*"
                 />
               </div>
-              {errors ? errors.firstName && showErrors && <p>{errors.firstName}</p> : ""}
-
-              <div className="input-field">
-                <i className="fas fa-user"></i>
-                <input
-                  type="text"
-                  name="lastName"
-                  value={values.lastName}
-                  onChange={handleChange}
-                  placeholder="Last Name*"
-                />
-              </div>
-              {errors ? errors.lastName && showErrors && <p>{errors.lastName}</p> : ""}
-
-              <div className="input-field">
-                <i className="fas fa-calendar-alt"></i>
-                <input
-                  className={`date ${values.dob ? 'has-value' : ''}`}
-                  type="date"
-                  name="dob"
-                  max={today}
-                  value={values.dob}
-                  onChange={handleChange}
-                  placeholder="Date of Birth*"
-                  title="Date of Birth"
-                />
-                {!values.dob && <span className="date-placeholder">Date of Birth*</span>}
-              </div>
-              {errors ? errors.dob && showErrors && <p>{errors.dob}</p> : ""}
-
-              <div className="input-field">
-                <i className="fas fa-globe-americas"></i>
-                <input
-                  type="text"
-                  name="country"
-                  value={values.country}
-                  onChange={handleChange}
-                  placeholder="Country*"
-                />
-              </div>
-              {errors ? errors.country && showErrors && <p>{errors.country}</p> : ""}
-
-              <div className="input-field">
-                <i className="fas fa-phone"></i>
-                <input
-                  type="text"
-                  name="phone"
-                  value={values.phone}
-                  onChange={handleChange}
-                  placeholder="Phone Number*"
-                />
-              </div>
-              {errors ? errors.phone && showErrors && <p>{errors.phone}</p> : ""}
+              {showErrors && errors.fullName && <p>{errors.fullName}</p>}
 
               <div className="input-field">
                 <i className="fas fa-envelope"></i>
@@ -298,7 +245,7 @@ function Account({ initialSignUp = false, redirect = "/app/home" }) {
                   placeholder="Email*"
                 />
               </div>
-              {errors ? errors.email && showErrors && <p>{errors.email}</p> : ""}
+              {showErrors && errors.email && <p>{errors.email}</p>}
 
               <div className="input-field">
                 <i className="fas fa-lock"></i>
@@ -336,19 +283,7 @@ function Account({ initialSignUp = false, redirect = "/app/home" }) {
                   {passwordStrength.text}
                 </div>
               )}
-              {errors ? errors.password && showErrors && <p>{errors.password}</p> : ""}
-
-              <div className="input-field">
-                <i className="fas fa-lock"></i>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  value={values.confirmPassword}
-                  onChange={handleChange}
-                  placeholder="Confirm Password*"
-                />
-              </div>
-              {errors ? errors.confirmPassword && showErrors && <p>{errors.confirmPassword}</p> : ""}
+              {showErrors && errors.password && <p>{errors.password}</p>}
 
               <input 
                 type="submit" 
