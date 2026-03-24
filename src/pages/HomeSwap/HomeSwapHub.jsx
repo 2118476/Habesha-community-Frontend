@@ -9,6 +9,9 @@ import { InlineSpinner } from '../../components/ui/Spinner/Spinner';
 const PAGE_SIZE = 12;
 
 function coverFrom(item) {
+  // Prefer the streaming endpoint which is consistent and cache-bustable
+  const id = item?.id || item?._id;
+  if (id) return `/homeswap/${id}/photos/first`;
   return (
     item?.coverUrl ||
     item?.cover ||

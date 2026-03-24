@@ -42,13 +42,20 @@ function firstWord(name) {
   return (space === -1 ? s : s.slice(0, space)) || "there";
 }
 
-/** Derive photos from the item's photos array (backend shape: photos[].url). */
+/** Derive photos from the item's photos array (backend shape: photos[].url).
+ *  Uses the streaming endpoint /homeswap/photos/{photoId} for reliable serving. */
 function deriveHomeSwapPhotos(item) {
   const out = [];
 
   if (Array.isArray(item?.photos)) {
     for (const p of item.photos) {
       if (!p) continue;
+      // Prefer streaming endpoint by photo ID
+      if (p.id) {
+        const abs = makeApiUrl(`/homeswap/photos/${p.id}`);
+        if (abs && !out.includes(abs)) out.push(abs);
+        continue;
+      }
       const src = typeof p === "string" ? p : p.url || p.path || p.src || null;
       if (!src) continue;
       const abs = toAbs(src);
