@@ -10,6 +10,7 @@ const useForm = (validateForm) => {
     fullName: "",
     email: "",
     password: "",
+    confirmPassword: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -38,7 +39,7 @@ const useForm = (validateForm) => {
         const res = await api.post('/auth/register', registration);
 
         if (res.status === 200 || res.status === 201) {
-          setValues({ fullName: '', email: '', password: '' });
+          setValues({ fullName: '', email: '', password: '', confirmPassword: '' });
           setErrors({});
           await Swal.fire({
             icon: 'success',

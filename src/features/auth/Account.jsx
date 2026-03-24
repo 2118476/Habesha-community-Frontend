@@ -285,6 +285,18 @@ function Account({ initialSignUp = false, redirect = "/app/home" }) {
               )}
               {showErrors && errors.password && <p>{errors.password}</p>}
 
+              <div className="input-field">
+                <i className="fas fa-lock"></i>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={values.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="Confirm Password*"
+                />
+              </div>
+              {showErrors && errors.confirmPassword && <p>{errors.confirmPassword}</p>}
+
               <input 
                 type="submit" 
                 className="account-btn" 

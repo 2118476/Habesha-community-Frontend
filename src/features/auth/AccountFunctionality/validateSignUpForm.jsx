@@ -24,6 +24,13 @@ function validateSignUpForm(values) {
     errors.password = "Password must be at least 8 characters.";
   }
 
+  // Confirm Password
+  if (!values.confirmPassword) {
+    errors.confirmPassword = "Please confirm your password.";
+  } else if (values.confirmPassword !== values.password) {
+    errors.confirmPassword = "Passwords do not match.";
+  }
+
   return errors;
 }
 
