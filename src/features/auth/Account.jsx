@@ -6,8 +6,9 @@ import { Link, useNavigate } from "react-router-dom";
 import './Account.css';
 import useForm from "./AccountFunctionality/useForm";
 import validateSignUpForm from "./AccountFunctionality/validateSignUpForm";
-// Use the host authentication context rather than manually calling the E-Learning API
 import useAuth from '../../hooks/useAuth';
+import api from '../../api/axiosInstance';
+import Swal from 'sweetalert2';
 
 function Account({ initialSignUp = false, redirect = "/app/home" }) {
   const { handleChange, values, handleSubmit, errors, showErrors } =
@@ -75,6 +76,32 @@ function Account({ initialSignUp = false, redirect = "/app/home" }) {
       if (err && err.response) {
         const status = err.response.status;
         const data = err.response.data;
+
+        // Specific handling for unverified email (403 with "Email Not Verified")
+        if (status === 403 && data?.error === 'Email Not Verified') {
+          await Swal.fire({
+            icon: 'warning',
+            title: 'Email Not Verified',
+            html: 'Please check your inbox and click the verification link before signing in.<br/><br/>Didn\'t receive it?',
+            showCancelButton: true,
+            confirmButtonText: 'Resend Verification',
+            cancelButtonText: 'OK',
+            confirmButtonColor: '#5995fd',
+          }).then(async (result) => {
+            if (result.isConfirmed) {
+              try {
+                await api.post('/auth/resend-verification', { email });
+                Swal.fire({ icon: 'success', title: 'Email Sent', text: 'A new verification link has been sent to your email.', confirmButtonColor: '#5995fd' });
+              } catch {
+                Swal.fire({ icon: 'error', title: 'Failed', text: 'Could not resend verification email. Please try again later.', confirmButtonColor: '#5995fd' });
+              }
+            }
+          });
+          setEmail("");
+          setPassword("");
+          return;
+        }
+
         if (status === 401 || status === 403) {
           reason =
             (data && (data.message || data.error))

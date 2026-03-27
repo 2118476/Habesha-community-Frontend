@@ -39,13 +39,15 @@ const useForm = (validateForm) => {
         const res = await api.post('/auth/register', registration);
 
         if (res.status === 200 || res.status === 201) {
+          const registeredEmail = values.email;
           setValues({ fullName: '', email: '', password: '', confirmPassword: '' });
           setErrors({});
           await Swal.fire({
-            icon: 'success',
-            title: 'Check Your Email',
-            text: 'We sent a verification link to your email. Please verify to activate your account.',
+            icon: 'info',
+            title: 'Almost There!',
+            html: `We sent a verification link to <b>${registeredEmail}</b>.<br/>Please verify your email before signing in.`,
             confirmButtonColor: '#5995fd',
+            confirmButtonText: 'Got it',
           });
           navigate('/login');
         }

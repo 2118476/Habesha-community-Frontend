@@ -81,3 +81,42 @@
 .verify-btn:hover {
   background: #4d84e2;
 }
+
+.verify-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.verify-btn-outline {
+  background: transparent;
+  color: #5995fd;
+  border: 2px solid #5995fd;
+  margin-top: 0.5rem;
+}
+
+.verify-btn-outline:hover:not(:disabled) {
+  background: #5995fd;
+  color: #fff;
+}
+
+.verify-resend {
+  margin-top: 1.25rem;
+  width: 100%;
+}
+
+.verify-resend-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-family: "Poppins", sans-serif;
+  outline: none;
+  margin-bottom: 0.5rem;
+  box-sizing: border-box;
+}
+
+.verify-resend-input:focus {
+  border-color: #5995fd;
+  box-shadow: 0 0 0 3px rgba(89, 149, 253, 0.1);
+}
