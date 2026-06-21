@@ -148,6 +148,7 @@ export default function HomeDashboard() {
     `${process.env.PUBLIC_URL}/videos/${isMobile ? 'mobile-hero.mp4' : 'hero-coffee.mp4'}`
   );
   const heroPoster = encodeURI(`${process.env.PUBLIC_URL}/images/hero.png`);
+  const patternUrl = encodeURI(`${process.env.PUBLIC_URL}/images/habesha-pattern.png`);
 
   return (
     <div className={styles.wrapper}>
@@ -165,6 +166,8 @@ export default function HomeDashboard() {
           <source src={heroVideo} type="video/mp4" />
         </video>
         <div className={styles.bannerOverlay} aria-hidden="true" />
+        <div className={styles.patternTop} style={{ backgroundImage: `url(${patternUrl})` }} aria-hidden="true" />
+        <div className={styles.patternBottom} style={{ backgroundImage: `url(${patternUrl})` }} aria-hidden="true" />
         <div className={styles.bannerContent}>
           <h1>{firstName ? `Selam, ${firstName} 👋` : 'Selam 👋'}</h1>
           <p>Here’s what’s new in your community today.</p>

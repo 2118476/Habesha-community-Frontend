@@ -114,7 +114,10 @@ export default function AppShell() {
         "app-shell",
       ].join(" ").trim()}
     >
-      <Header onOpenMobileNav={() => setMobileNavOpen(true)} />
+      <Header
+        onOpenMobileNav={() => setMobileNavOpen(true)}
+        heroOverlay={/\/app\/home\/?$/.test(location.pathname)}
+      />
 
       {/* Desktop sidebar + scrim */}
       <div className={styles.main}>

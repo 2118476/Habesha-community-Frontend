@@ -44,6 +44,30 @@
   will-change: transform;
 }
 
+/* Home hero: nav sits transparent OVER the video — make it white + legible */
+.header[data-overlay="true"] {
+  --fg: #ffffff;
+  color: #ffffff;
+}
+.header[data-overlay="true"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.40), rgba(0, 0, 0, 0));
+  pointer-events: none;
+}
+.header[data-overlay="true"] a,
+.header[data-overlay="true"] strong,
+.header[data-overlay="true"] button {
+  color: #ffffff !important;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.55);
+}
+.header[data-overlay="true"] svg {
+  color: #ffffff;
+  filter: drop-shadow(0 1px 6px rgba(0, 0, 0, 0.5));
+}
+
 /* Mobile: slide header up when scrolling down */
 @media (max-width: 800px) {
   .header[data-hidden="true"] {

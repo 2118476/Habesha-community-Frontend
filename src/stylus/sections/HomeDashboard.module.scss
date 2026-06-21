@@ -49,14 +49,31 @@
   width: 100vw;
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
-  /* pull up so the video meets the bottom edge of the sticky nav (no gap) */
-  margin-top: calc(-1 * var(--header-h, 64px));
-  min-height: clamp(300px, 48vh, 540px);
+  /* pull up the full header offset so the video sits BEHIND the (transparent)
+     nav, running all the way to the top of the screen */
+  margin-top: calc(-2 * var(--header-h, 64px));
+  min-height: clamp(360px, 62vh, 640px);
   display: flex;
   align-items: flex-end;
   overflow: clip;
   border-radius: 0;
 }
+
+/* Traditional Habesha woven bands framing the clip (top & bottom) */
+.patternTop,
+.patternBottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  height: clamp(34px, 4.5vw, 54px);
+  background-repeat: repeat-x;
+  background-position: center;
+  background-size: auto 100%;
+  pointer-events: none;
+}
+.patternTop { top: 0; }
+.patternBottom { bottom: 0; }
 
 .bannerVideo {
   position: absolute;
@@ -85,7 +102,8 @@
   width: 100%;
   max-width: 1280px;
   margin-inline: auto;
-  padding: clamp(20px, 4vw, 44px) clamp(20px, 4vw, 44px) clamp(22px, 3.5vw, 40px);
+  /* extra bottom padding so the greeting clears the bottom woven band */
+  padding: clamp(20px, 4vw, 44px) clamp(20px, 4vw, 44px) clamp(58px, 8vw, 84px);
   color: #fff;
 
   h1 {

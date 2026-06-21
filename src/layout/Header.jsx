@@ -82,7 +82,7 @@ const initialsOf = (nameish) => {
   return parts.map((p) => p[0]).join("").toUpperCase();
 };
 
-export default function Header() {
+export default function Header({ heroOverlay = false }) {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const { data: counts } = useCounts();
@@ -191,7 +191,12 @@ export default function Header() {
   const notifCount = Number(counts?.notifications ?? 0) || 0;
 
   return (
-    <header className={styles.header} data-scrolled={scrolled} data-hidden={headerHidden || undefined}>
+    <header
+      className={styles.header}
+      data-scrolled={scrolled}
+      data-hidden={headerHidden || undefined}
+      data-overlay={heroOverlay && !scrolled ? "true" : undefined}
+    >
       <div className={styles.row}>
         {/* Left: menu + logo */}
         <div className={styles.left}>
