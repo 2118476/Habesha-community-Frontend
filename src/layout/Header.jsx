@@ -195,6 +195,7 @@ export default function Header({ heroOverlay = false }) {
       className={styles.header}
       data-scrolled={scrolled}
       data-hidden={headerHidden || undefined}
+      data-home={heroOverlay ? "true" : undefined}
       data-overlay={heroOverlay && !scrolled ? "true" : undefined}
     >
       <div className={styles.row}>

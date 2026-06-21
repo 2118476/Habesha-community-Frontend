@@ -44,6 +44,15 @@
   will-change: transform;
 }
 
+/* Home: take the nav OUT of flow so the hero video can fill the screen
+   behind it (sticky reserves space and blocks the video from the top). */
+.header[data-home="true"] {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+}
+
 /* Home hero: nav sits transparent OVER the video — make it white + legible */
 .header[data-overlay="true"] {
   --fg: #ffffff;

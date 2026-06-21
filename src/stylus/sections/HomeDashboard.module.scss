@@ -49,10 +49,11 @@
   width: 100vw;
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
-  /* pull up the full header offset so the video sits BEHIND the (transparent)
-     nav, running all the way to the top of the screen */
-  margin-top: calc(-2 * var(--header-h, 64px));
-  min-height: clamp(360px, 62vh, 640px);
+  /* the nav is position:fixed on home (out of flow) and .content has
+     padding-top:header-h, so pulling up one header height lands the video
+     at the very top, behind the transparent nav */
+  margin-top: calc(-1 * var(--header-h, 64px));
+  min-height: clamp(420px, 70vh, 760px);
   display: flex;
   align-items: flex-start;
   overflow: clip;
