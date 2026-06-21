@@ -7,100 +7,120 @@ import Footer from '../layout/Footer';
 import ExploreCategories from '../components/ExploreCategories';
 
 /**
- * PublicExplore is the signed-out landing page for the Habesha Community.
- * Frontend-only: no backend calls here.
+ * PublicExplore — signed-out landing page for the Habesha Community.
+ * Warm, cultural, community-first design. Frontend-only (no backend calls).
  */
+
+/* Small stroke-icon set (no icon dependency needed) */
+const Svg = ({ children, size = 24 }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
+  >
+    {children}
+  </svg>
+);
+
+const Icons = {
+  home: <Svg><path d="M3 10.5 12 3l9 7.5" /><path d="M5 9.5V21h14V9.5" /><path d="M9 21v-6h6v6" /></Svg>,
+  services: <Svg><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.3 2.3-2.1-2.1Z" /></Svg>,
+  events: <Svg><rect x="3" y="4" width="18" height="17" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></Svg>,
+  travel: <Svg><path d="M2 16.5 21 9l-5.5 11-2.5-5-5-1.5Z" /><path d="M13.5 14 21 9" /></Svg>,
+  shield: <Svg><path d="M12 3 5 6v6c0 4 3 6.5 7 8 4-1.5 7-4 7-8V6l-7-3Z" /><path d="m9 12 2 2 4-4" /></Svg>,
+  chat: <Svg><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-5A8 8 0 1 1 21 12Z" /></Svg>,
+  heart: <Svg><path d="M12 20s-7-4.6-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.4-7 10-7 10Z" /></Svg>,
+  spark: <Svg><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18" /></Svg>,
+};
+
+const TRUST = [
+  { icon: Icons.heart, label: 'Free to join' },
+  { icon: Icons.chat, label: 'Private messaging' },
+  { icon: Icons.shield, label: 'Verified community' },
+  { icon: Icons.spark, label: 'UK-wide & local' },
+];
+
+const FEATURES = [
+  {
+    icon: Icons.home,
+    title: 'Housing you can trust',
+    desc: 'Rooms, flats and friendly house shares posted by people from the community — not faceless agencies.',
+  },
+  {
+    icon: Icons.services,
+    title: 'Services & skills',
+    desc: 'Find a tutor, mover, hairdresser or handyman — or offer your own skills and earn within the community.',
+  },
+  {
+    icon: Icons.events,
+    title: 'Events & belonging',
+    desc: 'Cultural nights, church gatherings, coffee meetups and celebrations happening near you.',
+  },
+  {
+    icon: Icons.travel,
+    title: 'Travel together',
+    desc: 'Airport pickups, rideshares and travel buddies for trips home and around the UK.',
+  },
+  {
+    icon: Icons.chat,
+    title: 'Talk privately',
+    desc: 'Message any member directly to arrange viewings, services or plans — safely and privately.',
+  },
+  {
+    icon: Icons.shield,
+    title: 'Safety first',
+    desc: 'Report and block tools, plus gentle guidance to meet in safe public places. Your community, protected.',
+  },
+];
+
+const STEPS = [
+  'Create a free account with your email or phone number.',
+  'Browse listings or post your own offers and requests.',
+  'Chat privately to arrange viewings, services or travel plans.',
+  'Meet in safe public places and report anything that feels off.',
+];
+
 const PublicExplore = () => {
   const navigate = useNavigate();
   const { user, authReady } = useAuth();
 
-  // Navbar transparent while hero is visible; solid after you scroll past it.
+  // Navbar transparent over the hero; solid once you scroll past it.
   const heroRef = useRef(null);
   const [solidNav, setSolidNav] = useState(false);
 
   useEffect(() => {
     const el = heroRef.current;
     if (!el) return;
-
     const obs = new IntersectionObserver(
-      ([entry]) => {
-        // Keep navbar transparent while ~60%+ of hero is in view
-        setSolidNav(!(entry.isIntersecting && entry.intersectionRatio > 0.6));
-      },
+      ([entry]) => setSolidNav(!(entry.isIntersecting && entry.intersectionRatio > 0.6)),
       { threshold: [0, 0.6, 1] }
     );
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
 
-  // If logged in, send users straight to the app
+  // Logged-in users skip the marketing page.
   useEffect(() => {
     if (authReady && user) navigate('/app/home', { replace: true });
   }, [authReady, user, navigate]);
 
-  // --- Hero background: keep your public image and add a soft gradient overlay
   const heroImagePath = encodeURI(`${process.env.PUBLIC_URL}/images/hero.png`);
-  const heroBg = `linear-gradient(0deg, rgba(0,0,0,.35), rgba(0,0,0,.35)), url(${heroImagePath})`;
-
-  // --- Auto-contrast: compute text color (#fff on dark images, #0f172a on bright)
-  const [heroInk, setHeroInk] = useState('#ffffff');
-
-  useEffect(() => {
-    const img = new Image();
-    img.src = heroImagePath;
-    img.crossOrigin = 'anonymous';
-
-    img.onload = () => {
-      try {
-        const size = 32;
-        const canvas = document.createElement('canvas');
-        canvas.width = size;
-        canvas.height = size;
-        const ctx = canvas.getContext('2d', { willReadFrequently: true });
-        ctx.drawImage(img, 0, 0, size, size);
-        const { data } = ctx.getImageData(0, 0, size, size);
-
-        let r = 0, g = 0, b = 0, count = 0;
-        for (let i = 0; i < data.length; i += 4) {
-          r += data[i];
-          g += data[i + 1];
-          b += data[i + 2];
-          count++;
-        }
-        r /= count; g /= count; b /= count;
-
-        // Perceived luminance (0..1)
-        const L = 0.2126 * (r / 255) + 0.7152 * (g / 255) + 0.0722 * (b / 255);
-
-        // Threshold tuned considering the .35 black overlay above
-        setHeroInk(L > 0.55 ? '#0f172a' : '#ffffff');
-      } catch {
-        setHeroInk('#ffffff');
-      }
-    };
-
-    img.onerror = () => setHeroInk('#ffffff');
-  }, [heroImagePath]);
-
-  // Helper to get semi-transparent border using the chosen ink color
-  const hexToRgba = (hex, a = 0.28) => {
-    const h = hex.replace('#', '');
-    const isShort = h.length === 3;
-    const r = parseInt(isShort ? h[0] + h[0] : h.slice(0, 2), 16);
-    const g = parseInt(isShort ? h[1] + h[1] : h.slice(2, 4), 16);
-    const b = parseInt(isShort ? h[2] + h[2] : h.slice(4, 6), 16);
-    return `rgba(${r}, ${g}, ${b}, ${a})`;
-  };
 
   return (
     <div className={styles.wrapper}>
-      {/* Header overlays hero image; switches style on scroll */}
+      {/* Header overlays the hero, turns solid on scroll */}
       <header
         className={[
           styles.navbar,
           solidNav ? styles.navbarSolid : styles.navbarTransparent,
-          !solidNav ? 'nav-hero-white' : '',
-        ].filter(Boolean).join(' ')}
+        ].join(' ')}
         role="banner"
       >
         <div
@@ -110,6 +130,7 @@ const PublicExplore = () => {
           tabIndex={0}
           onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && navigate('/')}
         >
+          <span className={styles.brandDot} aria-hidden="true" />
           Habesha
         </div>
 
@@ -120,61 +141,109 @@ const PublicExplore = () => {
         </nav>
 
         <div className={styles.authLinks}>
-          <button
-            onClick={() => navigate('/login')}
-            className={styles.signInBtn}
-            type="button"
-          >
+          <button onClick={() => navigate('/login')} className={styles.signInBtn} type="button">
             Sign In
+          </button>
+          <button onClick={() => navigate('/register')} className={styles.getStartedBtn} type="button">
+            Join free
           </button>
         </div>
       </header>
 
-      <main className={styles.container}>
-        {/* Hero: background image is provided via CSS var (--hero-bg) */}
+      <main>
+        {/* HERO */}
         <section
-          className={`${styles.hero} hero-white-text`}
+          className={styles.hero}
           ref={heroRef}
-          style={{ '--hero-bg': heroBg }}
+          style={{ '--hero-bg': `url(${heroImagePath})` }}
         >
-          <h1>Welcome to Our Community</h1>
-          <p>
-            Connect with Ethiopians and Habesha friends across the UK. Find
-            housing, services, events and travel buddies—built specifically for
-            you.
-          </p>
-          <div className={styles.ctaGroup}>
-            <button
-              onClick={() => navigate('/register')}
-              className={styles.primaryCta}
-              type="button"
-            >
-              Get Started
-            </button>
-            <button
-              onClick={() => navigate('/login')}
-              className={styles.secondaryCta}
-              type="button"
-            >
-              Sign In
-            </button>
+          <div className={styles.heroInner}>
+            <span className={styles.eyebrow}>For Ethiopians &amp; Habesha friends in the UK</span>
+            <h1 className={styles.heroTitle}>
+              Your community,<br />all in one place.
+            </h1>
+            <p className={styles.heroSubtitle}>
+              Find housing, services, events and travel buddies — and connect with people who
+              feel like home. Built for us, by us.
+            </p>
+            <div className={styles.ctaGroup}>
+              <button onClick={() => navigate('/register')} className={styles.primaryCta} type="button">
+                Get started — it&apos;s free
+              </button>
+              <button onClick={() => navigate('/login')} className={styles.secondaryCta} type="button">
+                Sign in
+              </button>
+            </div>
+
+            <ul className={styles.heroTrust}>
+              {TRUST.map((t) => (
+                <li key={t.label} className={styles.heroTrustItem}>
+                  <span className={styles.heroTrustIcon}>{t.icon}</span>
+                  {t.label}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <span className={styles.scrollHint} aria-hidden="true" />
+        </section>
+
+        {/* EXPLORE CATEGORIES (own heading + marquee) */}
+        <ExploreCategories />
+
+        {/* WHY / FEATURES */}
+        <section className={styles.section}>
+          <div className={styles.sectionHead}>
+            <span className={styles.sectionEyebrow}>Why Habesha Community</span>
+            <h2 className={styles.sectionTitle}>Everything you need, in one trusted place</h2>
+            <p className={styles.sectionSub}>
+              No more scattered Facebook groups and lost messages. One welcoming home for
+              the things that matter to our community.
+            </p>
+          </div>
+
+          <div className={styles.featureGrid}>
+            {FEATURES.map((f) => (
+              <article key={f.title} className={styles.featureCard}>
+                <span className={styles.featureIcon}>{f.icon}</span>
+                <h3 className={styles.featureTitle}>{f.title}</h3>
+                <p className={styles.featureDesc}>{f.desc}</p>
+              </article>
+            ))}
           </div>
         </section>
 
-        {/* Explore categories (image cards) */}
-        <ExploreCategories />
-
+        {/* HOW IT WORKS */}
         <section className={styles.howItWorks}>
-          <h2>How it works</h2>
-          <ol>
-            <li>Create a free account using your email or phone number.</li>
-            <li>Browse listings or post your own offers and requests.</li>
-            <li>Chat privately to arrange viewings, services or travel plans.</li>
-            <li>
-              Meet in safe public places and report any issues to keep the
-              community safe.
-            </li>
+          <div className={styles.sectionHead}>
+            <span className={styles.sectionEyebrow}>Simple to start</span>
+            <h2 className={styles.sectionTitle}>How it works</h2>
+          </div>
+          <ol className={styles.steps}>
+            {STEPS.map((text, i) => (
+              <li key={i} className={styles.step}>
+                <span className={styles.stepNum}>{i + 1}</span>
+                <span className={styles.stepText}>{text}</span>
+              </li>
+            ))}
           </ol>
+        </section>
+
+        {/* FINAL CTA */}
+        <section className={styles.ctaBand}>
+          <div className={styles.ctaBandInner}>
+            <h2 className={styles.ctaBandTitle}>Ready to feel at home?</h2>
+            <p className={styles.ctaBandText}>
+              Join your neighbours today. It takes less than a minute and it&apos;s completely free.
+            </p>
+            <div className={styles.ctaGroup}>
+              <button onClick={() => navigate('/register')} className={styles.primaryCta} type="button">
+                Create your free account
+              </button>
+              <button onClick={() => navigate('/about')} className={styles.ghostCta} type="button">
+                Learn more
+              </button>
+            </div>
+          </div>
         </section>
       </main>
 
