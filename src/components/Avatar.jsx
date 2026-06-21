@@ -11,12 +11,25 @@ function initialsFrom(name) {
   return parts.map((p) => p[0]?.toUpperCase()).join("");
 }
 
-function initialsDataUrl(initials) {
+/* Warm, on-brand palette for default avatars (Facebook/Google style). */
+const AVATAR_COLORS = [
+  "#1b7a4b", "#c4861a", "#c0392b", "#2c7da0",
+  "#7b4bb7", "#b5651d", "#0f766e", "#9333ea", "#1e6091",
+];
+
+function colorFromName(name) {
+  const s = (name || "?").trim();
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return AVATAR_COLORS[h % AVATAR_COLORS.length];
+}
+
+function initialsDataUrl(initials, bg) {
   const svg = encodeURIComponent(
-    `<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'>
-      <rect width='100%' height='100%' fill='#E5E7EB'/>
-      <text x='50%' y='50%' dominant-baseline='central' text-anchor='middle'
-            font-family='Inter,system-ui,Arial' font-size='28' fill='#374151'>${initials}</text>
+    `<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'>
+      <rect width='100%' height='100%' fill='${bg}'/>
+      <text x='50%' y='50%' dy='.06em' dominant-baseline='middle' text-anchor='middle'
+            font-family='Inter,system-ui,Arial' font-weight='600' font-size='34' fill='#ffffff'>${initials}</text>
     </svg>`
   );
   return `data:image/svg+xml;charset=UTF-8,${svg}`;
@@ -62,7 +75,7 @@ export default function Avatar({
   }, [alt, displayName, username, u?.displayName, u?.name, u?.fullName, u?.username]);
 
   const fallbackDataUrl = useMemo(
-    () => initialsDataUrl(initialsFrom(altText)),
+    () => initialsDataUrl(initialsFrom(altText), colorFromName(altText)),
     [altText]
   );
 

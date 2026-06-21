@@ -16,7 +16,6 @@ import useUnreadCount from "../hooks/useUnreadCount";
 
 import NoticeBadge from "../components/Nav/NoticeBadge";
 import Icon from "../components/Nav/Icon";
-import ThemeToggle from "../components/ThemeToggle";
 import LanguageToggle from "../components/LanguageToggle";
 import api from "../api/axiosInstance";
 import NotificationBell from "../components/notifications/NotificationBell";
@@ -346,12 +345,7 @@ export default function Header() {
           <span className={styles.tip} title="Language">
             <LanguageToggle />
           </span>
-
-          <span className={styles.tip} title="Theme">
-            <div className={styles.theme}>
-              <ThemeToggle />
-            </div>
-          </span>
+          {/* Theme switch removed from the nav bar — it lives in Settings → Display */}
         </div>
       </div>
     </header>
