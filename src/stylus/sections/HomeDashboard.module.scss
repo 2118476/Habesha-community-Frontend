@@ -54,7 +54,7 @@
   margin-top: calc(-2 * var(--header-h, 64px));
   min-height: clamp(360px, 62vh, 640px);
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   overflow: clip;
   border-radius: 0;
 }
@@ -102,23 +102,23 @@
   width: 100%;
   max-width: 1280px;
   margin-inline: auto;
-  /* extra bottom padding so the greeting clears the bottom woven band */
-  padding: clamp(20px, 4vw, 44px) clamp(20px, 4vw, 44px) clamp(58px, 8vw, 84px);
+  /* sit at the TOP of the clip, clearing the transparent nav + top band */
+  padding: clamp(80px, 13vh, 132px) clamp(20px, 4vw, 44px) clamp(24px, 4vw, 40px);
   color: #fff;
 
   h1 {
     margin: 0;
-    color: #fff;
+    color: #fff !important;
     font-size: clamp(1.7rem, 2.4vw + 1rem, 2.8rem);
     font-weight: 800;
     letter-spacing: -.3px;
-    text-shadow: 0 2px 16px rgba(0, 0, 0, .55);
+    text-shadow: 0 2px 16px rgba(0, 0, 0, .6);
   }
   p {
     margin: .35rem 0 0;
-    color: rgba(255, 255, 255, .96);
+    color: #fff !important;
     font-size: clamp(.95rem, .4vw + .85rem, 1.1rem);
-    text-shadow: 0 2px 12px rgba(0, 0, 0, .5);
+    text-shadow: 0 2px 12px rgba(0, 0, 0, .55);
   }
 }
 
