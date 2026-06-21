@@ -840,7 +840,10 @@ export default function PublicProfile() {
     } catch {
       /* ignore */
     }
-    navigate(`/app/messages?to=${encodeURIComponent(profile.id)}`);
+    // Canonical deep link: Messages.jsx resolves the chat by peer user id.
+    navigate(`/app/messages/thread/${profile.id}`, {
+      state: { selectedUserId: String(profile.id), focusComposer: true },
+    });
   }, [navigate, profile?.id]);
 
   /* ---------------- Share / Report / Block ---------------- */
