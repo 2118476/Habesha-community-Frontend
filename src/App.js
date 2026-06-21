@@ -153,6 +153,12 @@ const FeedPage = lazyWithPreload(
   "feed-page"
 );
 
+/* ---------- Home Dashboard (bento landing, lazy) ---------- */
+const HomeDashboard = lazyWithPreload(
+  () => import(/* webpackChunkName: "home-dashboard" */ "./pages/Home/HomeDashboard"),
+  "home-dashboard"
+);
+
 /* ---------- Home Swap (lazy) ---------- */
 const HomeSwapHub = lazyWithPreload(
   () =>
@@ -511,17 +517,17 @@ const AppRoutes = () => (
             </RequireAuth>
           }
         >
-          {/* Default redirect for /app */}
+          {/* Default redirect for /app → bento dashboard */}
           <Route
             index
-            element={<Navigate to={FEED_ENABLED ? "feed" : "home"} replace />}
+            element={<Navigate to="home" replace />}
           />
 
-          {/* Unified Home Feed */}
+          {/* Unified Home Feed (still available directly) */}
           <Route path="feed" element={<FeedPage />} />
 
-          {/* Keep legacy /app/home alive (same feed) */}
-          <Route path="home" element={<FeedPage />} />
+          {/* Home dashboard (bento landing) */}
+          <Route path="home" element={<HomeDashboard />} />
 
           {/* Home Swapping */}
           <Route path="home-swap" element={<HomeSwapHub />} />
