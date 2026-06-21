@@ -115,6 +115,9 @@ export default function HomeDashboard() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches
+  );
 
   useEffect(() => {
     let alive = true;
@@ -131,14 +134,41 @@ export default function HomeDashboard() {
     return () => { alive = false; };
   }, []);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    const mq = window.matchMedia('(max-width: 768px)');
+    const onChange = (e) => setIsMobile(e.matches);
+    mq.addEventListener?.('change', onChange);
+    return () => mq.removeEventListener?.('change', onChange);
+  }, []);
+
   const by = (t) => items.filter((i) => (i.type || '').toLowerCase() === t);
   const firstName = (user?.name || user?.displayName || user?.username || '').split(' ')[0];
+  const heroVideo = encodeURI(
+    `${process.env.PUBLIC_URL}/videos/${isMobile ? 'mobile-hero.mp4' : 'hero-coffee.mp4'}`
+  );
+  const heroPoster = encodeURI(`${process.env.PUBLIC_URL}/images/hero.png`);
 
   return (
     <div className={styles.wrapper}>
-      <header className={styles.greeting}>
-        <h1>{firstName ? `Selam, ${firstName} 👋` : 'Selam 👋'}</h1>
-        <p>Here’s what’s new in your community today.</p>
+      <header className={styles.banner}>
+        <video
+          className={styles.bannerVideo}
+          key={heroVideo}
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          poster={heroPoster}
+        >
+          <source src={heroVideo} type="video/mp4" />
+        </video>
+        <div className={styles.bannerOverlay} aria-hidden="true" />
+        <div className={styles.bannerContent}>
+          <h1>{firstName ? `Selam, ${firstName} 👋` : 'Selam 👋'}</h1>
+          <p>Here’s what’s new in your community today.</p>
+        </div>
       </header>
 
       {loading ? (

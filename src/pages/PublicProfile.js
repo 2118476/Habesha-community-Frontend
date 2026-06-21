@@ -390,44 +390,6 @@ function ContactInfo({ profile }) {
   );
 }
 
-/** the little stat row (Ads / Rentals / … / Photos) */
-function QuickStatsBar({ counts, onJump }) {
-  const { t } = useTranslation();
-  
-  const order = [
-    ["ads", t("profile.tabs.ads")],
-    ["rentals", t("profile.tabs.rentals")],
-    ["services", t("profile.tabs.services")],
-    ["events", t("profile.tabs.events")],
-    ["swaps", t("homeSwap.homeSwap")],
-    ["photos", t("profile.tabs.photos")],
-  ];
-
-  return (
-    <div
-      className={styles.quickStatsBar}
-      role="navigation"
-      aria-label="Quick stats"
-    >
-      {order.map(([key, label]) => {
-        const val = counts[key] || 0;
-        // hide swaps if none, because Home Swap is optional
-        if (key === "swaps" && !val) return null;
-        return (
-          <button
-            key={key}
-            className={styles.statBtn}
-            onClick={() => onJump(key === "swaps" ? "home-swap" : key)}
-          >
-            <span className={styles.statNum}>{val}</span>
-            <span className={styles.statLabel}>{label}</span>
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
 /* ============================ Report Modal ============================ */
 function ReportModal({ open, onClose, onSubmit, submitting, targetName }) {
   const { t } = useTranslation();
@@ -1315,8 +1277,7 @@ export default function PublicProfile() {
                 </div>
               </div>
 
-              {/* quick stats row (Ads / Rentals / … / Photos) */}
-              <QuickStatsBar counts={counts} onJump={scrollTo} />
+              {/* stats are shown on the section tabs below — no separate strip */}
             </div>
           </div>
 
