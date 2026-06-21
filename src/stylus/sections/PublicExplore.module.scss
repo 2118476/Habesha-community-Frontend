@@ -162,11 +162,12 @@
   min-height: 100vh;
   min-height: 100svh;
   margin-top: calc(-1 * var(--hc-header-h));
-  padding: calc(var(--hc-header-h) + 2rem) clamp(20px, 5vw, 56px) clamp(56px, 8vw, 90px);
+  padding: calc(var(--hc-header-h) + 1.5rem) clamp(20px, 5vw, 56px) clamp(56px, 8vw, 90px);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  /* content sits at the top, just under the navbar (not vertically centered) */
+  justify-content: flex-start;
   text-align: center;
   color: #fff;
   overflow: clip;
