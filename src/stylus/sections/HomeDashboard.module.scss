@@ -24,10 +24,11 @@
   display: flex;
   flex-direction: column;
   gap: clamp(14px, 2vw, 20px);
-  padding: clamp(12px, 2.5vw, 24px);
+  padding: 0 clamp(12px, 2.5vw, 24px) clamp(16px, 2.5vw, 28px);
   max-width: 1280px;
   margin-inline: auto;
   color: var(--hc-ink);
+  overflow-x: clip;
 }
 
 :global([data-theme="dark"]) .wrapper {
@@ -40,16 +41,21 @@
   --hc-sh-2: 0 14px 34px rgba(0, 0, 0, 0.55);
 }
 
-/* ---- Video banner (greeting overlaid on the traditional hero clip) ---- */
+/* ---- Video banner: full-bleed, flush up under the nav, greeting overlaid ---- */
 .banner {
   position: relative;
   isolation: isolate;
-  border-radius: var(--hc-r);
-  overflow: clip;
-  min-height: clamp(200px, 34vh, 360px);
+  /* break out of the wrapper to span the full viewport width */
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  /* pull up so the video meets the bottom edge of the sticky nav (no gap) */
+  margin-top: calc(-1 * var(--header-h, 64px));
+  min-height: clamp(300px, 48vh, 540px);
   display: flex;
   align-items: flex-end;
-  box-shadow: var(--hc-sh-1);
+  overflow: clip;
+  border-radius: 0;
 }
 
 .bannerVideo {
@@ -66,29 +72,35 @@
   position: absolute;
   inset: 0;
   z-index: 1;
+  /* darker toward the bottom so the white greeting is always readable,
+     even where the clip shows the bright "welcome" sign */
   background:
-    radial-gradient(900px 320px at 18% -10%, rgba(27, 122, 75, .35), transparent 70%),
-    linear-gradient(180deg, rgba(26, 16, 8, .30) 0%, rgba(26, 16, 8, .20) 40%, rgba(26, 16, 8, .72) 100%);
+    radial-gradient(900px 360px at 20% -10%, rgba(27, 122, 75, .35), transparent 70%),
+    linear-gradient(180deg, rgba(26, 16, 8, .28) 0%, rgba(26, 16, 8, .14) 32%, rgba(26, 16, 8, .55) 72%, rgba(26, 16, 8, .85) 100%);
 }
 
 .bannerContent {
   position: relative;
   z-index: 2;
-  padding: clamp(16px, 3vw, 28px);
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding: clamp(20px, 4vw, 44px) clamp(20px, 4vw, 44px) clamp(22px, 3.5vw, 40px);
   color: #fff;
 
   h1 {
     margin: 0;
-    font-size: clamp(1.5rem, 1.8vw + 1rem, 2.2rem);
+    color: #fff;
+    font-size: clamp(1.7rem, 2.4vw + 1rem, 2.8rem);
     font-weight: 800;
     letter-spacing: -.3px;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, .4);
+    text-shadow: 0 2px 16px rgba(0, 0, 0, .55);
   }
   p {
-    margin: .3rem 0 0;
-    font-size: clamp(.95rem, .4vw + .85rem, 1.08rem);
-    color: rgba(255, 255, 255, .94);
-    text-shadow: 0 2px 10px rgba(0, 0, 0, .35);
+    margin: .35rem 0 0;
+    color: rgba(255, 255, 255, .96);
+    font-size: clamp(.95rem, .4vw + .85rem, 1.1rem);
+    text-shadow: 0 2px 12px rgba(0, 0, 0, .5);
   }
 }
 
