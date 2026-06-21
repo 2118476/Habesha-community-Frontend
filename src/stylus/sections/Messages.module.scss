@@ -1062,3 +1062,32 @@
     color: var(--on-surface-1) !important;
   }
 }
+
+/* ==========================================================================
+   MOBILE FULL-SCREEN CHAT (Messenger-style)
+   Placed at the END of the file on purpose: the base .threads (grid-column:1,
+   border-right) and .conversation (grid-column:2, inset box-shadow) rules live
+   LATER in the source than the earlier @media block, so they were overriding
+   the mobile overrides — leaving the open chat stuck in the right-hand column
+   with an empty half and a vertical divider line. This block wins by source
+   order and makes the active pane fill the whole screen.
+   ========================================================================== */
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr !important;
+    /* kill the 42% two-tone split gradient that drew a seam down the middle */
+    background: var(--msg-surface-1) !important;
+  }
+
+  .threads,
+  .conversation {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border-right: none !important;
+    box-shadow: none !important; /* remove the inset divider line */
+  }
+
+  /* Only the active pane is shown; the other is fully removed (no reserved space) */
+  .mobileHidden { display: none !important; }
+}
