@@ -113,6 +113,21 @@ const PublicExplore = () => {
 
   const heroImagePath = encodeURI(`${process.env.PUBLIC_URL}/images/hero.png`);
 
+  // Pick the right hero video for the viewport (separate desktop / mobile cuts).
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches
+  );
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    const mq = window.matchMedia('(max-width: 768px)');
+    const onChange = (e) => setIsMobile(e.matches);
+    mq.addEventListener?.('change', onChange);
+    return () => mq.removeEventListener?.('change', onChange);
+  }, []);
+  const heroVideo = encodeURI(
+    `${process.env.PUBLIC_URL}/videos/${isMobile ? 'mobile-hero.mp4' : 'hero-coffee.mp4'}`
+  );
+
   return (
     <div className={styles.wrapper}>
       {/* Header overlays the hero, turns solid on scroll */}
@@ -152,11 +167,20 @@ const PublicExplore = () => {
 
       <main>
         {/* HERO */}
-        <section
-          className={styles.hero}
-          ref={heroRef}
-          style={{ '--hero-bg': `url(${heroImagePath})` }}
-        >
+        <section className={styles.hero} ref={heroRef}>
+          <video
+            className={styles.heroVideo}
+            key={heroVideo}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            poster={heroImagePath}
+          >
+            <source src={heroVideo} type="video/mp4" />
+          </video>
+          <div className={styles.heroOverlay} aria-hidden="true" />
           <div className={styles.heroInner}>
             <span className={styles.eyebrow}>For Ethiopians &amp; Habesha friends in the UK</span>
             <h1 className={styles.heroTitle}>
