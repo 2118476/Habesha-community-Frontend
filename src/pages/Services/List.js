@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../../api/axiosInstance';
 import { toast } from 'react-toastify';
 import EntityCard from '../../components/common/EntityCard';
@@ -44,12 +45,12 @@ const ServicesList = () => {
     <div className={styles.container}>
       <h2>Service Marketplace</h2>
       <div>
-        <button
+        <Link
+          to="/app/services/post"
           className={`${buttonStyles.btn} ${buttonStyles.primary}`}
-          onClick={() => (window.location.href = '/app/services/post')}
         >
           Post Service
-        </button>
+        </Link>
       </div>
       {loading ? (
         <p>Loading services…</p>

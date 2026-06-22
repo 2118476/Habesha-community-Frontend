@@ -25,7 +25,7 @@ const getAvatarUserId = (u) =>
 const getDisplayName = (u) =>
   u?.displayName || u?.name || u?.fullName || u?.username || 'User';
 
-export default function ProfileChip({ user, subtext, link = true, size = 'md', className }) {
+export default function ProfileChip({ user, subtext, subtextTitle, link = true, size = 'md', className }) {
   if (!user) return null;
 
   const linkUserId = getLinkUserId(user);
@@ -50,7 +50,7 @@ export default function ProfileChip({ user, subtext, link = true, size = 'md', c
         ) : (
           <span className={styles.name}>{displayName}</span>
         )}
-        {subtext ? <div className={styles.subtext}>{subtext}</div> : null}
+        {subtext ? <div className={styles.subtext} title={subtextTitle || undefined}>{subtext}</div> : null}
       </div>
     </div>
   );

@@ -18,6 +18,9 @@ import { MinimalPageLoader } from "./components/ui/PageLoader/PageLoader";
 /* ---------- Enterprise Notification System ---------- */
 import EnterpriseNotificationSystem from "./components/notifications/EnterpriseNotificationSystem";
 
+/* ---------- Cookie consent (GDPR-style, shown once) ---------- */
+import CookieConsent from "./components/CookieConsent/CookieConsent";
+
 /* ---------- Small fallbacks ---------- */
 const Fallback = () => <MinimalPageLoader />;
 
@@ -633,8 +636,14 @@ const AppRoutes = () => (
 const App = () => {
   // Apply global theme settings on app startup
   useGlobalTheme();
-  
-  return <AppRoutes />;
+
+  return (
+    <>
+      <AppRoutes />
+      {/* Mounted outside the router so it persists across navigation */}
+      <CookieConsent />
+    </>
+  );
 };
 
 export default App;

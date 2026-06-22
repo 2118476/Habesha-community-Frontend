@@ -50,6 +50,13 @@
   color: var(--muted);
 }
 
+/* Posted-date stamp row (relative time, e.g. "Posted 2 hours ago") */
+.postedRow {
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+}
+
 /* Emphasise the price of rentals and services with a larger font and brand colour */
 .price {
   font-size: var(--text-lg);

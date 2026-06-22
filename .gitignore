@@ -10,6 +10,19 @@ node_modules
 build/
 dist/
 
+# Capacitor / Android — commit the project, ignore generated build artifacts
+/android/.gradle/
+/android/build/
+/android/app/build/
+/android/app/release/
+/android/capacitor-cordova-android-plugins/
+/android/local.properties
+/ios/App/Pods/
+/ios/App/build/
+# Signing keys — NEVER commit
+*.keystore
+*.jks
+
 # Zip files and archives
 *.zip
 *.tar.gz

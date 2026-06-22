@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Habesha Community">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#c8592f"/>
+      <stop offset="1" stop-color="#8a3d23"/>
+    </linearGradient>
+  </defs>
+  <!-- warm tile (rounded, with safe padding for maskable icons) -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <!-- subtle highlight -->
+  <rect width="512" height="512" rx="112" fill="#ffffff" opacity="0.04"/>
+  <!-- steam -->
+  <g fill="none" stroke="#f6e9d8" stroke-width="14" stroke-linecap="round" opacity="0.9">
+    <path d="M214 150c-18-18-18-40 0-58"/>
+    <path d="M256 150c-18-18-18-40 0-58"/>
+    <path d="M298 150c-18-18-18-40 0-58"/>
+  </g>
+  <!-- coffee cup -->
+  <g fill="#f6e9d8">
+    <path d="M150 196h180a16 16 0 0 1 16 16v36a92 92 0 0 1-92 92h-28a92 92 0 0 1-92-92v-36a16 16 0 0 1 16-16z"/>
+  </g>
+  <!-- handle -->
+  <path d="M346 214h24a44 44 0 0 1 0 88h-18" fill="none" stroke="#f6e9d8" stroke-width="22" stroke-linecap="round"/>
+  <!-- saucer -->
+  <rect x="132" y="350" width="248" height="26" rx="13" fill="#f6e9d8"/>
+</svg>

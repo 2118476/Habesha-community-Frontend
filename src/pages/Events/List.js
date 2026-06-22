@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import api from '../../api/axiosInstance';
 import { toast } from 'react-toastify';
 import EntityCard from '../../components/common/EntityCard';
@@ -49,12 +50,12 @@ const EventsList = () => {
     <div className={styles.container}>
       <h2>{t('pages.communityEvents')}</h2>
       <div>
-        <button
+        <Link
+          to="/app/events/post"
           className={`${buttonStyles.btn} ${buttonStyles.primary}`}
-          onClick={() => (window.location.href = '/app/events/post')}
         >
           Post Event
-        </button>
+        </Link>
       </div>
       {loading ? (
         <p>{t('pages.loadingEvents')}</p>

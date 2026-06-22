@@ -12,11 +12,17 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 // Global styles (consolidated SCSS entry)
 import './main.scss';
 
+// Mobile / native-app base layer (safe areas, touch behavior)
+import './styles/mobile.css';
+
 // Initialize scroll reveal animations
 import './utils/scrollReveal';
 
 // Initialize i18n BEFORE rendering
 import './i18n';
+
+// Native (Capacitor) bootstrap — no-op on the web
+import { initNative } from './capacitor/initNative';
 
 // Hero text overrides — loaded last to ensure highest cascade priority
 import './styles/hero-overrides.css';
@@ -51,6 +57,9 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+// Configure native shell (status bar, back button, splash) — safely no-ops on web
+initNative();
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

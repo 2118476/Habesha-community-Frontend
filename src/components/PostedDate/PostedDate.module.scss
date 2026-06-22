@@ -1,0 +1,14 @@
+.posted {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.78rem;
+  line-height: 1;
+  color: var(--on-surface-muted, #666);
+  white-space: nowrap;
+}
+
+.icon {
+  opacity: 0.8;
+  flex: 0 0 auto;
+}

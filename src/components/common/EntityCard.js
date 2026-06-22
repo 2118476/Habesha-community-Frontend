@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import ProfileChip from '../ProfileChip';
+import PostedDate from '../PostedDate/PostedDate';
 import styles from '../../stylus/components/EntityCard.module.scss';
 
 /**
@@ -9,8 +10,8 @@ import styles from '../../stylus/components/EntityCard.module.scss';
  */
 const EntityCard = ({ item, type }) => {
   if (!item) return null;
-  const { 
-    id, title, location, date, price, images, author, postedBy, description,
+  const {
+    id, title, location, date, price, images, author, postedBy, description, createdAt,
     // Service-specific fields
     category, basePrice, estimatedTime, estimated_time, duration,
     deliveryType, delivery_type, serviceType, rating, averageRating,
@@ -120,6 +121,14 @@ const EntityCard = ({ item, type }) => {
           </>
         )}
         
+        {/* Posted timestamp — relative ("2 hours ago") with full-date tooltip.
+           Renders nothing if createdAt is missing, so it is safe for any entity. */}
+        {createdAt && (
+          <div className={styles.postedRow}>
+            <PostedDate date={createdAt} icon />
+          </div>
+        )}
+
         {/* Display the poster information using ProfileChip. Fallback to the legacy
            author field if postedBy is not present. */}
         {(postedBy || author) && (

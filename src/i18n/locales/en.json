@@ -104,8 +104,16 @@
     "linkCopied": "Link copied to clipboard",
     "sharingNotSupported": "Sharing not supported on this device.",
     "today": "Today",
+    "posted": "Posted",
     "strength": "Strength",
     "unknown": "Unknown"
+  },
+  "cookies": {
+    "title": "We value your privacy",
+    "message": "We use cookies to keep you signed in, remember your preferences, and make Habesha Community better. Choose what you're comfortable with.",
+    "accept": "Accept all",
+    "decline": "Essential only",
+    "learnMore": "Learn more"
   },
   "forms": {
     "required": "This field is required",
