@@ -79,7 +79,14 @@ const TravelPost = () => {
       }
     } catch (err) {
       console.error(err);
-      toast.error(t('errors.saveFailed'));
+      // Surface the real backend reason instead of a generic message so failures
+      // (validation, server/DB errors) are actionable rather than mysterious.
+      const serverMsg =
+        err?.normalized?.message ||
+        err?.response?.data?.message ||
+        err?.response?.data?.error ||
+        err?.message;
+      toast.error(serverMsg ? `${t('errors.saveFailed')}: ${serverMsg}` : t('errors.saveFailed'));
     } finally {
       setSubmitting(false);
     }

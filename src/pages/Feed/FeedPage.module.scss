@@ -789,6 +789,47 @@
 @media (max-width: 768px) { .cardGrid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 480px) { .cardGrid { grid-template-columns: 1fr; } }
 
+/* ===== Curated mosaic: one big "featured" card + a few small ones ===== */
+.mosaic {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+.mosaic .card {
+  display: flex;
+  flex-direction: column;
+}
+.mosaic .card .cardInfo {
+  flex: 0 0 auto;
+}
+
+/* Featured (first) card — full-width hero on phones */
+.mosaic .featured {
+  grid-column: 1 / -1;
+}
+.mosaic .featured .cardImage {
+  aspect-ratio: 16 / 9;
+}
+.mosaic .featured .cardTitle {
+  font-size: 16px;
+}
+
+/* Desktop/tablet: featured fills a 2x2 block, four small cards complete the bento */
+@media (min-width: 720px) {
+  .mosaic {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .mosaic .featured {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+  .mosaic .featured .cardImage {
+    aspect-ratio: auto;
+    flex: 1 1 auto;
+    min-height: 200px;
+  }
+}
+
 .card {
   text-decoration: none;
   color: var(--text-1);

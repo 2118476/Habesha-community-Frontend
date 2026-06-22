@@ -212,10 +212,11 @@ function PeekStrip({ items = [], ariaLabel }) {
 
   if (!items.length) return <div className={styles.emptyInline}>{t('feed.nothingYet')}</div>;
 
-  const visible = items.slice(0, 6);
+  // Curated mosaic: one big "featured" card + a few small ones (not a wall of cards).
+  const visible = items.slice(0, 5);
 
   return (
-    <div className={styles.cardGrid} role="list" aria-label={ariaLabel}>
+    <div className={styles.mosaic} role="list" aria-label={ariaLabel}>
       {visible.map((it, i) => {
         const id = it?.id ?? it?._id ?? it?.listingId ?? it?.publicId ?? `x${i}`;
         const key = `card-${id}-${i}`;
@@ -230,7 +231,12 @@ function PeekStrip({ items = [], ariaLabel }) {
         const category = it?.category || "";
 
         return (
-          <Link key={key} to={href} className={styles.card} role="listitem">
+          <Link
+            key={key}
+            to={href}
+            className={`${styles.card} ${i === 0 ? styles.featured : ''}`}
+            role="listitem"
+          >
             <div className={styles.cardImage}>
               {hasImage ? (
                 <img
@@ -1054,7 +1060,7 @@ export default function FeedPage() {
   const [rentals, setRentals] = useState([]);
   const [services, setServices] = useState([]);
   const [ads, setAds] = useState([]);
-  const [, setTravel] = useState([]);
+  const [travel, setTravel] = useState([]);
   const [nextCursor, setNextCursor] = useState(null);
 
   // Infinite scroll ref
@@ -1644,6 +1650,43 @@ export default function FeedPage() {
           </Link>
         </header>
         <PeekStrip items={services} ariaLabel={`Latest services (${services.length})`} />
+      </section>
+
+      <hr className={styles.sectionDivider} aria-hidden="true" />
+
+      {/* ===== Travel ===== */}
+      <section
+        className={`${styles.sectionRow} feedSection section--travel`}
+        data-motion="slide-right"
+        data-dur="450"
+        data-delay="70"
+        data-amp="1.0"
+        aria-labelledby="travel-title"
+        aria-busy={loading ? "true" : "false"}
+      >
+        <header className={styles.sectionHeader}>
+          <h2 id="travel-title" className={styles.sectionTitle}>
+            {t('feed.sections.travel', 'Travel')}
+          </h2>
+          <Link
+            className={styles.viewAllBtn}
+            to="/app/travel"
+            aria-label={t('feed.viewAll') + ' travel'}
+          >
+            <span>{t('feed.viewAll')}</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M8 4l8 8-8 8"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </Link>
+        </header>
+        <PeekStrip items={travel} ariaLabel={`Latest travel posts (${travel.length})`} />
       </section>
 
       <hr className={styles.sectionDivider} aria-hidden="true" />
