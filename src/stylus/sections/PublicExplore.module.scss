@@ -58,11 +58,14 @@
   position: fixed;
   inset: 0 0 auto 0;
   z-index: 1000;
-  height: var(--hc-header-h);
+  box-sizing: content-box;
+  min-height: var(--hc-header-h);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 clamp(16px, 4vw, 44px);
+  /* clear the phone's status bar when the native app draws full-bleed */
+  padding-top: env(safe-area-inset-top, 0px);
   border-bottom: 1px solid transparent;
   transition: background-color .3s var(--hc-ease), box-shadow .3s var(--hc-ease),
     border-color .3s var(--hc-ease), color .3s var(--hc-ease);
@@ -162,7 +165,10 @@
   min-height: 100vh;
   min-height: 100svh;
   margin-top: calc(-1 * var(--hc-header-h));
-  padding: calc(var(--hc-header-h) + 1.5rem) clamp(20px, 5vw, 56px) clamp(56px, 8vw, 90px);
+  padding:
+    calc(var(--hc-header-h) + env(safe-area-inset-top, 0px) + 1.5rem)
+    clamp(20px, 5vw, 56px)
+    calc(clamp(56px, 8vw, 90px) + env(safe-area-inset-bottom, 0px));
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -171,6 +177,13 @@
   text-align: center;
   color: #fff;
   overflow: clip;
+}
+
+/* On phones, sit the hero copy toward the bottom for a full-screen, app-like feel */
+@media (max-width: 768px) {
+  .wrapper .hero {
+    justify-content: flex-end;
+  }
 }
 
 /* Full-bleed background video (desktop/mobile cut chosen in JS) */

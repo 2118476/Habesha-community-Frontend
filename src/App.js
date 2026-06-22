@@ -21,6 +21,9 @@ import EnterpriseNotificationSystem from "./components/notifications/EnterpriseN
 /* ---------- Cookie consent (GDPR-style, shown once) ---------- */
 import CookieConsent from "./components/CookieConsent/CookieConsent";
 
+/* ---------- Native status bar (edge-to-edge landing) ---------- */
+import StatusBarController from "./capacitor/StatusBarController";
+
 /* ---------- Small fallbacks ---------- */
 const Fallback = () => <MinimalPageLoader />;
 
@@ -639,6 +642,8 @@ const App = () => {
 
   return (
     <>
+      {/* Adjusts the native status bar per route (no-op on web) */}
+      <StatusBarController />
       <AppRoutes />
       {/* Mounted outside the router so it persists across navigation */}
       <CookieConsent />

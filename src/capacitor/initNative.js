@@ -9,17 +9,8 @@ import { Capacitor } from "@capacitor/core";
 export async function initNative() {
   if (!Capacitor?.isNativePlatform?.()) return;
 
-  // Status bar: sit above the webview (not overlaying) with brand colour.
-  try {
-    const { StatusBar, Style } = await import("@capacitor/status-bar");
-    await StatusBar.setOverlaysWebView({ overlay: false });
-    await StatusBar.setStyle({ style: Style.Light });
-    if (Capacitor.getPlatform() === "android") {
-      await StatusBar.setBackgroundColor({ color: "#0ea5e9" });
-    }
-  } catch {
-    /* status-bar plugin unavailable — ignore */
-  }
+  // Note: the status bar (overlay/colour/style) is managed per-route by
+  // StatusBarController so the landing page can go full-bleed.
 
   // Android hardware back button: navigate back, or exit at the root.
   try {
