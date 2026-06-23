@@ -10,9 +10,10 @@
   --radius: 14px;
 }
 
-/* Content offset (remove for hero pages so video starts at top) */
+/* Content offset (remove for hero pages so video starts at top).
+   Includes the status-bar safe area so content clears the (taller) native header. */
 :global(body:not([data-hero="true"])) main {
-  padding-top: var(--header-h);
+  padding-top: calc(var(--header-h) + env(safe-area-inset-top, 0px));
 }
 :global(body[data-hero="true"]) main {
   padding-top: 0;
@@ -23,7 +24,11 @@
   position: sticky;
   top: 0;
   z-index: 60;
-  height: var(--header-h);
+  /* Grow by the status-bar inset and pad the top so nav controls sit BELOW
+     the phone's clock/battery (Android edge-to-edge). 0 on desktop. */
+  box-sizing: border-box;
+  height: calc(var(--header-h) + env(safe-area-inset-top, 0px));
+  padding-top: env(safe-area-inset-top, 0px);
   display: grid;
   align-items: center;
 

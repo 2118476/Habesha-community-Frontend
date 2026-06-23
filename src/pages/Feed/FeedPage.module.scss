@@ -798,9 +798,23 @@
 .mosaic .card {
   display: flex;
   flex-direction: column;
+  border-radius: 18px;
+  box-shadow: 0 6px 22px rgba(16, 24, 40, 0.08);
+  transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1),
+    box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.mosaic .card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 40px rgba(16, 24, 40, 0.14);
 }
 .mosaic .card .cardInfo {
   flex: 0 0 auto;
+}
+:global([data-theme="dark"]) .mosaic .card {
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.4);
+}
+:global([data-theme="dark"]) .mosaic .card:hover {
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
 }
 
 /* Featured (first) card — full-width hero on phones */
