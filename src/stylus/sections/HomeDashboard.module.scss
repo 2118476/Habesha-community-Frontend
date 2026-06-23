@@ -52,7 +52,7 @@
   /* the nav is position:fixed on home (out of flow) and .content has
      padding-top:header-h, so pulling up one header height lands the video
      at the very top, behind the transparent nav */
-  margin-top: calc(-1 * (var(--header-h, 64px) + env(safe-area-inset-top, 0px)));
+  margin-top: calc(-1 * (var(--header-h, 64px) + env(safe-area-inset-top, 0px) + 6px));
   min-height: clamp(420px, 70vh, 760px);
   display: flex;
   align-items: flex-start;
@@ -260,6 +260,117 @@
 }
 @media (max-width: 520px) {
   .featuredGrid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ---- Category panel with swipeable gallery of preview cards ---- */
+.peekPanel {
+  background: var(--hc-surface);
+  border: 1px solid var(--hc-line);
+  border-radius: var(--hc-r);
+  box-shadow: var(--hc-sh-1);
+  padding: clamp(14px, 1.6vw, 18px);
+  display: flex;
+  flex-direction: column;
+}
+.peekRow {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.peekRow::-webkit-scrollbar { display: none; }
+
+.peekCard {
+  scroll-snap-align: start;
+  /* ~1.7 cards visible on phones (next one peeks); capped on desktop */
+  flex: 0 0 clamp(150px, 58%, 210px);
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid var(--hc-line);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--hc-surface);
+  transition: transform .2s var(--hc-ease), box-shadow .2s var(--hc-ease),
+    border-color .2s var(--hc-ease);
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--hc-sh-2);
+    border-color: color-mix(in srgb, var(--hc-gold) 40%, transparent);
+  }
+}
+.peekThumb {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background-color: color-mix(in srgb, var(--hc-green) 10%, var(--hc-cream));
+  background-size: cover;
+  background-position: center;
+  display: grid;
+  place-items: center;
+}
+.peekPrice {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  background: rgba(0, 0, 0, .72);
+  color: #fff;
+  font-weight: 700;
+  font-size: .8rem;
+  padding: 3px 9px;
+  border-radius: 8px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.peekBody {
+  padding: 9px 11px 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+.peekTitle {
+  margin: 0;
+  font-size: .92rem;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.peekMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  align-items: baseline;
+  font-size: .8rem;
+  color: var(--hc-ink-soft);
+  min-height: 1em;
+}
+.rating { color: var(--hc-gold); font-weight: 700; white-space: nowrap; }
+.peekFooter {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.peekDate { font-size: .72rem; color: var(--hc-ink-soft); }
+.viewDetail {
+  font-size: .76rem;
+  font-weight: 700;
+  color: var(--hc-green);
+  white-space: nowrap;
+}
+.skelPeek {
+  flex: 0 0 clamp(150px, 58%, 210px);
+  height: 190px;
+  border-radius: 14px;
+  background: var(--hc-line);
+  animation: pulse 1.3s ease-in-out infinite;
 }
 
 /* ---- Card grids ---- */

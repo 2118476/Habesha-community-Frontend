@@ -63,7 +63,7 @@
 /* ----- Content area with smooth transitions ----- */
 .content {
   min-width: 0;
-  padding-top: calc(var(--header-h, 64px) + env(safe-area-inset-top, 0px));
+  padding-top: calc(var(--header-h, 64px) + env(safe-area-inset-top, 0px) + 6px);
   min-height: calc(100vh - var(--header-h, 64px));
   padding-inline: clamp(16px, 3vw, 32px);
   position: relative;
@@ -82,7 +82,7 @@
   }
 
   .content {
-    padding-top: calc(var(--header-h, 56px) + env(safe-area-inset-top, 0px));
+    padding-top: calc(var(--header-h, 56px) + env(safe-area-inset-top, 0px) + 6px);
     padding-inline: clamp(8px, 3vw, 16px);
   }
 }
