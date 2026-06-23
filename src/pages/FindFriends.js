@@ -1,80 +1,160 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import api from '../api/axiosInstance';
-import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import formStyles from '../stylus/components/Form.module.scss';
-import buttonStyles from '../stylus/components/Button.module.scss';
-import styles from '../stylus/sections/Friends.module.scss';
+import { Search, X, UserPlus, Check } from 'lucide-react';
+import api from '../api/axiosInstance';
+import { makeApiUrl } from '../api/httpUrl';
+import { toast } from 'react-toastify';
+import Avatar from '../components/Avatar';
+import styles from '../stylus/sections/FindFriends.module.scss';
 
 /**
- * FindFriends allows the user to search by name or username and send
- * friend requests directly. This view is available at /app/friends/find.
+ * FindFriends — search people by name/username and send friend requests.
+ * Live (debounced) search with a clean, YouTube-style search bar.
+ * Available at /app/friends/find.
  */
 const FindFriends = () => {
   const { t } = useTranslation();
-  const [query, setQuery] = useState('');
-  const [results, setResults] = useState([]);
   const navigate = useNavigate();
 
-  const handleSearch = async () => {
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [searched, setSearched] = useState(false);
+  const [sent, setSent] = useState({}); // userId -> true once a request is sent
+
+  // Debounced live search as the user types (min 2 chars).
+  useEffect(() => {
     const q = query.trim();
     if (q.length < 2) {
-      return toast.warn('Enter at least 2 characters to search.');
+      setResults([]);
+      setSearched(false);
+      setLoading(false);
+      return undefined;
     }
-    try {
-      const { data } = await api.get(`/friends/search?query=${encodeURIComponent(q)}`);
-      setResults(Array.isArray(data) ? data : []);
-    } catch (err) {
-      toast.error('Failed to search for users');
-    }
-  };
+    setLoading(true);
+    let cancelled = false;
+    const id = setTimeout(async () => {
+      try {
+        const { data } = await api.get(`/friends/search?query=${encodeURIComponent(q)}`);
+        if (!cancelled) {
+          setResults(Array.isArray(data) ? data : []);
+          setSearched(true);
+        }
+      } catch {
+        if (!cancelled) {
+          setResults([]);
+          setSearched(true);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }, 300);
+    return () => {
+      cancelled = true;
+      clearTimeout(id);
+    };
+  }, [query]);
 
-  const sendRequest = async (receiverId) => {
+  const sendRequest = async (user) => {
+    setSent((s) => ({ ...s, [user.id]: true }));
     try {
-      await api.post('/friends/request', { receiverId });
-      toast.success('Friend request sent');
-      setResults((prev) => prev.filter((u) => u.id !== receiverId));
+      await api.post('/friends/request', { receiverId: user.id });
+      toast.success(t('friends.requestSent', 'Friend request sent'));
     } catch (err) {
-      toast.error(err.response?.data || 'Could not send request');
+      setSent((s) => {
+        const next = { ...s };
+        delete next[user.id];
+        return next;
+      });
+      toast.error(err.response?.data || t('errors.saveFailed', 'Could not send request'));
     }
   };
 
   return (
-    <div className={styles.container}>
-      <h2>{t('friends.findFriends')}</h2>
-      <div className={styles.searchBar}>
+    <div className={styles.wrap}>
+      <h2 className={styles.heading}>{t('friends.findFriends')}</h2>
+
+      <div className={styles.searchPill}>
+        <Search size={20} className={styles.searchIcon} aria-hidden="true" />
         <input
           type="text"
-          placeholder="Search by name or username"
+          className={styles.searchInput}
+          placeholder={t('friends.searchPlaceholder', 'Search people by name or username')}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className={formStyles.input}
+          // eslint-disable-next-line jsx-a11y/no-autofocus
+          autoFocus
+          aria-label={t('friends.findFriends')}
         />
-        <button onClick={handleSearch} className={buttonStyles.btn}>{t('common.search')}</button>
+        {query && (
+          <button
+            type="button"
+            className={styles.clearBtn}
+            onClick={() => setQuery('')}
+            aria-label={t('common.close')}
+          >
+            <X size={18} />
+          </button>
+        )}
       </div>
+
+      {loading && <div className={styles.status}>{t('common.loading')}</div>}
+
+      {!loading && searched && results.length === 0 && (
+        <div className={styles.status}>{t('friends.noResults', 'No people found.')}</div>
+      )}
+
+      {!query && (
+        <div className={styles.hint}>
+          {t('friends.searchHint', 'Type a name or username to find people in the community.')}
+        </div>
+      )}
+
       {results.length > 0 && (
-        <div>
-          <h4>{t('friends.results')}</h4>
-          <ul className={styles.list}>
-            {results.map((user) => (
-              <li key={user.id} className={styles.listItem}>
-                <span
-                  style={{ cursor: 'pointer', color: 'var(--primary)', textDecoration: 'underline' }}
+        <ul className={styles.results}>
+          {results.map((user) => {
+            const name = user.name || user.username || 'User';
+            const requested = !!sent[user.id];
+            return (
+              <li key={user.id} className={styles.resultRow}>
+                <button
+                  type="button"
+                  className={styles.person}
                   onClick={() => navigate(`/app/u/${user.username || user.id}`)}
                 >
-                  {user.username} ({user.name})
-                </span>
+                  <Avatar
+                    user={user}
+                    src={makeApiUrl(`/users/${user.id}/profile-image`)}
+                    alt={name}
+                    size="md"
+                  />
+                  <span className={styles.personInfo}>
+                    <span className={styles.personName}>{name}</span>
+                    {user.username && <span className={styles.personHandle}>@{user.username}</span>}
+                  </span>
+                </button>
+
                 <button
-                  className={buttonStyles.btn}
-                  onClick={() => sendRequest(user.id)}
+                  type="button"
+                  className={`${styles.addBtn} ${requested ? styles.addBtnSent : ''}`}
+                  onClick={() => !requested && sendRequest(user)}
+                  disabled={requested}
                 >
-                  Send Request
+                  {requested ? (
+                    <>
+                      <Check size={16} /> {t('friends.requested', 'Requested')}
+                    </>
+                  ) : (
+                    <>
+                      <UserPlus size={16} /> {t('friends.add', 'Add')}
+                    </>
+                  )}
                 </button>
               </li>
-            ))}
-          </ul>
-        </div>
+            );
+          })}
+        </ul>
       )}
     </div>
   );

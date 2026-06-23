@@ -1,0 +1,148 @@
+/* FindFriends — clean, YouTube-style people search */
+
+.wrap {
+  max-width: 680px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 8px 0 28px;
+}
+
+.heading {
+  margin: 0;
+  font-size: clamp(20px, 3vw, 26px);
+  font-weight: 800;
+  color: var(--on-surface-1, #0f0f0f);
+}
+
+/* Pill search bar */
+.searchPill {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface-1, #f2f2f2);
+  border: 1.5px solid var(--border-soft, #e5e5e5);
+  border-radius: 999px;
+  padding: 0 14px;
+  height: 52px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.searchPill:focus-within {
+  border-color: var(--brand, #0a84ff);
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--brand, #0a84ff) 14%, transparent);
+}
+.searchIcon {
+  color: var(--on-surface-muted, #909090);
+  flex: 0 0 auto;
+}
+.searchInput {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 16px;
+  color: var(--on-surface-1, #0f0f0f);
+}
+.searchInput::placeholder {
+  color: var(--on-surface-muted, #909090);
+}
+.clearBtn {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--on-surface-muted, #909090);
+  cursor: pointer;
+}
+.clearBtn:hover {
+  background: color-mix(in oklab, var(--on-surface-1, #000) 8%, transparent);
+}
+
+.status,
+.hint {
+  color: var(--on-surface-muted, #666);
+  font-size: 14px;
+  padding: 6px 4px;
+}
+
+/* Results */
+.results {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.resultRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 8px;
+  border-radius: 14px;
+  transition: background 0.15s ease;
+}
+.resultRow:hover {
+  background: color-mix(in oklab, var(--on-surface-1, #000) 4%, transparent);
+}
+.person {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+}
+.personInfo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.personName {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--on-surface-1, #0f0f0f);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.personHandle {
+  font-size: 13px;
+  color: var(--on-surface-muted, #777);
+}
+.addBtn {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 9px 16px;
+  border-radius: 999px;
+  border: 0;
+  background: var(--brand, #0a84ff);
+  color: #fff;
+  cursor: pointer;
+  transition: filter 0.15s ease;
+}
+.addBtn:hover {
+  filter: brightness(0.95);
+}
+.addBtnSent {
+  background: var(--surface-2, #e8e8e8);
+  color: var(--on-surface-muted, #666);
+  cursor: default;
+}

@@ -31,6 +31,15 @@
   overflow-x: clip;
 }
 
+/* On phones, let the section panels use (nearly) the full screen width by
+   cancelling the app-shell side padding. */
+@media (max-width: 768px) {
+  .wrapper {
+    margin-inline: calc(-1 * clamp(8px, 3vw, 16px));
+    padding-inline: 10px;
+  }
+}
+
 :global([data-theme="dark"]) .wrapper {
   --hc-cream: #1a140e;
   --hc-surface: #241c14;
