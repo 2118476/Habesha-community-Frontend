@@ -191,9 +191,14 @@
   pointer-events: none;
 }
 /* On phones show the FULL portrait frame (no side crop) so the in-video
-   "WELCOME TO YOUR HOME" reads in full; text is split above/below it. */
+   "WELCOME TO YOUR HOME" reads in full, and pin it to the TOP so all the empty
+   space falls BELOW the video — the subtitle drops under "WELCOME" and the
+   CTAs sit in the dark area beneath the clip. */
 @media (max-width: 768px) {
-  .heroVideo { object-fit: contain; }
+  .heroVideo {
+    object-fit: contain;
+    object-position: center top;
+  }
 }
 
 /* Warm overlay (espresso + green) for cultural feel + text contrast */
