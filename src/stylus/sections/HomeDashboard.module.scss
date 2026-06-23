@@ -87,9 +87,15 @@
   z-index: 0;
   pointer-events: none;
 }
-/* On phones show the FULL portrait frame side-to-side (no side crop) */
+/* On phones, size the banner to the portrait video (832x1104) so it fills
+   edge-to-edge with the WHOLE frame — full "WELCOME TO YOUR HOME", no side
+   crop and no letterbox bars. */
 @media (max-width: 768px) {
-  .bannerVideo { object-fit: contain; }
+  .banner {
+    min-height: 0;
+    aspect-ratio: 832 / 1104;
+  }
+  .bannerVideo { object-fit: cover; }
 }
 
 .bannerOverlay {
