@@ -161,6 +161,8 @@
 .hero {
   position: relative;
   isolation: isolate;
+  /* dark backdrop so the portrait video's letterbox blends on phones */
+  background: #14100a;
   width: 100%;
   min-height: 100vh;
   min-height: 100svh;
@@ -172,18 +174,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* content sits at the top, just under the navbar (not vertically centered) */
   justify-content: flex-start;
   text-align: center;
   color: #fff;
   overflow: clip;
-}
-
-/* On phones, sit the hero copy toward the bottom for a full-screen, app-like feel */
-@media (max-width: 768px) {
-  .wrapper .hero {
-    justify-content: flex-end;
-  }
 }
 
 /* Full-bleed background video (desktop/mobile cut chosen in JS) */
@@ -195,6 +189,11 @@
   object-fit: cover;
   z-index: 0;
   pointer-events: none;
+}
+/* On phones show the FULL portrait frame (no side crop) so the in-video
+   "WELCOME TO YOUR HOME" reads in full; text is split above/below it. */
+@media (max-width: 768px) {
+  .heroVideo { object-fit: contain; }
 }
 
 /* Warm overlay (espresso + green) for cultural feel + text contrast */
@@ -210,12 +209,27 @@
 .heroInner {
   position: relative;
   z-index: 2;
+  flex: 1 1 auto;
+  width: 100%;
   max-width: 880px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.1rem;
+  /* push the top group up and the bottom group down, leaving the middle
+     (where the video's "WELCOME" text sits) clear */
+  justify-content: space-between;
+  gap: 1.4rem;
 }
+
+.heroTop,
+.heroBottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+.heroBottom { gap: 1.1rem; }
 
 .eyebrow {
   display: inline-flex;

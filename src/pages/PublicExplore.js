@@ -182,31 +182,38 @@ const PublicExplore = () => {
           </video>
           <div className={styles.heroOverlay} aria-hidden="true" />
           <div className={styles.heroInner}>
-            <span className={styles.eyebrow}>For Ethiopians &amp; Habesha friends in the UK</span>
-            <h1 className={styles.heroTitle}>
-              Your community,<br />all in one place.
-            </h1>
-            <p className={styles.heroSubtitle}>
-              Find housing, services, events and travel buddies — and connect with people who
-              feel like home. Built for us, by us.
-            </p>
-            <div className={styles.ctaGroup}>
-              <button onClick={() => navigate('/register')} className={styles.primaryCta} type="button">
-                Get started — it&apos;s free
-              </button>
-              <button onClick={() => navigate('/login')} className={styles.secondaryCta} type="button">
-                Sign in
-              </button>
+            {/* Top group — sits above the video's "WELCOME" text */}
+            <div className={styles.heroTop}>
+              <span className={styles.eyebrow}>For Ethiopians &amp; Habesha friends in the UK</span>
+              <h1 className={styles.heroTitle}>
+                Your community,<br />all in one place.
+              </h1>
             </div>
 
-            <ul className={styles.heroTrust}>
-              {TRUST.map((t) => (
-                <li key={t.label} className={styles.heroTrustItem}>
-                  <span className={styles.heroTrustIcon}>{t.icon}</span>
-                  {t.label}
-                </li>
-              ))}
-            </ul>
+            {/* Bottom group — sits below the video's "WELCOME" text */}
+            <div className={styles.heroBottom}>
+              <p className={styles.heroSubtitle}>
+                Find housing, services, events and travel buddies — and connect with people who
+                feel like home. Built for us, by us.
+              </p>
+              <div className={styles.ctaGroup}>
+                <button onClick={() => navigate('/register')} className={styles.primaryCta} type="button">
+                  Get started — it&apos;s free
+                </button>
+                <button onClick={() => navigate('/login')} className={styles.secondaryCta} type="button">
+                  Sign in
+                </button>
+              </div>
+
+              <ul className={styles.heroTrust}>
+                {TRUST.map((t) => (
+                  <li key={t.label} className={styles.heroTrustItem}>
+                    <span className={styles.heroTrustIcon}>{t.icon}</span>
+                    {t.label}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
           <span className={styles.scrollHint} aria-hidden="true" />
         </section>

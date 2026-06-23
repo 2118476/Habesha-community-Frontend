@@ -58,6 +58,8 @@
   align-items: flex-start;
   overflow: clip;
   border-radius: 0;
+  /* dark backdrop so the portrait video's letterbox blends on phones */
+  background: #14100a;
 }
 
 /* Traditional Habesha woven bands framing the clip (top & bottom) */
@@ -84,6 +86,10 @@
   object-fit: cover;
   z-index: 0;
   pointer-events: none;
+}
+/* On phones show the FULL portrait frame side-to-side (no side crop) */
+@media (max-width: 768px) {
+  .bannerVideo { object-fit: contain; }
 }
 
 .bannerOverlay {
