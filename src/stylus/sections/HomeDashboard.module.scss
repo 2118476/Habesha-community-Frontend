@@ -52,7 +52,7 @@
   /* the nav is position:fixed on home (out of flow) and .content has
      padding-top:header-h, so pulling up one header height lands the video
      at the very top, behind the transparent nav */
-  margin-top: calc(-1 * var(--header-h, 64px));
+  margin-top: calc(-1 * (var(--header-h, 64px) + env(safe-area-inset-top, 0px)));
   min-height: clamp(420px, 70vh, 760px);
   display: flex;
   align-items: flex-start;
@@ -198,6 +198,68 @@
   border-radius: 8px;
   transition: background .15s var(--hc-ease);
   &:hover { background: color-mix(in srgb, var(--hc-green) 10%, transparent); }
+}
+
+/* ---- Featured categories strip (horizontal, swipeable) ---- */
+.catStrip {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 2px 2px 6px;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.catStrip::-webkit-scrollbar { display: none; }
+
+.catCard {
+  scroll-snap-align: start;
+  flex: 0 0 auto;
+  width: clamp(118px, 33vw, 150px);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px;
+  text-decoration: none;
+  color: var(--hc-ink);
+  background: var(--hc-surface);
+  border: 1px solid var(--hc-line);
+  border-radius: 16px;
+  box-shadow: var(--hc-sh-1);
+  transition: transform .2s var(--hc-ease), box-shadow .2s var(--hc-ease),
+    border-color .2s var(--hc-ease);
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--hc-sh-2);
+    border-color: color-mix(in srgb, var(--hc-gold) 40%, transparent);
+  }
+}
+.catIcon {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+}
+.catLabel { font-weight: 700; font-size: .98rem; line-height: 1.1; }
+.catBlurb { font-size: .78rem; color: var(--hc-ink-soft); }
+
+/* ---- Featured "latest picks" grid ---- */
+.featuredSection { display: flex; flex-direction: column; gap: 12px; }
+.sectionHeading h2 {
+  margin: 4px 0 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -.2px;
+  color: var(--hc-ink);
+}
+.featuredGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 14px;
+}
+@media (max-width: 520px) {
+  .featuredGrid { grid-template-columns: repeat(2, 1fr); }
 }
 
 /* ---- Card grids ---- */

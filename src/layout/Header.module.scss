@@ -82,6 +82,17 @@
   filter: drop-shadow(0 1px 6px rgba(0, 0, 0, 0.5));
 }
 
+/* Over the hero BEFORE scroll: no white plate behind the icons — fully
+   transparent so the icons float directly over the video. Higher specificity
+   than the "solid header on non-hero pages" rule, so this wins. */
+.header[data-overlay="true"]:not([data-scrolled="true"]) {
+  background: transparent !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
 /* Mobile: slide header up when scrolling down */
 @media (max-width: 800px) {
   .header[data-hidden="true"] {

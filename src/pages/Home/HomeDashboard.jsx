@@ -99,6 +99,25 @@ function Panel({ type, items, big = false, limit = 4, variant = 'panel' }) {
   );
 }
 
+/* Compact, horizontally-scrollable "Featured Categories" strip */
+const CATEGORY_ORDER = ['rental', 'home_swap', 'service', 'travel', 'event', 'ad'];
+function CategoryStrip() {
+  return (
+    <div className={styles.catStrip} role="list" aria-label="Browse categories">
+      {CATEGORY_ORDER.map((type) => {
+        const s = SECTIONS[type];
+        return (
+          <Link key={type} to={s.list} className={styles.catCard} role="listitem">
+            <span className={[styles.catIcon, styles[`ic_${type}`]].join(' ')}>{ICONS[type]}</span>
+            <span className={styles.catLabel}>{s.label}</span>
+            <span className={styles.catBlurb}>{s.blurb}</span>
+          </Link>
+        );
+      })}
+    </div>
+  );
+}
+
 function SkeletonPanel({ tall = false }) {
   return (
     <div className={[styles.panel, tall ? styles.panelBig : ''].join(' ')} aria-hidden="true">
@@ -174,40 +193,43 @@ export default function HomeDashboard() {
         </div>
       </header>
 
+      {/* Compact "browse by category" row — one tap to each full list */}
+      <CategoryStrip />
+
       {loading ? (
-        <>
-          <div className={styles.rowTop}>
-            <SkeletonPanel tall />
-            <div className={styles.colSmall}>
-              <SkeletonPanel />
-              <SkeletonPanel />
-            </div>
-          </div>
-          <div className={styles.rowTwo}>
-            <SkeletonPanel />
-            <SkeletonPanel />
-          </div>
-        </>
+        <div className={styles.featuredGrid} aria-hidden="true">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className={styles.skelCard} />
+          ))}
+        </div>
       ) : error ? (
         <div className={styles.errorBox}>
           <p>Couldn’t load the latest posts. Please refresh.</p>
         </div>
       ) : (
         <>
-          <div className={styles.rowTop}>
-            <Panel type="rental" items={by('rental')} big limit={6} />
-            <div className={styles.colSmall}>
-              <Panel type="service" items={by('service')} limit={2} />
-              <Panel type="home_swap" items={by('home_swap')} limit={2} />
-            </div>
-          </div>
+          {/* Latest picks — one featured card per category (no long lists) */}
+          {(() => {
+            const featured = ['rental', 'service', 'home_swap', 'travel', 'event']
+              .map((type) => ({ type, item: by(type)[0] }))
+              .filter((x) => x.item);
+            if (!featured.length) return null;
+            return (
+              <section className={styles.featuredSection}>
+                <div className={styles.sectionHeading}>
+                  <h2>Latest picks</h2>
+                </div>
+                <div className={styles.featuredGrid}>
+                  {featured.map(({ type, item }) => (
+                    <Card key={type} item={{ ...item, type }} />
+                  ))}
+                </div>
+              </section>
+            );
+          })()}
 
-          <div className={styles.rowTwo}>
-            <Panel type="event" items={by('event')} limit={3} />
-            <Panel type="travel" items={by('travel')} limit={3} />
-          </div>
-
-          <Panel type="ad" items={by('ad')} variant="panelWide" limit={8} />
+          {/* Community ads — the main feed on the home page */}
+          <Panel type="ad" items={by('ad')} variant="panelWide" limit={12} />
         </>
       )}
     </div>
