@@ -98,10 +98,10 @@ function PreviewCard({ item, type }) {
   );
 }
 
-/** A bento panel: one featured card + a "View all" link. `hero` = full-width. */
+/** A bento panel. `hero` = full-width with a swipeable carousel of cards. */
 function PeekPanel({ type, items, hero = false }) {
   const s = SECTIONS[type];
-  const featured = items[0];
+  const list = items.slice(0, 8);
   return (
     <section
       className={`${styles.peekPanel} ${hero ? styles.heroPanel : ''}`}
@@ -115,10 +115,15 @@ function PeekPanel({ type, items, hero = false }) {
         </div>
       </div>
 
-      {!featured ? (
+      {list.length === 0 ? (
         <EmptyState type={type} />
+      ) : hero ? (
+        // Swipeable carousel — slide through the listings one by one
+        <div className={styles.heroCarousel} role="list" aria-label={`Latest ${s.label}`}>
+          {list.map((it) => <PreviewCard key={`${type}-${it.id}`} item={it} type={type} />)}
+        </div>
       ) : (
-        <PreviewCard item={featured} type={type} />
+        <PreviewCard item={list[0]} type={type} />
       )}
 
       <Link to={s.list} className={styles.viewAllRow}>View all →</Link>

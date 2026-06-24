@@ -57,6 +57,26 @@
   aspect-ratio: 16 / 9;
 }
 
+/* Services hero carousel — slide through cards one by one (snap, peek of next) */
+.heroCarousel {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+.heroCarousel::-webkit-scrollbar { display: none; }
+.heroCarousel .peekCard {
+  flex: 0 0 86%;
+  width: auto;
+  scroll-snap-align: center;
+}
+@media (min-width: 700px) {
+  .heroCarousel .peekCard { flex-basis: 47%; }
+}
+
 /* "View all" link beneath the featured card */
 .viewAllRow {
   align-self: flex-start;

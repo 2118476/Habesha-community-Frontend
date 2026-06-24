@@ -9,6 +9,7 @@ import buttonStyles from '../../stylus/components/Button.module.scss';
 import EntityMetaBar from '../../components/EntityMetaBar.jsx';
 import ContactButton from '../../components/ContactButton.jsx';
 import { PageLoader } from '../../components/ui/PageLoader/PageLoader';
+import ServiceReviews from '../../components/reviews/ServiceReviews';
 
 export default function ServiceDetails() {
   const { user } = useAuth();
@@ -356,6 +357,11 @@ export default function ServiceDetails() {
             </button>
           </div>
         </div>
+      </div>
+
+      {/* Reviews (gated by a genuine two-way chat with the provider) */}
+      <div className={styles.serviceSection}>
+        <ServiceReviews providerId={posterId} />
       </div>
     </div>
   );

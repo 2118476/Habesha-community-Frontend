@@ -1,0 +1,122 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--on-surface-1, #0f172a);
+}
+.summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--on-surface-1, #0f172a);
+  font-size: .95rem;
+}
+.muted {
+  color: var(--on-surface-muted, #777);
+  font-size: .9rem;
+}
+
+.stars { display: inline-flex; gap: 1px; }
+.starOn { color: #e0a82e; }
+.starOff { color: var(--border-strong, #cbd5e1); }
+
+/* Write / edit form */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--surface-1, #fff);
+  border: 1px solid var(--border-soft, #e2e8f0);
+  border-radius: 14px;
+  padding: 14px;
+}
+.ratePick { display: inline-flex; gap: 4px; }
+.pickOn,
+.pickOff {
+  background: none;
+  border: 0;
+  padding: 2px;
+  cursor: pointer;
+  line-height: 0;
+}
+.pickOn { color: #e0a82e; }
+.pickOff { color: var(--border-strong, #cbd5e1); }
+.textarea {
+  width: 100%;
+  resize: vertical;
+  border: 1px solid var(--border-soft, #e2e8f0);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font: inherit;
+  background: var(--surface-0, #fff);
+  color: var(--on-surface-1, #0f172a);
+}
+.textarea:focus-visible {
+  outline: none;
+  border-color: var(--brand, #1b7a4b);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--brand, #1b7a4b) 18%, transparent);
+}
+.formActions { display: flex; gap: 8px; }
+.submitBtn {
+  background: var(--brand, #1b7a4b);
+  color: #fff;
+  border: 0;
+  border-radius: 999px;
+  padding: 9px 18px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.submitBtn:disabled { opacity: .6; cursor: not-allowed; }
+.deleteBtn {
+  background: transparent;
+  color: var(--on-surface-muted, #777);
+  border: 1px solid var(--border-soft, #e2e8f0);
+  border-radius: 999px;
+  padding: 9px 16px;
+  cursor: pointer;
+}
+
+/* Eligibility gate message */
+.gate {
+  background: color-mix(in oklab, var(--brand, #1b7a4b) 8%, transparent);
+  border: 1px dashed var(--border-strong, #cbd5e1);
+  border-radius: 12px;
+  padding: 12px 14px;
+  color: var(--on-surface-2, #555);
+  font-size: .9rem;
+  line-height: 1.5;
+}
+
+/* List */
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.item { display: flex; gap: 12px; }
+.itemBody { flex: 1; min-width: 0; }
+.itemTop { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.reviewer { font-weight: 700; color: var(--on-surface-1, #0f172a); }
+.comment {
+  margin: 4px 0 2px;
+  color: var(--on-surface-2, #444);
+  font-size: .92rem;
+  line-height: 1.5;
+}
+.date { font-size: .75rem; color: var(--on-surface-muted, #888); }
