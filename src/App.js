@@ -17,6 +17,7 @@ import { MinimalPageLoader } from "./components/ui/PageLoader/PageLoader";
 
 /* ---------- Enterprise Notification System ---------- */
 import EnterpriseNotificationSystem from "./components/notifications/EnterpriseNotificationSystem";
+import MessageNotifications from "./components/notifications/MessageNotifications";
 
 /* ---------- Cookie consent (GDPR-style, shown once) ---------- */
 import CookieConsent from "./components/CookieConsent/CookieConsent";
@@ -492,6 +493,7 @@ const AppRoutes = () => (
       <ScrollToTop />
       <PreloadAfterAuth />
       <EnterpriseNotificationSystem />
+      <MessageNotifications />
       <Routes>
         {/* Public landing */}
         <Route path="/" element={<PublicExplore />} />

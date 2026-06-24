@@ -21,6 +21,7 @@ import buttonStyles from "../stylus/components/Button.module.scss";
 import Avatar from "../components/Avatar";
 import ProfileLink from "../components/ProfileLink";
 import { ListLoader, SectionLoader } from "../components/ui/SectionLoader/SectionLoader";
+import EnableAlertsPrompt from "../components/notifications/EnableAlertsPrompt";
 
 const POLL_MS = 10000;
 const MOBILE_BREAKPOINT = 900;
@@ -1073,6 +1074,7 @@ export default function Messages() {
   /* --------------------------------- render ------------------------------- */
   return (
     <div className={styles.messagesPageWrapper}>
+      <EnableAlertsPrompt />
       <div
         className={styles.layout}
         style={{ "--threads-w": paneW || undefined }}
