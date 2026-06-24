@@ -1,28 +1,11 @@
 // src/components/search/SearchPopover.jsx
-import React, {
-  useEffect,
-  useRef,
-  useState,
-  useCallback,
-  useMemo,
-} from "react";
-import { createPortal } from "react-dom";
-import { Link, useNavigate } from "react-router-dom";
-import {
-  Search as SearchIcon,
-  ArrowRight,
-  Home,
-  Repeat,
-  Wrench,
-  Calendar,
-  Plane,
-  Megaphone,
-} from "lucide-react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { Search as SearchIcon } from "lucide-react";
 
 import { searchAll } from "../../api/search";
 import api from "../../api/axiosInstance";
 import styles from "./SearchPopover.module.scss";
-import { buildHrefForItem } from "../../utils/detailRoutes";
 
 /* ------------------------------- helpers ------------------------------- */
 const isAbs = (s) => typeof s === "string" && /^(https?:)?\/\//i.test(s);
@@ -211,26 +194,6 @@ const normalizeResults = (raw) => {
   });
 };
 
-/* Small module icon */
-const ModIcon = ({ mod }) => {
-  switch (mod) {
-    case "rentals":
-      return <Home size={16} strokeWidth={2} />;
-    case "homeswap":
-      return <Repeat size={16} strokeWidth={2} />;
-    case "services":
-      return <Wrench size={16} strokeWidth={2} />;
-    case "events":
-      return <Calendar size={16} strokeWidth={2} />;
-    case "travel":
-      return <Plane size={16} strokeWidth={2} />;
-    case "ads":
-      return <Megaphone size={16} strokeWidth={2} />;
-    default:
-      return <SearchIcon size={16} strokeWidth={2} />;
-  }
-};
-
 /* ------------------------------ existence check ------------------------------ */
 
 /**
@@ -410,362 +373,105 @@ export const tolerantSearch = async (term) => {
 };
 
 /* -------------------------------- component -------------------------------- */
+/**
+ * Header search: just a magnifier icon that expands inline into a text field.
+ * No popup/overlay. Pressing Enter runs the search on the /search results page.
+ * Transparent field (no white box) so it stays readable over the hero video.
+ */
 export default function SearchPopover() {
   const navigate = useNavigate();
   const wrapRef = useRef(null);
   const inputRef = useRef(null);
-  const listRef = useRef(null);
 
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [err, setErr] = useState("");
-  const [items, setItems] = useState([]);
-  const [active, setActive] = useState(-1);
-  const [hasSearched, setHasSearched] = useState(false);
 
-  /* ----- open / close helpers ----- */
   const openBox = useCallback(() => {
     setOpen(true);
-    setTimeout(() => inputRef.current?.focus(), 0);
+    // focus on the next frame, once the input has expanded
+    requestAnimationFrame(() => inputRef.current?.focus());
   }, []);
 
-  const closeBox = useCallback(() => {
-    setOpen(false);
-    setActive(-1);
-    setErr("");
-    setBusy(false);
-  }, []);
+  const closeBox = useCallback(() => setOpen(false), []);
 
-  const popRef = useRef(null);
-
-  /* ----- close when clicking outside / pressing Escape ----- */
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e) => {
-      if (e.key === "Escape") {
-        e.stopPropagation();
-        closeBox();
-      }
-    };
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [open, closeBox]);
-
-  /* ----- global keyboard shortcuts: "/" and Ctrl+K / Cmd+K to open ----- */
-  useEffect(() => {
-    const handler = (e) => {
-      const target = e.target;
-      const tag = (target?.tagName || "").toLowerCase();
-      const isTypingField =
-        tag === "input" || tag === "textarea" || target?.isContentEditable;
-
-      if (isTypingField) return;
-
-      const isCmdK =
-        (e.key === "k" || e.key === "K") &&
-        (e.metaKey || e.ctrlKey) &&
-        !e.altKey &&
-        !e.shiftKey;
-
-      const isSlash =
-        e.key === "/" && !e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey;
-
-      if (isCmdK || isSlash) {
-        e.preventDefault();
-        if (!open) {
-          setQ("");
-          openBox();
-        } else {
-          inputRef.current?.focus();
-        }
-      }
-    };
-
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [open, openBox]);
-
-  /* ----- debounced live search ----- */
-  useEffect(() => {
-    let cancel = false;
-    let t;
-    if (!open) return;
+  const submit = useCallback(() => {
     const term = q.trim();
     if (!term) {
-      setItems([]);
-      setErr("");
-      setBusy(false);
-      setHasSearched(false);
+      inputRef.current?.focus();
       return;
     }
-    setBusy(true);
-    setErr("");
+    navigate(`/search?q=${encodeURIComponent(term)}`);
+    setOpen(false);
+    setQ("");
+  }, [q, navigate]);
 
-    t = setTimeout(async () => {
-      try {
-        const results = await tolerantSearch(term);
-        if (!cancel) {
-          setItems(results);
-          setHasSearched(true);
-          setActive(results.length ? 0 : -1);
-        }
-      } catch {
-        if (!cancel) {
-          setErr("Search failed. Please try again.");
-          setItems([]);
-          setActive(-1);
-        }
-      } finally {
-        if (!cancel) setBusy(false);
-      }
-    }, 180);
-
-    return () => {
-      cancel = true;
-      clearTimeout(t);
+  // Collapse on outside click or Escape.
+  useEffect(() => {
+    if (!open) return undefined;
+    const onPointer = (e) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false);
     };
-  }, [q, open]);
+    document.addEventListener("pointerdown", onPointer);
+    return () => document.removeEventListener("pointerdown", onPointer);
+  }, [open]);
 
-  /* ----- keyboard navigation inside list ----- */
-  const baseSeeAllHref = useMemo(
-    () => (q.trim() ? `/search?q=${encodeURIComponent(q.trim())}` : "/search"),
-    [q]
-  );
+  // Global shortcuts: "/" and Ctrl/Cmd+K open + focus the field.
+  useEffect(() => {
+    const handler = (e) => {
+      const tag = (e.target?.tagName || "").toLowerCase();
+      const typing =
+        tag === "input" || tag === "textarea" || e.target?.isContentEditable;
+      if (typing) return;
 
-  const onKeyDown = (e) => {
-    const total = items.length;
-    if (e.key === "ArrowDown" && total) {
-      e.preventDefault();
-      const next = (active + 1) % total;
-      setActive(next);
-      listRef.current?.children?.[next]?.scrollIntoView({ block: "nearest" });
-    } else if (e.key === "ArrowUp" && total) {
-      e.preventDefault();
-      const prev = (active - 1 + total) % total;
-      setActive(prev);
-      listRef.current?.children?.[prev]?.scrollIntoView({ block: "nearest" });
-    } else if (e.key === "Enter") {
-      e.preventDefault();
-      if (active >= 0 && items[active]) {
-        const sel = items[active];
-        const raw = sel._raw || sel;
-        const modHint = sel.__module || inferModule(raw);
-        const built = buildHrefForItem({ ...raw, __module: modHint });
-        const detailHref = normalizeHref(built, raw, modHint);
-        const moduleParam = modHint
-          ? `&module=${encodeURIComponent(modHint)}`
-          : "";
-        const target = detailHref || `${baseSeeAllHref}${moduleParam}`;
+      const cmdK =
+        (e.key === "k" || e.key === "K") && (e.metaKey || e.ctrlKey) &&
+        !e.altKey && !e.shiftKey;
+      const slash =
+        e.key === "/" && !e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey;
 
-        closeBox();
-        requestAnimationFrame(() => {
-          if (!target) return;
-          if (isAbs(target)) window.location.assign(target);
-          else
-            navigate(target, {
-              replace: false,
-              state: { fromSearch: true, item: raw },
-            });
-        });
-        return;
+      if (cmdK || slash) {
+        e.preventDefault();
+        openBox();
       }
-      navigate(baseSeeAllHref);
-      closeBox();
-    }
-  };
-
-  const showEmpty =
-    !busy && hasSearched && q.trim() && items.length === 0 && !err;
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [openBox]);
 
   return (
     <div
       className={styles.wrap}
       ref={wrapRef}
       data-open={open ? "true" : "false"}
-      aria-expanded={open ? "true" : "false"}
-      aria-haspopup="dialog"
     >
       <button
         type="button"
-        className={styles.trigger}
-        aria-label="Open global search"
+        className={styles.iconBtn}
+        aria-label="Search"
         title="Search (press / or Ctrl+K)"
-        onClick={() => (open ? closeBox() : openBox())}
+        onClick={() => (open ? submit() : openBox())}
       >
-        <SearchIcon size={18} strokeWidth={2} className={styles.triggerIcon} aria-hidden="true" />
-        <span className={styles.triggerText}>Search rentals, services, events…</span>
-        <kbd className={styles.triggerKbd}>/</kbd>
+        <SearchIcon size={20} strokeWidth={2} aria-hidden="true" />
       </button>
 
-      {open && createPortal(
-        <div className={styles.centerWrap} aria-hidden="false">
-          <div className={styles.backdrop} onMouseDown={closeBox} />
-          <div
-            ref={popRef}
-            className={styles.pop}
-            role="dialog"
-            aria-label="Search results"
-            aria-modal="true"
-            data-search-pop="true"
-          >
-            <div className={styles.popInputRow}>
-              <input
-                ref={inputRef}
-                type="search"
-                className={styles.popInput}
-                placeholder="Search rentals, swaps, services, ads…"
-                value={q}
-                onChange={(e) => {
-                  setQ(e.target.value);
-                  setActive(-1);
-                }}
-                onKeyDown={onKeyDown}
-                aria-autocomplete="list"
-                aria-controls="search-pop-list"
-                aria-activedescendant={active >= 0 ? `search-opt-${active}` : undefined}
-              />
-            </div>
-            {busy && <div className={styles.status}>Searching…</div>}
-
-            {!busy && err && <div className={styles.error}>{err}</div>}
-
-            {!busy && !err && !q.trim() && (
-              <div className={styles.hint}>
-                <SearchIcon
-                  size={14}
-                  strokeWidth={2}
-                  className={styles.hintIcon}
-                />
-                <span>
-                  Type to search across rentals, swaps, services, events, travel
-                  and ads.
-                </span>
-                <span className={styles.shortcutPill}>Press / or Ctrl+K</span>
-              </div>
-            )}
-
-            {showEmpty && (
-              <div className={styles.hint}>
-                <span>
-                  No quick matches for <strong>“{q}”</strong>.
-                </span>
-              </div>
-            )}
-
-            {!busy && !err && items.length > 0 && (
-              <>
-                <div
-                  className={styles.list}
-                  role="listbox"
-                  id="search-pop-list"
-                  ref={listRef}
-                >
-                  {items.map((it, i) => {
-                    const isActive = i === active;
-                    const raw = it._raw || it;
-                    const modHint = it.__module || inferModule(raw);
-                    const built = buildHrefForItem({ ...raw, __module: modHint });
-                    const detailHref = normalizeHref(built, raw, modHint);
-                    const moduleParam = modHint
-                      ? `&module=${encodeURIComponent(modHint)}`
-                      : "";
-                    const targetHref =
-                      detailHref || `${baseSeeAllHref}${moduleParam}`;
-                    const external = isAbs(targetHref);
-
-                    const selectAndGo = (e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      closeBox();
-                      requestAnimationFrame(() => {
-                        if (!targetHref) return;
-                        if (external) window.location.assign(targetHref);
-                        else
-                          navigate(targetHref, {
-                            replace: false,
-                            state: { fromSearch: true, item: raw },
-                          });
-                      });
-                    };
-
-                    const Row = (
-                      <>
-                        <span className={styles.leadingIcon}>
-                          <ModIcon mod={modHint} />
-                        </span>
-                        <span className={styles.title}>{it.title}</span>
-                        <span className={styles.metaRight}>
-                          <span className={styles.badge}>
-                            {modHint || it.type}
-                          </span>
-                          <ArrowRight size={14} aria-hidden="true" />
-                        </span>
-                      </>
-                    );
-
-                    if (!targetHref) {
-                      return (
-                        <div
-                          key={`${it.id}-${i}`}
-                          id={`search-opt-${i}`}
-                          className={`${styles.item} ${
-                            isActive ? styles.active : ""
-                          }`}
-                          role="option"
-                          aria-selected={isActive}
-                        >
-                          {Row}
-                        </div>
-                      );
-                    }
-
-                    return external ? (
-                      <a
-                        key={`${it.id}-${i}`}
-                        id={`search-opt-${i}`}
-                        href={targetHref}
-                        className={`${styles.item} ${
-                          isActive ? styles.active : ""
-                        }`}
-                        role="option"
-                        aria-selected={isActive}
-                        onMouseDown={selectAndGo}
-                        onClick={selectAndGo}
-                        rel="noreferrer"
-                        data-href={targetHref}
-                        data-module={modHint || ""}
-                      >
-                        {Row}
-                      </a>
-                    ) : (
-                      <Link
-                        key={`${it.id}-${i}`}
-                        id={`search-opt-${i}`}
-                        to={targetHref}
-                        className={`${styles.item} ${
-                          isActive ? styles.active : ""
-                        }`}
-                        role="option"
-                        aria-selected={isActive}
-                        onMouseDown={selectAndGo}
-                        onClick={selectAndGo}
-                        replace={false}
-                        data-href={targetHref}
-                        data-module={modHint || ""}
-                      >
-                        {Row}
-                      </Link>
-                    );
-                  })}
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      , document.body)}
+      <input
+        ref={inputRef}
+        type="search"
+        className={styles.inlineInput}
+        placeholder="Search rentals, services, events…"
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            submit();
+          } else if (e.key === "Escape") {
+            closeBox();
+          }
+        }}
+        aria-label="Search"
+        tabIndex={open ? 0 : -1}
+      />
     </div>
   );
 }

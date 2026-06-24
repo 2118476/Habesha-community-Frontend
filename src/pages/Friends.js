@@ -14,7 +14,6 @@ import { toast } from "react-toastify";
 import useAuth from "../hooks/useAuth";
 
 import styles from "../stylus/sections/Friends.module.scss";
-import formStyles from "../stylus/components/Form.module.scss";
 import buttonStyles from "../stylus/components/Button.module.scss";
 import ProfileChip from "../components/ProfileChip";
 
@@ -591,7 +590,7 @@ export default function FriendsPage() {
                 if (active !== "search") setActive("search");
                 onSearchKeyDown(e);
               }}
-              className={cx(formStyles.input, "friends-search__input")}
+              className="friends-search__input"
               aria-label="Search people"
             />
             {!!searchQuery && (

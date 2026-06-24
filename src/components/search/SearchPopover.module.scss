@@ -1,86 +1,28 @@
 /* ==========================================================================
    SearchPopover.module.scss
-   YouTube / Spotlight style — wide horizontal search bar, screen-centered
+   Header search = a magnifier icon that expands inline into a text field.
+   No popup, no white card. Everything uses currentColor so it stays readable
+   on a light header AND white-on-video over the hero.
    ========================================================================== */
 
-/* ===== Wrapper (lives in header, holds the search-bar trigger) ===== */
 .wrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  max-width: 520px;
-  margin: 0 auto;
-  z-index: 1000;
-}
-@media (max-width: 600px) {
-  .wrap { width: auto; max-width: none; }
-}
-
-/* ===== Search-bar trigger (Airbnb / YouTube style pill) ===== */
-.trigger {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  width: 100%;
-  height: 42px;
-  padding: 0 8px 0 14px;
+  gap: 2px;
+  border: 1px solid transparent;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
-  background: color-mix(in srgb, currentColor 7%, transparent);
-  color: inherit;
-  cursor: pointer;
-  transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
-}
-.trigger:hover {
-  border-color: color-mix(in srgb, currentColor 40%, transparent);
-  background: color-mix(in srgb, currentColor 11%, transparent);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-}
-.trigger:focus-visible {
-  outline: 2px solid #065fd4;
-  outline-offset: 2px;
-}
-.triggerIcon {
-  flex: 0 0 auto;
-  opacity: 0.85;
-}
-.triggerText {
-  flex: 1 1 auto;
-  text-align: left;
-  font-size: 14px;
-  font-weight: 500;
-  opacity: 0.7;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.triggerKbd {
-  flex: 0 0 auto;
-  font: 600 11px/1 ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
-  padding: 4px 8px;
-  border-radius: 7px;
-  border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
-  opacity: 0.6;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  z-index: 1000;
 }
 
-/* Collapse to a circular icon button on phones */
-@media (max-width: 600px) {
-  .trigger {
-    width: 40px;
-    height: 40px;
-    padding: 0;
-    justify-content: center;
-    border-radius: 50%;
-  }
-  .triggerText,
-  .triggerKbd {
-    display: none;
-  }
+/* When expanded, show a subtle outline pill — transparent inside (no white box) */
+.wrap[data-open="true"] {
+  border-color: color-mix(in srgb, currentColor 32%, transparent);
+  background: transparent;
+  padding-left: 4px;
 }
 
-/* ===== Trigger icon button ===== */
+/* ===== Magnifier button ===== */
 .iconBtn {
   width: 40px;
   height: 40px;
@@ -95,427 +37,63 @@
   transition: background 0.15s ease, transform 0.15s ease;
 }
 .iconBtn:hover {
-  background: rgba(0, 0, 0, 0.06);
-  transform: scale(1.05);
+  background: color-mix(in srgb, currentColor 12%, transparent);
 }
-.iconBtn:active { transform: scale(0.95); }
-.wrap[data-open="true"] .iconBtn { color: var(--brand, #0a84ff); }
-.iconBtn svg { width: 20px; height: 20px; display: block; }
-.searchEmoji { font-size: 20px; line-height: 1; display: block; }
-
-:global([data-theme="dark"]) .iconBtn:hover {
-  background: rgba(255, 255, 255, 0.08);
+.iconBtn:active {
+  transform: scale(0.94);
 }
-
-/* =====================================================================
-   FULLSCREEN OVERLAY — positions search panel below the navbar
-   ===================================================================== */
-.centerWrap {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding-top: var(--header-h, 64px);
-  pointer-events: auto;
-}
-
-.backdrop {
-  position: absolute;
-  inset: 0;
-  background: transparent;
-}
-:global([data-theme="dark"]) .backdrop {
-  background: transparent;
-}
-
-/* =====================================================================
-   SEARCH PANEL — the wide horizontal card, dead center
-   ===================================================================== */
-.pop {
-  position: relative;
-  z-index: 1;
-  width: 88vw;
-  max-width: 560px;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.06);
-  overflow: hidden;
-  animation: popSlide 0.2s cubic-bezier(0.32, 0.72, 0, 1) both;
-  color: #1a1a1a;
-  filter: none;
-  text-shadow: none;
-  -webkit-text-fill-color: initial;
-}
-
-/* Reset all children too */
-.pop, .pop * {
-  filter: none !important;
-  text-shadow: none !important;
-}
-
-:global([data-theme="dark"]) .pop {
-  background: #282828;
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.08);
-  color: #e8e8e8;
-}
-
-:global(body[data-hero="true"]) .pop {
-  background: #282828;
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.08);
-  color: #e8e8e8;
-}
-
-/* =====================================================================
-   INPUT ROW — the main horizontal search bar
-   ===================================================================== */
-.popInputRow {
-  display: flex;
-  align-items: center;
-  height: 54px;
-  padding: 0 18px;
-  gap: 12px;
-  border-bottom: 1px solid #e5e5e5;
-}
-
-:global([data-theme="dark"]) .popInputRow {
-  border-bottom-color: rgba(255, 255, 255, 0.1);
-}
-:global(body[data-hero="true"]) .popInputRow {
-  border-bottom-color: rgba(255, 255, 255, 0.1);
-}
-
-/* Search icon via pseudo — sits left of input */
-.popInputRow::before {
-  content: "";
-  flex-shrink: 0;
+.iconBtn svg {
   width: 20px;
   height: 20px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23909090' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E");
-  background-size: contain;
-  background-repeat: no-repeat;
+  display: block;
+}
+.iconBtn:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
 }
 
-.popInput {
-  flex: 1;
-  height: 100%;
-  border: none;
-  outline: none;
+/* ===== Inline expanding text field ===== */
+.inlineInput {
+  width: 0;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
   background: transparent;
-  font-size: 16px;
-  font-weight: 400;
-  color: #0f0f0f;
-  caret-color: #065fd4;
-  letter-spacing: 0;
+  color: inherit;
+  font-size: 15px;
   font-family: inherit;
+  opacity: 0;
+  transition: width 0.24s ease, opacity 0.18s ease, padding 0.24s ease;
 }
-.popInput::placeholder {
-  color: #909090;
-  font-weight: 400;
+.inlineInput::placeholder {
+  color: inherit;
+  opacity: 0.55;
 }
-.popInput::-webkit-search-decoration,
-.popInput::-webkit-search-cancel-button,
-.popInput::-webkit-search-results-button,
-.popInput::-webkit-search-results-decoration {
+/* hide the browser's native search clear button */
+.inlineInput::-webkit-search-cancel-button,
+.inlineInput::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
   display: none;
 }
 
-:global([data-theme="dark"]) .popInput {
-  color: #fff;
-  caret-color: #3ea6ff;
-}
-:global([data-theme="dark"]) .popInput::placeholder {
-  color: #888;
-}
-:global(body[data-hero="true"]) .popInput {
-  color: #fff;
-  caret-color: #3ea6ff;
-}
-:global(body[data-hero="true"]) .popInput::placeholder {
-  color: #888;
+.wrap[data-open="true"] .inlineInput {
+  width: clamp(170px, 30vw, 300px);
+  opacity: 1;
+  padding: 8px 12px 8px 4px;
 }
 
-/* =====================================================================
-   HINT / STATUS / ERROR — below the input bar
-   ===================================================================== */
-.status, .hint, .error {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 20px;
-  font-size: 14px;
-  color: #606060;
-  line-height: 1.4;
-}
-:global([data-theme="dark"]) .status,
-:global([data-theme="dark"]) .hint {
-  color: #999;
-}
-:global(body[data-hero="true"]) .status,
-:global(body[data-hero="true"]) .hint {
-  color: #999;
-}
-
-.hintIcon { opacity: 0.5; flex-shrink: 0; }
-
-.error {
-  color: #c00;
-  background: rgba(204, 0, 0, 0.04);
-}
-:global([data-theme="dark"]) .error {
-  color: #f44;
-  background: rgba(255, 68, 68, 0.06);
-}
-
-.shortcutPill {
-  margin-left: auto;
-  padding: 3px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 500;
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
-  background: #f2f2f2;
-  color: #606060;
-  border: 1px solid #e0e0e0;
-  white-space: nowrap;
-}
-:global([data-theme="dark"]) .shortcutPill {
-  background: rgba(255, 255, 255, 0.08);
-  color: #999;
-  border-color: rgba(255, 255, 255, 0.12);
-}
-
-/* =====================================================================
-   RESULTS LIST
-   ===================================================================== */
-.list {
-  max-height: 50vh;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  padding: 8px 0;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0,0,0,0.15) transparent;
-}
-.list::-webkit-scrollbar { width: 6px; }
-.list::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,0.12);
-  border-radius: 6px;
-}
-:global([data-theme="dark"]) .list {
-  scrollbar-color: rgba(255,255,255,0.12) transparent;
-}
-:global([data-theme="dark"]) .list::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.1);
-}
-
-/* =====================================================================
-   RESULT ITEM — horizontal row, YouTube suggestion style
-   ===================================================================== */
-.item {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 10px 20px;
-  text-decoration: none;
-  color: inherit;
-  cursor: pointer;
-  transition: background 0.1s ease;
-}
-.item:hover {
-  background: #f2f2f2;
-}
-.active {
-  background: #e8e8e8;
-}
-
-:global([data-theme="dark"]) .item:hover {
-  background: rgba(255, 255, 255, 0.08);
-}
-:global([data-theme="dark"]) .active {
-  background: rgba(255, 255, 255, 0.12);
-}
-:global(body[data-hero="true"]) .item:hover {
-  background: rgba(255, 255, 255, 0.08);
-}
-:global(body[data-hero="true"]) .active {
-  background: rgba(255, 255, 255, 0.12);
-}
-
-/* Leading icon */
-.leadingIcon {
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: #f2f2f2;
-  color: #606060;
-  flex-shrink: 0;
-}
-:global([data-theme="dark"]) .leadingIcon {
-  background: rgba(255, 255, 255, 0.08);
-  color: #bbb;
-}
-:global(body[data-hero="true"]) .leadingIcon {
-  background: rgba(255, 255, 255, 0.08);
-  color: #bbb;
-}
-.leadingIcon svg { width: 18px; height: 18px; }
-
-/* Title */
-.title {
-  flex: 1;
-  min-width: 0;
-  font-size: 15px;
-  font-weight: 500;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  color: #0f0f0f;
-}
-:global([data-theme="dark"]) .title { color: #fff; }
-:global(body[data-hero="true"]) .title { color: #fff; }
-
-/* Right meta */
-.metaRight {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-  margin-left: auto;
-}
-
-.badge {
-  padding: 2px 8px;
-  font-size: 11px;
-  font-weight: 500;
-  border-radius: 4px;
-  background: #f2f2f2;
-  color: #606060;
-  text-transform: capitalize;
-}
-:global([data-theme="dark"]) .badge {
-  background: rgba(255, 255, 255, 0.1);
-  color: #bbb;
-}
-:global(body[data-hero="true"]) .badge {
-  background: rgba(255, 255, 255, 0.1);
-  color: #bbb;
-}
-
-.metaRight svg {
-  width: 16px; height: 16px;
-  color: #909090;
-  opacity: 0;
-  transition: opacity 0.1s ease;
-}
-.item:hover .metaRight svg { opacity: 1; }
-
-/* =====================================================================
-   FOOTER
-   ===================================================================== */
-.footer {
-  padding: 8px 12px;
-  border-top: 1px solid #e5e5e5;
-  display: flex;
-  justify-content: flex-end;
-}
-:global([data-theme="dark"]) .footer { border-top-color: rgba(255, 255, 255, 0.1); }
-
-.allBtn, .seeAll {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  border-radius: 18px;
-  text-decoration: none;
-  border: 0;
-  background: transparent;
-  font-size: 13px;
-  font-weight: 500;
-  color: #065fd4;
-  cursor: pointer;
-  transition: background 0.1s ease;
-}
-.allBtn:hover, .seeAll:hover {
-  background: rgba(6, 95, 212, 0.06);
-}
-:global([data-theme="dark"]) .allBtn,
-:global([data-theme="dark"]) .seeAll { color: #3ea6ff; }
-:global([data-theme="dark"]) .allBtn:hover,
-:global([data-theme="dark"]) .seeAll:hover { background: rgba(62, 166, 255, 0.08); }
-
-/* =====================================================================
-   FOCUS / A11Y
-   ===================================================================== */
-.iconBtn:focus-visible {
-  outline: 2px solid #065fd4;
-  outline-offset: 2px;
-}
-.item:focus-visible {
-  outline: 2px solid #065fd4;
-  outline-offset: -2px;
-  border-radius: 4px;
-}
-.allBtn:focus-visible, .seeAll:focus-visible {
-  outline: 2px solid #065fd4;
-  outline-offset: 2px;
-}
-
-/* =====================================================================
-   ANIMATIONS
-   ===================================================================== */
-@keyframes popSlide {
-  from { opacity: 0; transform: scale(0.95); }
-  to   { opacity: 1; transform: scale(1); }
-}
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+@media (max-width: 600px) {
+  .wrap[data-open="true"] .inlineInput {
+    width: clamp(96px, 38vw, 170px);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pop, .backdrop { animation: none !important; }
-}
-
-/* =====================================================================
-   RESPONSIVE — Mobile
-   ===================================================================== */
-@media (max-width: 600px) {
-  .pop {
-    width: 95vw;
-    max-width: 100%;
-    border-radius: 20px;
+  .wrap,
+  .iconBtn,
+  .inlineInput {
+    transition: none;
   }
-  .popInputRow {
-    height: 56px;
-    padding: 0 16px;
-    gap: 12px;
-  }
-  .popInputRow::before { width: 22px; height: 22px; }
-  .popInput { font-size: 16px; }
-  .item { padding: 10px 16px; gap: 12px; }
-  .leadingIcon { width: 32px; height: 32px; min-width: 32px; }
-  .leadingIcon svg { width: 16px; height: 16px; }
-  .title { font-size: 14px; }
-}
-
-@media (max-width: 380px) {
-  .pop {
-    width: 98vw;
-    border-radius: 16px;
-  }
-  .popInputRow { height: 52px; padding: 0 14px; }
-  .popInput { font-size: 15px; }
-}
-
-/* =====================================================================
-   HIGH CONTRAST
-   ===================================================================== */
-@media (forced-colors: active) {
-  .pop { border: 2px solid CanvasText; }
-  .item.active { outline: 2px solid Highlight; }
-  .badge { border: 1px solid CanvasText; }
 }
