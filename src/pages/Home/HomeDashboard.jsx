@@ -126,7 +126,9 @@ function PeekPanel({ type, items, hero = false }) {
         <PreviewCard item={list[0]} type={type} />
       )}
 
-      <Link to={s.list} className={styles.viewAllRow}>View all →</Link>
+      <Link to={s.list} className={styles.viewAllRow}>
+        View all <span className={styles.vaArrow} aria-hidden="true">→</span>
+      </Link>
     </section>
   );
 }
@@ -228,7 +230,9 @@ function MarketplaceFeed() {
           <h3 id="market-title" className={styles.panelTitle}>{SECTIONS.ad.label}</h3>
           <span className={styles.panelBlurb}>{SECTIONS.ad.blurb}</span>
         </div>
-        <Link to={SECTIONS.ad.list} className={styles.viewAll}>View all →</Link>
+        <Link to={SECTIONS.ad.list} className={styles.viewAll}>
+          View all <span className={styles.vaArrow} aria-hidden="true">→</span>
+        </Link>
       </div>
 
       {loading ? (

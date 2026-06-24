@@ -767,3 +767,109 @@
   .link { transition: none; }
   .skelBar { animation: none; }
 }
+
+/* ===================================================================
+   ENHANCED CONTENT — premium polish for the panels INSIDE each setting.
+   Entrance animation matches the settings list; cards, inputs, buttons
+   and section titles get a higher-standard treatment.
+   =================================================================== */
+@keyframes settingsContentIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.page {
+  animation: settingsContentIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.page .title {
+  font-size: clamp(20px, 2.4vw, 26px);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin-bottom: 16px;
+}
+
+/* Panels become elevated cards with a soft, staggered entrance */
+.page .panel {
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(16, 24, 40, 0.05);
+  padding: clamp(16px, 2.5vw, 22px);
+  margin-bottom: 16px;
+  animation: settingsContentIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.page .panel:hover {
+  box-shadow: 0 12px 32px rgba(16, 24, 40, 0.09);
+  border-color: color-mix(in oklab, var(--primary, #2563eb) 18%, var(--border-1, #e5e7eb));
+}
+.page .panel:nth-of-type(2) { animation-delay: 0.08s; }
+.page .panel:nth-of-type(3) { animation-delay: 0.14s; }
+.page .panel:nth-of-type(4) { animation-delay: 0.20s; }
+.page .panel:nth-of-type(5) { animation-delay: 0.26s; }
+
+/* Section titles get an accent bar */
+.page .panel > h2 {
+  margin: 0 0 14px;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.page .panel > h2::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 4px;
+  height: 18px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, var(--primary, #2563eb), #7c3aed);
+}
+
+/* Inputs: roomier, rounder, smooth branded focus */
+.page .formGrid input,
+.page .formGrid select,
+.page .formGrid textarea,
+.page .input,
+.page .select,
+.page .textarea {
+  padding: 11px 14px;
+  border-radius: 12px;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+.page .formGrid input:focus,
+.page .formGrid select:focus,
+.page .formGrid textarea:focus,
+.page .input:focus,
+.page .textarea:focus {
+  border-color: var(--primary, #2563eb);
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary, #2563eb) 16%, transparent);
+}
+.page .formGrid label,
+.page .field label,
+.page .label {
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+/* Primary action becomes a real filled pill */
+.page .btnPrimary {
+  background: var(--primary, #2563eb);
+  border-color: var(--primary, #2563eb);
+  color: #fff;
+  border-radius: 999px;
+  padding: 10px 20px;
+}
+.page .btnPrimary:hover {
+  filter: brightness(1.06);
+  box-shadow: 0 6px 18px color-mix(in oklab, var(--primary, #2563eb) 35%, transparent);
+}
+.page .btnSecondary,
+.page .btnDanger {
+  border-radius: 999px;
+  padding: 10px 18px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page,
+  .page .panel { animation: none; }
+}

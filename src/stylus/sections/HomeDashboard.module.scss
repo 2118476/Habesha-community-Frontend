@@ -89,6 +89,29 @@
 }
 .viewAllRow:hover { text-decoration: underline; }
 
+/* Eye-catching "View all" / shortcut arrows — gentle continuous nudge,
+   slide further on hover. */
+.vaArrow,
+.compactArrow {
+  display: inline-block;
+  transition: transform .2s var(--hc-ease);
+  animation: vaNudge 1.5s ease-in-out infinite;
+}
+@keyframes vaNudge {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(4px); }
+}
+.viewAllRow:hover .vaArrow,
+.viewAll:hover .vaArrow,
+.compactPanel:hover .compactArrow {
+  transform: translateX(7px);
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .vaArrow,
+  .compactArrow { animation: none; }
+}
+
 /* Events / Travel — compact shortcut cards */
 .compactPanel {
   display: flex;

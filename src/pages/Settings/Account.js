@@ -20,6 +20,7 @@ const AccountSettings = () => {
   const [displayName, setDisplayName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [bio, setBio] = useState('');
   const [saving, setSaving] = useState(false);
   
   // Modal states
@@ -33,6 +34,7 @@ const AccountSettings = () => {
       setDisplayName(user.name || '');
       setEmail(user.email || '');
       setPhone(user.phone || '');
+      setBio(user.bio || '');
     }
   }, [user]);
 
@@ -58,7 +60,7 @@ const AccountSettings = () => {
         location: user?.city || '',
         avatarUrl: user?.profileImageUrl || '',
         bannerUrl: null,
-        bio: null,
+        bio: bio.trim(),
       });
       await refreshMe();
       toast.success(t('settings.account.updateSuccess'));
@@ -160,6 +162,20 @@ const AccountSettings = () => {
           />
           <p id="phoneHelp" className={styles.help}>
             {t('settings.account.phoneHelp')}
+          </p>
+
+          <label htmlFor="bio">{t('settings.account.aboutMe', 'About me')}</label>
+          <textarea
+            id="bio"
+            value={bio}
+            onChange={(e) => setBio(e.target.value)}
+            maxLength={1000}
+            rows={4}
+            placeholder={t('settings.account.aboutMePlaceholder', 'Tell the community a little about yourself…')}
+            aria-describedby="bioHelp"
+          />
+          <p id="bioHelp" className={styles.help}>
+            {t('settings.account.aboutMeHelp', 'This shows on your public profile.')} ({bio.length}/1000)
           </p>
 
           <div className={styles.rowRight}>
