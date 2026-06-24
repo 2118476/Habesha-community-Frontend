@@ -40,6 +40,21 @@
   }
 }
 
+/* Category panels: stacked on phones, 2-column bento on wide screens */
+.panelsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(14px, 2vw, 20px);
+}
+@media (min-width: 900px) {
+  .panelsGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+}
+
 :global([data-theme="dark"]) .wrapper {
   --hc-cream: #1a140e;
   --hc-surface: #241c14;

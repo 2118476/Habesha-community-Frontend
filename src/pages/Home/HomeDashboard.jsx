@@ -215,21 +215,23 @@ export default function HomeDashboard() {
         </div>
       </header>
 
-      {loading ? (
-        <>
-          <SkeletonPanel />
-          <SkeletonPanel />
-          <SkeletonPanel />
-        </>
-      ) : error ? (
-        <div className={styles.errorBox}>
-          <p>Couldn’t load the latest posts. Please refresh.</p>
-        </div>
-      ) : (
-        SECTION_ORDER.map((type) => (
-          <PeekPanel key={type} type={type} items={by(type)} />
-        ))
-      )}
+      <div className={styles.panelsGrid}>
+        {loading ? (
+          <>
+            <SkeletonPanel />
+            <SkeletonPanel />
+            <SkeletonPanel />
+          </>
+        ) : error ? (
+          <div className={styles.errorBox}>
+            <p>Couldn’t load the latest posts. Please refresh.</p>
+          </div>
+        ) : (
+          SECTION_ORDER.map((type) => (
+            <PeekPanel key={type} type={type} items={by(type)} />
+          ))
+        )}
+      </div>
     </div>
   );
 }

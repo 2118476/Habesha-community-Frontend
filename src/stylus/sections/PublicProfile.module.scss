@@ -114,8 +114,6 @@
   }
 
   padding: var(--pf-hero-pad);
-  /* Desktop: extra padding for absolutely positioned tabs */
-  padding-bottom: calc(var(--pf-hero-pad) + var(--pf-tab-rail-h) + 16px);
 }
 
 /* Optional banner background */
@@ -441,10 +439,11 @@
 
 /* =============================== TAB RAIL =============================== */
 .tabRail {
-  position: absolute;
-  right: var(--pf-hero-pad);
-  left:  var(--pf-hero-pad);
-  bottom: var(--pf-hero-pad);
+  /* Flow naturally below the identity content (no overlap with the name on
+     wide screens — previously this was position:absolute over the hero). */
+  position: static;
+  width: 100%;
+  margin-top: 14px;
 
   display: flex;
   flex-wrap: wrap;
