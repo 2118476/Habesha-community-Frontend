@@ -100,10 +100,10 @@ function PreviewCard({ item, type }) {
   );
 }
 
-/** A category panel with a swipeable gallery + View all. */
+/** A compact bento panel: one featured card + a "View all" link. */
 function PeekPanel({ type, items }) {
   const s = SECTIONS[type];
-  const list = items.slice(0, 8);
+  const featured = items[0];
   return (
     <section className={styles.peekPanel} aria-labelledby={`sec-${type}`}>
       <div className={styles.panelHead}>
@@ -112,16 +112,15 @@ function PeekPanel({ type, items }) {
           <h3 id={`sec-${type}`} className={styles.panelTitle}>{s.label}</h3>
           <span className={styles.panelBlurb}>{s.blurb}</span>
         </div>
-        <Link to={s.list} className={styles.viewAll}>View all →</Link>
       </div>
 
-      {list.length === 0 ? (
+      {!featured ? (
         <EmptyState type={type} />
       ) : (
-        <div className={styles.peekRow} role="list" aria-label={`Latest ${s.label}`}>
-          {list.map((it) => <PreviewCard key={`${type}-${it.id}`} item={it} type={type} />)}
-        </div>
+        <PreviewCard item={featured} type={type} />
       )}
+
+      <Link to={s.list} className={styles.viewAllRow}>View all →</Link>
     </section>
   );
 }
@@ -140,9 +139,7 @@ function SkeletonPanel() {
   return (
     <div className={styles.peekPanel} aria-hidden="true">
       <div className={styles.skelHead} />
-      <div className={styles.peekRow}>
-        {Array.from({ length: 3 }).map((_, i) => <div key={i} className={styles.skelPeek} />)}
-      </div>
+      <div className={styles.skelPeek} />
     </div>
   );
 }
