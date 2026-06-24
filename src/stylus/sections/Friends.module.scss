@@ -125,20 +125,28 @@
 
 :global(.friends-search) {
   display: grid;
-  grid-template-columns: 24px 1fr max-content max-content;
+  grid-template-columns: 20px 1fr max-content max-content;
   align-items: center;
   gap: 10px;
   background: var(--c-surface);
   color: var(--c-ink);
   border: 1.5px solid var(--c-border);
   border-radius: var(--r-pill);
-  padding: 6px 14px;
-  transition: all 0.2s var(--ease);
+  padding: 5px 6px 5px 16px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), background 0.2s var(--ease);
+}
+:global(.friends-search:hover) {
+  border-color: color-mix(in oklab, var(--c-brand) 45%, var(--c-border));
 }
 
 :global(.friends-search:focus-within) {
   border-color: var(--c-brand);
-  box-shadow: 0 0 0 3px var(--c-brand-soft);
+  box-shadow: 0 0 0 4px var(--c-brand-soft), 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+/* the leading magnifier tints to brand on focus */
+:global(.friends-search:focus-within) :global(.ui-icon) {
+  color: var(--c-brand);
 }
 
 :global(.friends-search__input) {
@@ -148,7 +156,7 @@
   outline: none !important;
   min-width: 0;
   width: 100%;
-  font-size: 14px;
+  font-size: 15px;
   color: var(--c-ink);
 }
 :global(.friends-search__input::placeholder) {

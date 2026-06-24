@@ -69,12 +69,15 @@
 }
 .heroCarousel::-webkit-scrollbar { display: none; }
 .heroCarousel .peekCard {
-  flex: 0 0 86%;
+  flex: 0 0 calc(50% - 7px); /* two cards visible on phones */
   width: auto;
-  scroll-snap-align: center;
+  scroll-snap-align: start;
 }
 @media (min-width: 700px) {
-  .heroCarousel .peekCard { flex-basis: 47%; }
+  .heroCarousel .peekCard { flex-basis: calc(33.333% - 10px); } /* three on desktop */
+}
+@media (min-width: 1100px) {
+  .heroCarousel .peekCard { flex-basis: calc(25% - 11px); } /* four on wide desktop */
 }
 
 /* "View all" link beneath the featured card */
@@ -441,6 +444,11 @@
   background-position: center;
   display: grid;
   place-items: center;
+  transition: transform 0.45s var(--hc-ease);
+}
+/* Premium hover: gentle image zoom inside the rounded card */
+.peekCard:hover .peekThumb {
+  transform: scale(1.06);
 }
 .peekPrice {
   position: absolute;
@@ -454,6 +462,59 @@
   border-radius: 8px;
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
+}
+/* Rating chip on service cards (top-left of the image) */
+.ratingBadge {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(0, 0, 0, .72);
+  color: var(--hc-gold);
+  font-weight: 800;
+  font-size: .76rem;
+  padding: 3px 8px;
+  border-radius: 999px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.ratingCount {
+  color: rgba(255, 255, 255, .82);
+  font-style: normal;
+  font-weight: 600;
+  font-size: .72rem;
+}
+/* Provider row under the title on service cards */
+.providerRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.providerAvatar {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  background-color: color-mix(in srgb, var(--hc-green) 18%, var(--hc-cream));
+  color: var(--hc-green);
+  font-size: .62rem;
+  font-weight: 800;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.providerName {
+  font-size: .78rem;
+  color: var(--hc-ink-soft);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .peekBody {
   padding: 9px 11px 11px;
@@ -595,12 +656,16 @@
 .cardMeta { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
 .price { font-weight: 700; color: var(--hc-green); font-size: .9rem; }
 .loc {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
   font-size: .82rem;
   color: var(--hc-ink-soft);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
+  svg { flex: 0 0 auto; opacity: .8; }
 }
 
 /* Compact horizontal cards inside the small column */

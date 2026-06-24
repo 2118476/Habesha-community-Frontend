@@ -581,7 +581,7 @@ export default function FriendsPage() {
             <input
               ref={searchInputRef}
               type="text"
-              placeholder="Search people by name or username  (Press / to focus)"
+              placeholder="Search people by name or username…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={(e) => {

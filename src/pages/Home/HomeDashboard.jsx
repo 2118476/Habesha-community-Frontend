@@ -67,28 +67,123 @@ function detailPathFor(type, item) {
   return item?.id != null ? `${base}/${item.id}` : (base || '#');
 }
 
-/** Rich preview card: image, price tag, title, location, rating, posted date. */
+/**
+ * Auto-advancing horizontal carousel (Netflix/FB-style). Scrolls one card every
+ * `interval` ms, loops at the end, and pauses while the user interacts.
+ */
+function useAutoCarousel(ref, { interval = 4000, enabled = true } = {}) {
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !enabled) return undefined;
+    if (typeof window !== 'undefined' &&
+        window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return undefined;
+    }
+
+    let paused = false;
+    let resumeTimer;
+
+    const tick = () => {
+      if (paused) return;
+      const card = el.firstElementChild;
+      const gap = 14;
+      const stepW = (card ? card.getBoundingClientRect().width : el.clientWidth * 0.5) + gap;
+      const max = el.scrollWidth - el.clientWidth;
+      let next = el.scrollLeft + stepW;
+      if (next >= max - 4) next = 0; // loop back to the start
+      el.scrollTo({ left: next, behavior: 'smooth' });
+    };
+
+    const timer = setInterval(tick, interval);
+    const pause = () => { paused = true; clearTimeout(resumeTimer); };
+    const resumeSoon = () => {
+      clearTimeout(resumeTimer);
+      resumeTimer = setTimeout(() => { paused = false; }, 5000);
+    };
+
+    el.addEventListener('mouseenter', pause);
+    el.addEventListener('mouseleave', resumeSoon);
+    el.addEventListener('pointerdown', pause);
+    el.addEventListener('touchstart', pause, { passive: true });
+    el.addEventListener('touchend', resumeSoon, { passive: true });
+    el.addEventListener('scroll', resumeSoon, { passive: true });
+
+    return () => {
+      clearInterval(timer);
+      clearTimeout(resumeTimer);
+      el.removeEventListener('mouseenter', pause);
+      el.removeEventListener('mouseleave', resumeSoon);
+      el.removeEventListener('pointerdown', pause);
+      el.removeEventListener('touchstart', pause);
+      el.removeEventListener('touchend', resumeSoon);
+      el.removeEventListener('scroll', resumeSoon);
+    };
+  }, [ref, interval, enabled]);
+}
+
+/** Resolve a possibly-relative avatar/image URL to an absolute one. */
+function resolveAvatar(u) {
+  if (!u) return null;
+  return isAbs(u) ? u : makeApiUrl(u);
+}
+
+/** Rich preview card: image, price tag, rating, provider, title, location, posted date. */
 function PreviewCard({ item, type }) {
   const img = resolveImg(item);
   const price = item?.price ?? item?.basePrice ?? item?.base_price;
   const rating = item?.rating ?? item?.averageRating;
+  const reviewCount = item?.reviewCount ?? item?.reviewsCount ?? 0;
   const isService = type === 'service';
   const showPrice = price != null && price !== '' && Number(price) !== 0;
+  const ratingLabel = rating != null && rating !== '' ? Number(rating).toFixed(1) : null;
+
+  const provider = isService
+    ? (item?.postedBy?.displayName || item?.author?.displayName
+       || item?.providerName || item?.posterName)
+    : null;
+  const providerAvatar = resolveAvatar(item?.postedBy?.avatarUrl || item?.author?.avatarUrl);
 
   return (
     <Link to={detailPathFor(type, item)} className={styles.peekCard} role="listitem">
       <div className={styles.peekThumb} style={img ? { backgroundImage: `url(${img})` } : undefined}>
         {!img && <span className={styles.thumbFallback}>{initialOf(item?.title)}</span>}
-        {showPrice && (
-          <span className={styles.peekPrice}>£{price}{isService ? '/hr' : ''}</span>
+        {isService && ratingLabel && (
+          <span className={styles.ratingBadge}>
+            ★ {ratingLabel}
+            {reviewCount ? <em className={styles.ratingCount}>({reviewCount})</em> : null}
+          </span>
         )}
+        {showPrice && <span className={styles.peekPrice}>£{price}</span>}
       </div>
       <div className={styles.peekBody}>
         <h4 className={styles.peekTitle}>{item?.title || 'Untitled'}</h4>
+
+        {isService && provider && (
+          <div className={styles.providerRow}>
+            <span
+              className={styles.providerAvatar}
+              style={providerAvatar ? { backgroundImage: `url(${providerAvatar})` } : undefined}
+            >
+              {!providerAvatar && initialOf(provider)}
+            </span>
+            <span className={styles.providerName}>{provider}</span>
+          </div>
+        )}
+
         <div className={styles.peekMeta}>
-          {item?.location && <span className={styles.loc}>{item.location}</span>}
-          {isService && rating && <span className={styles.rating}>★ {rating}</span>}
+          {item?.location && (
+            <span className={styles.loc}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z" /><circle cx="12" cy="10" r="3" />
+              </svg>
+              {item.location}
+            </span>
+          )}
+          {!isService && ratingLabel && <span className={styles.rating}>★ {ratingLabel}</span>}
         </div>
+
         <div className={styles.peekFooter}>
           {item?.createdAt && <PostedDate date={item.createdAt} prefix={false} className={styles.peekDate} />}
           <span className={styles.viewDetail}>View →</span>
@@ -102,6 +197,8 @@ function PreviewCard({ item, type }) {
 function PeekPanel({ type, items, hero = false }) {
   const s = SECTIONS[type];
   const list = items.slice(0, 8);
+  const carouselRef = useRef(null);
+  useAutoCarousel(carouselRef, { enabled: hero && list.length > 1 });
   return (
     <section
       className={`${styles.peekPanel} ${hero ? styles.heroPanel : ''}`}
@@ -119,7 +216,7 @@ function PeekPanel({ type, items, hero = false }) {
         <EmptyState type={type} />
       ) : hero ? (
         // Swipeable carousel — slide through the listings one by one
-        <div className={styles.heroCarousel} role="list" aria-label={`Latest ${s.label}`}>
+        <div className={styles.heroCarousel} ref={carouselRef} role="list" aria-label={`Latest ${s.label}`}>
           {list.map((it) => <PreviewCard key={`${type}-${it.id}`} item={it} type={type} />)}
         </div>
       ) : (

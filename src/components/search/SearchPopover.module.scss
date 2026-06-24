@@ -68,10 +68,10 @@
 .pop {
   position: relative;
   z-index: 1;
-  width: 90vw;
-  max-width: 720px;
+  width: 88vw;
+  max-width: 560px;
   background: #fff;
-  border-radius: 24px;
+  border-radius: 16px;
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.06);
   overflow: hidden;
   animation: popSlide 0.2s cubic-bezier(0.32, 0.72, 0, 1) both;
@@ -105,9 +105,9 @@
 .popInputRow {
   display: flex;
   align-items: center;
-  height: 64px;
-  padding: 0 20px;
-  gap: 14px;
+  height: 54px;
+  padding: 0 18px;
+  gap: 12px;
   border-bottom: 1px solid #e5e5e5;
 }
 
@@ -122,8 +122,8 @@
 .popInputRow::before {
   content: "";
   flex-shrink: 0;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23909090' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E");
   background-size: contain;
   background-repeat: no-repeat;
@@ -135,7 +135,7 @@
   border: none;
   outline: none;
   background: transparent;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 400;
   color: #0f0f0f;
   caret-color: #065fd4;
