@@ -39,9 +39,6 @@ const SECTIONS = {
   ad:        { label: 'Marketplace',   list: '/app/ads',       post: '/app/ads/post',       blurb: 'buy & sell' },
 };
 
-// Bento sections shown at the top (Marketplace is its own infinite feed below)
-const SECTION_ORDER = ['rental', 'home_swap', 'service', 'travel', 'event'];
-
 const isAbs = (s) => typeof s === 'string' && /^(https?:)?\/\//i.test(s);
 
 function initialOf(s) {
@@ -101,12 +98,15 @@ function PreviewCard({ item, type }) {
   );
 }
 
-/** A compact bento panel: one featured card + a "View all" link. */
-function PeekPanel({ type, items }) {
+/** A bento panel: one featured card + a "View all" link. `hero` = full-width. */
+function PeekPanel({ type, items, hero = false }) {
   const s = SECTIONS[type];
   const featured = items[0];
   return (
-    <section className={styles.peekPanel} aria-labelledby={`sec-${type}`}>
+    <section
+      className={`${styles.peekPanel} ${hero ? styles.heroPanel : ''}`}
+      aria-labelledby={`sec-${type}`}
+    >
       <div className={styles.panelHead}>
         <span className={[styles.panelIcon, styles[`ic_${type}`]].join(' ')}>{ICONS[type]}</span>
         <div className={styles.panelTitleWrap}>
@@ -123,6 +123,22 @@ function PeekPanel({ type, items }) {
 
       <Link to={s.list} className={styles.viewAllRow}>View all →</Link>
     </section>
+  );
+}
+
+/** Small shortcut card for low-density categories (events, travel). */
+function CompactPanel({ type, items }) {
+  const s = SECTIONS[type];
+  const featured = items?.[0];
+  return (
+    <Link to={s.list} className={styles.compactPanel} aria-label={`${s.label} — ${s.blurb}`}>
+      <span className={[styles.panelIcon, styles[`ic_${type}`]].join(' ')}>{ICONS[type]}</span>
+      <div className={styles.compactInfo}>
+        <h3 className={styles.panelTitle}>{s.label}</h3>
+        <span className={styles.panelBlurb}>{featured?.title || s.blurb}</span>
+      </div>
+      <span className={styles.compactArrow} aria-hidden="true">→</span>
+    </Link>
   );
 }
 
@@ -308,9 +324,16 @@ export default function HomeDashboard() {
             <p>Couldn’t load the latest posts. Please refresh.</p>
           </div>
         ) : (
-          SECTION_ORDER.map((type) => (
-            <PeekPanel key={type} type={type} items={by(type)} />
-          ))
+          <>
+            {/* Services — full-width hero */}
+            <PeekPanel type="service" items={by('service')} hero />
+            {/* Rentals + Home swap — equal halves */}
+            <PeekPanel type="rental" items={by('rental')} />
+            <PeekPanel type="home_swap" items={by('home_swap')} />
+            {/* Events + Travel — compact shortcuts */}
+            <CompactPanel type="event" items={by('event')} />
+            <CompactPanel type="travel" items={by('travel')} />
+          </>
         )}
       </div>
 

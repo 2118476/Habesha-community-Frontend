@@ -48,7 +48,14 @@
   align-items: stretch;
 }
 @media (min-width: 700px) { .panelsGrid { gap: 16px; } }
-@media (min-width: 1100px) { .panelsGrid { grid-template-columns: repeat(3, 1fr); } }
+
+/* Services = full-width hero with a taller image */
+.heroPanel {
+  grid-column: 1 / -1;
+}
+.heroPanel .peekThumb {
+  aspect-ratio: 16 / 9;
+}
 
 /* "View all" link beneath the featured card */
 .viewAllRow {
@@ -61,6 +68,44 @@
   padding-top: 2px;
 }
 .viewAllRow:hover { text-decoration: underline; }
+
+/* Events / Travel — compact shortcut cards */
+.compactPanel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--hc-ink);
+  background: var(--hc-surface);
+  border: 1px solid var(--hc-line);
+  border-radius: var(--hc-r);
+  box-shadow: var(--hc-sh-1);
+  padding: 12px;
+  transition: transform .2s var(--hc-ease), box-shadow .2s var(--hc-ease),
+    border-color .2s var(--hc-ease);
+}
+.compactPanel:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--hc-sh-2);
+  border-color: color-mix(in srgb, var(--hc-gold) 40%, transparent);
+}
+.compactInfo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+.compactInfo .panelBlurb {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.compactArrow {
+  flex: 0 0 auto;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--hc-ink-soft);
+}
 
 :global([data-theme="dark"]) .wrapper {
   --hc-cream: #1a140e;
