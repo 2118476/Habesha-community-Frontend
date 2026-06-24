@@ -57,17 +57,22 @@
   width: 0;
   min-width: 0;
   padding: 0;
-  border: 0;
   outline: 0;
-  background: transparent;
-  color: inherit;
+  /* The global light-theme `input{}` rule forces white bg + black text +
+     border, so override all three with !important to stay transparent. */
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent !important;
+  color: inherit !important;
+  border: 0 !important;
+  box-shadow: none !important;
   font-size: 15px;
   font-family: inherit;
   opacity: 0;
   transition: width 0.24s ease, opacity 0.18s ease, padding 0.24s ease;
 }
 .inlineInput::placeholder {
-  color: inherit;
+  color: inherit !important;
   opacity: 0.55;
 }
 /* hide the browser's native search clear button */

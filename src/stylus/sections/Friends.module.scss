@@ -128,13 +128,12 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: var(--c-surface);
+  background: transparent; /* no white box — just a clean outlined field */
   color: var(--c-ink);
   border: 1.5px solid var(--c-border);
   border-radius: 999px;
   padding: 0 8px 0 18px;
   height: 52px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), background 0.2s var(--ease);
 }
 :global(.friends-search) :global(.ui-icon) {
@@ -158,9 +157,12 @@
   flex: 1 1 auto;
   min-width: 0;
   height: 100%;
+  -webkit-appearance: none;
+  appearance: none;
   background: transparent !important;
   border: none !important;
   outline: none !important;
+  box-shadow: none !important;
   font-size: 16px; /* 16px avoids iOS zoom-on-focus */
   color: var(--c-ink);
 }
