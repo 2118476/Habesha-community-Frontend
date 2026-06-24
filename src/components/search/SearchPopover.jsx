@@ -578,12 +578,14 @@ export default function SearchPopover() {
         ref={inputRef}
         type="search"
         className={styles.inlineInput}
-        placeholder="Search rentals, services, events…"
+        placeholder="Search…"
         value={q}
         onChange={(e) => setQ(e.target.value)}
         onKeyDown={onKeyDown}
         aria-label="Search"
         tabIndex={open ? 0 : -1}
+        // Grow with the text: start small (~8 chars), expand up to ~40.
+        size={open ? Math.min(Math.max(q.length + 1, 8), 40) : 1}
       />
 
       {showDropdown &&

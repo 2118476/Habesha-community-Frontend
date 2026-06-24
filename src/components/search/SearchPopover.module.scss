@@ -9,6 +9,8 @@
   display: inline-flex;
   align-items: center;
   gap: 2px;
+  max-width: 100%;
+  min-width: 0;
   border: 1px solid transparent;
   border-radius: 999px;
   transition: border-color 0.2s ease, background 0.2s ease;
@@ -24,6 +26,7 @@
 
 /* ===== Magnifier button ===== */
 .iconBtn {
+  flex: 0 0 auto;
   width: 40px;
   height: 40px;
   min-width: 40px;
@@ -54,8 +57,12 @@
 
 /* ===== Inline expanding text field ===== */
 .inlineInput {
+  /* width is driven by the input's `size` attribute (grows with the text),
+     but it can shrink and is capped to the slot so it never overlaps icons. */
+  flex: 0 1 auto;
   width: 0;
   min-width: 0;
+  max-width: 100%;
   padding: 0;
   outline: 0;
   /* The global light-theme `input{}` rule forces white bg + black text +
@@ -69,7 +76,7 @@
   font-size: 15px;
   font-family: inherit;
   opacity: 0;
-  transition: width 0.24s ease, opacity 0.18s ease, padding 0.24s ease;
+  transition: opacity 0.18s ease, padding 0.18s ease;
 }
 .inlineInput::placeholder {
   color: inherit !important;
@@ -84,15 +91,9 @@
 }
 
 .wrap[data-open="true"] .inlineInput {
-  width: clamp(170px, 30vw, 300px);
+  width: auto; /* let the `size` attribute size it to the text */
   opacity: 1;
-  padding: 8px 12px 8px 4px;
-}
-
-@media (max-width: 600px) {
-  .wrap[data-open="true"] .inlineInput {
-    width: clamp(96px, 38vw, 170px);
-  }
+  padding: 8px 10px 8px 4px;
 }
 
 @media (prefers-reduced-motion: reduce) {
