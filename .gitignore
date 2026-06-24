@@ -23,6 +23,11 @@ dist/
 *.keystore
 *.jks
 
+# Firebase config / credentials — keep local, never commit
+/android/app/google-services.json
+google-services.json
+**/*firebase-adminsdk*.json
+
 # Zip files and archives
 *.zip
 *.tar.gz
