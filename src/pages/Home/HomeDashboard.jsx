@@ -71,7 +71,7 @@ function detailPathFor(type, item) {
  * Auto-advancing horizontal carousel (Netflix/FB-style). Scrolls one card every
  * `interval` ms, loops at the end, and pauses while the user interacts.
  */
-function useAutoCarousel(ref, { interval = 4000, enabled = true } = {}) {
+function useAutoCarousel(ref, { interval = 3500, enabled = true } = {}) {
   useEffect(() => {
     const el = ref.current;
     if (!el || !enabled) return undefined;
@@ -83,15 +83,21 @@ function useAutoCarousel(ref, { interval = 4000, enabled = true } = {}) {
 
     let paused = false;
     let resumeTimer;
+    let dir = 1; // 1 = slide forward, -1 = slide back (ping-pong)
 
     const tick = () => {
       if (paused) return;
-      const card = el.firstElementChild;
-      const gap = 14;
-      const stepW = (card ? card.getBoundingClientRect().width : el.clientWidth * 0.5) + gap;
       const max = el.scrollWidth - el.clientWidth;
-      let next = el.scrollLeft + stepW;
-      if (next >= max - 4) next = 0; // loop back to the start
+      if (max <= 4) return; // everything fits — nothing to slide
+      // Reverse at each edge so it glides back and forth.
+      if (el.scrollLeft >= max - 4) dir = -1;
+      else if (el.scrollLeft <= 4) dir = 1;
+      const card = el.firstElementChild;
+      const gap = 12;
+      const stepW = (card ? card.getBoundingClientRect().width : el.clientWidth * 0.5) + gap;
+      let next = el.scrollLeft + dir * stepW;
+      if (next > max) next = max;
+      if (next < 0) next = 0;
       el.scrollTo({ left: next, behavior: 'smooth' });
     };
 

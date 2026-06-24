@@ -389,7 +389,7 @@
 /* ---------- Responsive ---------- */
 @media (max-width: 768px) {
   .dashboard {
-    padding: 1rem;
+    padding: 1rem 0.75rem;
   }
 
   .header {
@@ -410,6 +410,75 @@
     flex-direction: column;
     gap: 0.75rem;
     align-items: center;
+  }
+
+  /* No more sideways scrolling: turn each row into a self-contained card. */
+  .tableScroll { overflow-x: visible; }
+  .table {
+    min-width: 0;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  .table thead { display: none; } /* labels move inline via data-label */
+  .table,
+  .table tbody,
+  .table tr,
+  .table td { display: block; width: 100%; }
+
+  .table tbody tr {
+    background: var(--surface-1, #fff);
+    border: 1px solid var(--border-soft, #e2e8f0);
+    border-radius: 12px;
+    padding: 0.35rem 0.85rem;
+    margin: 0 0.25rem 0.85rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+  .table tbody tr:last-child td { border-bottom: 1px solid var(--border-soft, #f1f5f9); }
+
+  .table td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.5rem 0;
+    white-space: normal;
+    text-align: right;
+    border-bottom: 1px solid var(--border-soft, #f1f5f9);
+  }
+  .table td:last-child { border-bottom: none; }
+
+  /* The label pulled from the column header */
+  .table td::before {
+    content: attr(data-label);
+    flex: 0 0 38%;
+    text-align: left;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--on-surface-muted, #64748b);
+  }
+
+  /* The Actions row stacks its controls full-width under its label */
+  .table td[data-label="Actions"] {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: left;
+  }
+  .table td[data-label="Actions"]::before { flex-basis: auto; margin-bottom: 0.4rem; }
+  .actions { flex-wrap: wrap; gap: 0.5rem; }
+  .actions > * { flex: 1 1 auto; }
+  .roleSelect { min-width: 0; width: 100%; }
+  .onlineDot { margin: 0; }
+}
+
+:global([data-theme="dark"]) {
+  @media (max-width: 768px) {
+    .table tbody tr {
+      background: var(--surface-1, #1e293b);
+      border-color: var(--border-soft, #334155);
+    }
   }
 }
 

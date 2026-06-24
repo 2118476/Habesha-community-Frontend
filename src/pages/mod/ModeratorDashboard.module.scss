@@ -293,7 +293,7 @@
 /* ---------- Responsive ---------- */
 @media (max-width: 768px) {
   .dashboard {
-    padding: 1rem;
+    padding: 1rem 0.75rem;
   }
 
   .header {
@@ -314,6 +314,61 @@
     flex-direction: column;
     gap: 0.75rem;
     align-items: center;
+  }
+
+  /* No more sideways scrolling: each row becomes a stacked card. */
+  .tableScroll { overflow-x: visible; }
+  .table {
+    min-width: 0;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  .table thead { display: none; }
+  .table,
+  .table tbody,
+  .table tr,
+  .table td { display: block; width: 100%; }
+
+  .table tbody tr {
+    background: var(--surface-1, #fff);
+    border: 1px solid var(--border-soft, #e2e8f0);
+    border-radius: 12px;
+    padding: 0.35rem 0.85rem;
+    margin: 0 0.25rem 0.85rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+
+  .table td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.5rem 0;
+    white-space: normal;
+    text-align: right;
+    border-bottom: 1px solid var(--border-soft, #f1f5f9);
+  }
+  .table td:last-child { border-bottom: none; }
+
+  .table td::before {
+    content: attr(data-label);
+    flex: 0 0 38%;
+    text-align: left;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--on-surface-muted, #64748b);
+  }
+}
+
+:global([data-theme="dark"]) {
+  @media (max-width: 768px) {
+    .table tbody tr {
+      background: var(--surface-1, #1e293b);
+      border-color: var(--border-soft, #334155);
+    }
   }
 }
 

@@ -11,7 +11,8 @@ import buttonStyles from '../../stylus/components/Button.module.scss';
 // services based on role.
 const ServicePost = () => {
   const { t } = useTranslation();
-  const [, setImageFile] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
     category: '',
     title: '',
@@ -44,6 +45,7 @@ const ServicePost = () => {
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length) { setErrors(errs); toast.error('Please fix the highlighted errors'); return; }
+    setSubmitting(true);
     try {
       // Convert mode to uppercase enum (IN_PERSON/ONLINE) as expected by the backend
       const payload = {
@@ -56,11 +58,29 @@ const ServicePost = () => {
         mode: form.mode,
         featured: form.featured,
       };
-      await api.post('/api/services', payload);
+      const { data } = await api.post('/api/services', payload);
+
+      // Upload the cover image (if chosen) now that we have the new service id.
+      const newId = data?.id;
+      if (imageFile && newId) {
+        const fd = new FormData();
+        fd.append('file', imageFile);
+        try {
+          await api.post(`/api/services/${newId}/image`, fd, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+          });
+        } catch {
+          toast.warn('Service created, but the image failed to upload.');
+        }
+      }
+
       toast.success('Service created');
       setForm({ category: '', title: '', description: '', estimatedTime: '', basePrice: '', location: '', mode: 'IN_PERSON', featured: false });
+      setImageFile(null);
     } catch {
       toast.error('Failed to create service');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -139,11 +159,19 @@ const ServicePost = () => {
 
         <label className={formStyles.label} htmlFor="svc-image">{t('services.imageOptional')}</label>
         <input id="svc-image" type="file" accept="image/*" className={formStyles.input} onChange={(e)=>setImageFile(e.target.files?.[0]||null)} />
+        {imageFile && (
+          <img
+            src={URL.createObjectURL(imageFile)}
+            alt="Preview"
+            style={{ maxWidth: '100%', maxHeight: 220, borderRadius: 12, objectFit: 'cover', marginTop: 8 }}
+          />
+        )}
         <button
           type="submit"
+          disabled={submitting}
           className={`${buttonStyles.btn} ${buttonStyles.primary}`}
         >
-          Create Service
+          {submitting ? 'Creating…' : 'Create Service'}
         </button>
       </form>
     </div>

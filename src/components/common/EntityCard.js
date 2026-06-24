@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import ProfileChip from '../ProfileChip';
 import PostedDate from '../PostedDate/PostedDate';
+import { makeApiUrl } from '../../api/httpUrl';
 import styles from '../../stylus/components/EntityCard.module.scss';
 
 /**
@@ -18,8 +19,11 @@ const EntityCard = ({ item, type }) => {
     reviewCount, review_count, totalReviews
   } = item;
   
-  // Select the first image if available
-  const imageUrl = images && images.length > 0 ? images[0] : null;
+  // Select the first image if available, falling back to the entity's
+  // single cover image (e.g. services expose `imageUrl`). Resolve relative
+  // backend paths to absolute URLs so they load off the API host.
+  const rawImage = (images && images.length > 0 ? images[0] : null) || item.imageUrl || null;
+  const imageUrl = rawImage ? makeApiUrl(rawImage) : null;
   
   // Prepend /app to entity URLs when the user is authenticated. The
   // marketplace lives under the /app namespace.

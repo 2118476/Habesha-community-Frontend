@@ -156,29 +156,29 @@ export default function AdminDashboard() {
                 <tbody>
                   {content.map((u) => (
                     <tr key={u.id}>
-                      <td><span className={s.userId}>{u.id}</span></td>
-                      <td><span className={s.userName}>{u.name || '—'}</span></td>
-                      <td><span className={s.userEmail}>{u.email}</span></td>
-                      <td>
+                      <td data-label="ID"><span className={s.userId}>{u.id}</span></td>
+                      <td data-label="Name"><span className={s.userName}>{u.name || '—'}</span></td>
+                      <td data-label="Email"><span className={s.userEmail}>{u.email}</span></td>
+                      <td data-label="Role">
                         <span className={`${s.badge} ${ROLE_BADGE[u.role] || s.badgeUser}`}>
                           {ROLE_LABEL[u.role] || u.role}
                         </span>
                       </td>
-                      <td>
+                      <td data-label="Status">
                         <span className={`${s.badge} ${u.active ? s.badgeActive : s.badgeDisabled}`}>
                           {u.active ? 'Active' : 'Disabled'}
                         </span>
                       </td>
-                      <td><span className={s.dateCell}>{formatDate(u.lastLoginAt)}</span></td>
-                      <td><span className={s.dateCell}>{formatDate(u.lastActiveAt)}</span></td>
-                      <td style={{ textAlign: 'center' }}>
+                      <td data-label="Last Login"><span className={s.dateCell}>{formatDate(u.lastLoginAt)}</span></td>
+                      <td data-label="Last Active"><span className={s.dateCell}>{formatDate(u.lastActiveAt)}</span></td>
+                      <td data-label="Online" style={{ textAlign: 'center' }}>
                         <span
                           className={`${s.onlineDot} ${u.online ? s.online : s.offline}`}
                           title={u.online ? 'Online' : 'Offline'}
                         />
                       </td>
-                      <td><span className={s.dateCell}>{formatDate(u.createdAt)}</span></td>
-                      <td>
+                      <td data-label="Created"><span className={s.dateCell}>{formatDate(u.createdAt)}</span></td>
+                      <td data-label="Actions">
                         <div className={s.actions}>
                           <select
                             className={s.roleSelect}

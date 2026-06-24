@@ -209,6 +209,9 @@ export default function FriendsPage() {
   const deferredSearch = useDeferredValue(searchQuery);
   const [searchResults, setSearchResults] = useState([]);
   const [searching, setSearching] = useState(false);
+  // When the user is typing a query we show the results panel live, no matter
+  // which tab is active — so the search never feels "dead".
+  const isSearching = searchQuery.trim().length > 0;
 
   // refs
   const mountedRef = useRef(true);
@@ -656,8 +659,8 @@ export default function FriendsPage() {
         </Section>
       )}
 
-      {/* Search */}
-      {!loading && active === "search" && (
+      {/* Search — shown live whenever there's a query, regardless of tab */}
+      {!loading && (isSearching || active === "search") && (
         <Section
           title="Search results"
           actions={
@@ -677,9 +680,25 @@ export default function FriendsPage() {
           }
           className="friends-block--search"
         >
-          {searchResults.length === 0 && searchQuery && !searching && (
+          {searching && (
+            <ul className={cx(styles.list, "friends-list")} aria-busy="true">
+              {[...Array(4)].map((_, i) => (
+                <li key={i} className={cx(styles.listItem, "friends-list__item")}>
+                  <Shimmer height={56} />
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {!searching && searchResults.length === 0 && searchQuery.trim().length >= 2 && (
             <p className={cx(styles.empty, "friends-empty")}>
               No users found for “{searchQuery}”.
+            </p>
+          )}
+
+          {!searching && searchQuery.trim().length === 1 && (
+            <p className={cx(styles.empty, "friends-empty")}>
+              Keep typing — at least 2 characters to search.
             </p>
           )}
 
@@ -717,7 +736,7 @@ export default function FriendsPage() {
       )}
 
       {/* Incoming */}
-      {!loading && active === "incoming" && (
+      {!loading && !isSearching && active === "incoming" && (
         <Section title="Incoming requests" className="friends-block--incoming">
           {incoming.length === 0 ? (
             <p className={cx(styles.empty, "friends-empty")}>
@@ -779,7 +798,7 @@ export default function FriendsPage() {
       )}
 
       {/* Outgoing */}
-      {!loading && active === "outgoing" && (
+      {!loading && !isSearching && active === "outgoing" && (
         <Section title="Outgoing requests" className="friends-block--outgoing">
           {outgoing.length === 0 ? (
             <p className={cx(styles.empty, "friends-empty")}>
@@ -826,7 +845,7 @@ export default function FriendsPage() {
       )}
 
       {/* Suggestions */}
-      {!loading && active === "suggestions" && (
+      {!loading && !isSearching && active === "suggestions" && (
         <Section
           title="People you may know"
           className="friends-block--suggestions"
@@ -882,7 +901,7 @@ export default function FriendsPage() {
       )}
 
       {/* Friends */}
-      {!loading && active === "friends" && (
+      {!loading && !isSearching && active === "friends" && (
         <Section title="Your friends" className="friends-block--friends">
           {friends.length === 0 ? (
             <div className={cx(styles.empty, "friends-empty")}>
