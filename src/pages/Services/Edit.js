@@ -51,9 +51,8 @@ export default function EditService() {
         const fd = new FormData();
         fd.append('file', imageFile);
         try {
-          await api.post(`/api/services/${id}/image`, fd, {
-            headers: { 'Content-Type': 'multipart/form-data' },
-          });
+          // Let axios set multipart/form-data WITH the boundary automatically.
+          await api.post(`/api/services/${id}/image`, fd);
         } catch {
           toast.warn('Saved, but the new image failed to upload.');
         }

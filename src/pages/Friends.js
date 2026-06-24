@@ -596,11 +596,7 @@ export default function FriendsPage() {
             />
             {!!searchQuery && (
               <button
-                className={cx(
-                  buttonStyles.btn,
-                  buttonStyles.ghost,
-                  "friends-search__clear"
-                )}
+                className="friends-search__clear"
                 onClick={clearSearch}
                 aria-label="Clear search"
                 title="Clear"
@@ -608,17 +604,6 @@ export default function FriendsPage() {
                 <Icon I={X} />
               </button>
             )}
-            <button
-              type="button"
-              onClick={() => {
-                if (active !== "search") setActive("search");
-                performSearch();
-              }}
-              className={cx(buttonStyles.btn, "friends-search__submit")}
-              disabled={searching}
-            >
-              {searching ? "Searching…" : "Search"}
-            </button>
           </div>
         </div>
       </header>

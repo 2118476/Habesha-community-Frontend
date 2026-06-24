@@ -123,26 +123,31 @@
 .searchBar { display: flex; flex-wrap: wrap; gap: var(--s-2); align-items: center; }
 :global(.friends-searchDock) { display: block; }
 
+/* Clean, roomy search pill (Airbnb / Netflix style) — live results, no button */
 :global(.friends-search) {
-  display: grid;
-  grid-template-columns: 20px 1fr max-content max-content;
+  display: flex;
   align-items: center;
   gap: 10px;
   background: var(--c-surface);
   color: var(--c-ink);
   border: 1.5px solid var(--c-border);
-  border-radius: var(--r-pill);
-  padding: 5px 6px 5px 16px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  border-radius: 999px;
+  padding: 0 8px 0 18px;
+  height: 52px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), background 0.2s var(--ease);
+}
+:global(.friends-search) :global(.ui-icon) {
+  flex: 0 0 auto;
+  color: var(--c-muted);
+  transition: color 0.2s var(--ease);
 }
 :global(.friends-search:hover) {
   border-color: color-mix(in oklab, var(--c-brand) 45%, var(--c-border));
 }
-
 :global(.friends-search:focus-within) {
   border-color: var(--c-brand);
-  box-shadow: 0 0 0 4px var(--c-brand-soft), 0 4px 14px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 0 0 4px var(--c-brand-soft), 0 6px 18px rgba(0, 0, 0, 0.07);
 }
 /* the leading magnifier tints to brand on focus */
 :global(.friends-search:focus-within) :global(.ui-icon) {
@@ -150,39 +155,36 @@
 }
 
 :global(.friends-search__input) {
-  min-height: var(--search-h);
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
   background: transparent !important;
   border: none !important;
   outline: none !important;
-  min-width: 0;
-  width: 100%;
-  font-size: 15px;
+  font-size: 16px; /* 16px avoids iOS zoom-on-focus */
   color: var(--c-ink);
 }
 :global(.friends-search__input::placeholder) {
   color: var(--c-muted);
 }
 
-:global(.friends-search .friends-search__clear),
-:global(.friends-search .friends-search__submit) {
+:global(.friends-search__clear) {
+  flex: 0 0 auto;
   appearance: none;
-  background: transparent !important;
-  border: 0 !important;
-  height: var(--search-h);
-  padding: 0 12px !important;
-  border-radius: var(--r-pill) !important;
+  width: 36px;
+  height: 36px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  white-space: nowrap;
-  font: inherit;
+  background: color-mix(in oklab, var(--c-ink) 6%, transparent) !important;
+  border: 0 !important;
+  border-radius: 50% !important;
   cursor: pointer;
   color: var(--c-ink) !important;
+  transition: background 0.15s var(--ease);
 }
-:global(.friends-search__submit) {
-  background: var(--c-brand) !important;
-  color: #fff !important;
-  font-weight: 600;
+:global(.friends-search__clear:hover) {
+  background: color-mix(in oklab, var(--c-ink) 13%, transparent) !important;
 }
 
 /* ============================================================

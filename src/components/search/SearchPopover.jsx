@@ -10,7 +10,6 @@ import { createPortal } from "react-dom";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Search as SearchIcon,
-  X as XIcon,
   ArrowRight,
   Home,
   Repeat,
@@ -591,16 +590,14 @@ export default function SearchPopover() {
     >
       <button
         type="button"
-        className={styles.iconBtn}
-        aria-label={open ? "Close search" : "Open global search"}
-        title={open ? "Close search" : "Open global search (/ or Ctrl+K)"}
+        className={styles.trigger}
+        aria-label="Open global search"
+        title="Search (press / or Ctrl+K)"
         onClick={() => (open ? closeBox() : openBox())}
       >
-        {!open ? (
-          <SearchIcon size={20} strokeWidth={2} aria-hidden="true" />
-        ) : (
-          <XIcon size={18} strokeWidth={2} />
-        )}
+        <SearchIcon size={18} strokeWidth={2} className={styles.triggerIcon} aria-hidden="true" />
+        <span className={styles.triggerText}>Search rentals, services, events…</span>
+        <kbd className={styles.triggerKbd}>/</kbd>
       </button>
 
       {open && createPortal(

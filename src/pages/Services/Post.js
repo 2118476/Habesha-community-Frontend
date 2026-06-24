@@ -66,9 +66,8 @@ const ServicePost = () => {
         const fd = new FormData();
         fd.append('file', imageFile);
         try {
-          await api.post(`/api/services/${newId}/image`, fd, {
-            headers: { 'Content-Type': 'multipart/form-data' },
-          });
+          // Let axios set multipart/form-data WITH the boundary automatically.
+          await api.post(`/api/services/${newId}/image`, fd);
         } catch {
           toast.warn('Service created, but the image failed to upload.');
         }
