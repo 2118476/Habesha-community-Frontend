@@ -415,16 +415,23 @@
   animation: pulse 1.3s ease-in-out infinite;
 }
 
-/* ---- Marketplace (infinite-scroll grid of ads) ---- */
+/* ---- Marketplace (infinite-scroll Facebook-style feed of ads) ---- */
 .marketSection {
-  background: var(--hc-surface);
-  border: 1px solid var(--hc-line);
-  border-radius: var(--hc-r);
-  box-shadow: var(--hc-sh-1);
-  padding: clamp(14px, 1.6vw, 18px);
   display: flex;
   flex-direction: column;
   gap: 12px;
+  margin-top: 6px;
+}
+.marketSection .panelHead {
+  padding: 0 4px;
+}
+/* center the feed column on wide screens, like a social feed */
+@media (min-width: 760px) {
+  .marketSection {
+    width: 100%;
+    max-width: 680px;
+    margin-inline: auto;
+  }
 }
 .marketGrid {
   display: grid;

@@ -5,6 +5,7 @@ import { fetchFeed } from '../../api/feed';
 import useAuth from '../../hooks/useAuth';
 import { makeApiUrl } from '../../api/httpUrl';
 import PostedDate from '../../components/PostedDate/PostedDate';
+import { AdsFeedTimeline } from '../Feed/FeedPage';
 import styles from '../../stylus/sections/HomeDashboard.module.scss';
 
 /**
@@ -217,11 +218,8 @@ function MarketplaceFeed() {
         <EmptyState type="ad" />
       ) : (
         <>
-          <div className={styles.marketGrid}>
-            {items.map((it, i) => (
-              <PreviewCard key={`mk-${it.id ?? i}`} item={it} type="ad" />
-            ))}
-          </div>
+          {/* Full Facebook-style posts: photo, like / comment / share, details */}
+          <AdsFeedTimeline items={items} />
           {loadingMore && <div className={styles.marketStatus}>Loading more…</div>}
           {done && <div className={styles.marketStatus}>You’re all caught up.</div>}
         </>

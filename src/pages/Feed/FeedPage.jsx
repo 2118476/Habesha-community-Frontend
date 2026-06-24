@@ -333,7 +333,7 @@ function PostStatusBox({ user, onPostClick, onPostSuccess }) {
 }
 
 /** Wired: Inline timeline for Community Posts & Ads (Like/Comment/Share) */
-function AdsFeedTimeline({ items = [] }) {
+export function AdsFeedTimeline({ items = [] }) {
   // Hooks first — never after an early return
   const { t } = useTranslation();
   const navigate = useNavigate();
