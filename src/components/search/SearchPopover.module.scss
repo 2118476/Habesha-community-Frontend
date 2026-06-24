@@ -102,3 +102,108 @@
     transition: none;
   }
 }
+
+/* ===== Live results dropdown (anchored under the field, FB/YouTube style) ===== */
+.dropdown {
+  position: fixed;
+  z-index: 9999;
+  background: #ffffff;
+  color: #0f0f0f;
+  border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  padding: 6px;
+  animation: searchPop 0.14s ease both;
+}
+:global([data-theme="dark"]) .dropdown {
+  background: #282828;
+  color: #e8e8e8;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.dropdownList {
+  max-height: 60vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+.status {
+  padding: 14px 14px;
+  font-size: 13px;
+  color: #707070;
+}
+:global([data-theme="dark"]) .status {
+  color: #aaa;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+.item:hover,
+.item.active {
+  background: rgba(0, 0, 0, 0.06);
+}
+:global([data-theme="dark"]) .item:hover,
+:global([data-theme="dark"]) .item.active {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.leadingIcon {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.05);
+  color: #606060;
+}
+:global([data-theme="dark"]) .leadingIcon {
+  background: rgba(255, 255, 255, 0.08);
+  color: #cfcfcf;
+}
+
+.title {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.badge {
+  flex: 0 0 auto;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 7px;
+  background: rgba(0, 0, 0, 0.06);
+  color: #606060;
+  text-transform: capitalize;
+}
+:global([data-theme="dark"]) .badge {
+  background: rgba(255, 255, 255, 0.1);
+  color: #bbb;
+}
+
+@keyframes searchPop {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dropdown { animation: none; }
+}

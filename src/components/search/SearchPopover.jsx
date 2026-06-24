@@ -1,11 +1,21 @@
 // src/components/search/SearchPopover.jsx
 import React, { useEffect, useRef, useState, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
-import { Search as SearchIcon } from "lucide-react";
+import {
+  Search as SearchIcon,
+  Home,
+  Repeat,
+  Wrench,
+  Calendar,
+  Plane,
+  Megaphone,
+} from "lucide-react";
 
 import { searchAll } from "../../api/search";
 import api from "../../api/axiosInstance";
 import styles from "./SearchPopover.module.scss";
+import { buildHrefForItem } from "../../utils/detailRoutes";
 
 /* ------------------------------- helpers ------------------------------- */
 const isAbs = (s) => typeof s === "string" && /^(https?:)?\/\//i.test(s);
@@ -194,6 +204,26 @@ const normalizeResults = (raw) => {
   });
 };
 
+/* Small module icon for result rows */
+const ModIcon = ({ mod }) => {
+  switch (mod) {
+    case "rentals":
+      return <Home size={16} strokeWidth={2} />;
+    case "homeswap":
+      return <Repeat size={16} strokeWidth={2} />;
+    case "services":
+      return <Wrench size={16} strokeWidth={2} />;
+    case "events":
+      return <Calendar size={16} strokeWidth={2} />;
+    case "travel":
+      return <Plane size={16} strokeWidth={2} />;
+    case "ads":
+      return <Megaphone size={16} strokeWidth={2} />;
+    default:
+      return <SearchIcon size={16} strokeWidth={2} />;
+  }
+};
+
 /* ------------------------------ existence check ------------------------------ */
 
 /**
@@ -374,61 +404,108 @@ export const tolerantSearch = async (term) => {
 
 /* -------------------------------- component -------------------------------- */
 /**
- * Header search: just a magnifier icon that expands inline into a text field.
- * No popup/overlay. Pressing Enter runs the search on the /search results page.
- * Transparent field (no white box) so it stays readable over the hero video.
+ * Header search: a magnifier icon that expands inline into a transparent text
+ * field. As you type, live results appear in a compact dropdown anchored right
+ * under the field (Facebook / YouTube style) — no big centered overlay.
  */
 export default function SearchPopover() {
   const navigate = useNavigate();
   const wrapRef = useRef(null);
   const inputRef = useRef(null);
+  const listRef = useRef(null);
 
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
+  const [items, setItems] = useState([]);
+  const [busy, setBusy] = useState(false);
+  const [active, setActive] = useState(-1);
+  const [pos, setPos] = useState(null); // {left, top, width} for the dropdown
+
+  const term = q.trim();
 
   const openBox = useCallback(() => {
     setOpen(true);
-    // focus on the next frame, once the input has expanded
     requestAnimationFrame(() => inputRef.current?.focus());
   }, []);
-
-  const closeBox = useCallback(() => setOpen(false), []);
-
-  const submit = useCallback(() => {
-    const term = q.trim();
-    if (!term) {
-      inputRef.current?.focus();
-      return;
-    }
-    navigate(`/search?q=${encodeURIComponent(term)}`);
+  const closeBox = useCallback(() => {
     setOpen(false);
-    setQ("");
-  }, [q, navigate]);
+    setActive(-1);
+  }, []);
 
-  // Collapse on outside click or Escape.
+  // Anchor the dropdown directly under the input.
+  const updatePos = useCallback(() => {
+    const el = inputRef.current || wrapRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const width = Math.min(Math.max(r.width, 320), window.innerWidth - 24);
+    let left = r.left;
+    if (left + width > window.innerWidth - 12) left = window.innerWidth - 12 - width;
+    if (left < 12) left = 12;
+    setPos({ left, top: r.bottom + 6, width });
+  }, []);
+
+  // Debounced live search as the user types.
+  useEffect(() => {
+    if (!open || !term) {
+      setItems([]);
+      setBusy(false);
+      setActive(-1);
+      return undefined;
+    }
+    setBusy(true);
+    updatePos();
+    const t = setTimeout(async () => {
+      try {
+        const res = await tolerantSearch(term);
+        setItems(res);
+        setActive(res.length ? 0 : -1);
+      } catch {
+        setItems([]);
+      } finally {
+        setBusy(false);
+        updatePos();
+      }
+    }, 200);
+    return () => clearTimeout(t);
+  }, [term, open, updatePos]);
+
+  // Keep the dropdown anchored on scroll / resize.
+  useEffect(() => {
+    if (!open) return undefined;
+    updatePos();
+    const onMove = () => updatePos();
+    window.addEventListener("scroll", onMove, true);
+    window.addEventListener("resize", onMove);
+    return () => {
+      window.removeEventListener("scroll", onMove, true);
+      window.removeEventListener("resize", onMove);
+    };
+  }, [open, updatePos]);
+
+  // Collapse on outside click.
   useEffect(() => {
     if (!open) return undefined;
     const onPointer = (e) => {
-      if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false);
+      if (wrapRef.current?.contains(e.target)) return;
+      if (listRef.current?.contains(e.target)) return;
+      closeBox();
     };
     document.addEventListener("pointerdown", onPointer);
     return () => document.removeEventListener("pointerdown", onPointer);
-  }, [open]);
+  }, [open, closeBox]);
 
-  // Global shortcuts: "/" and Ctrl/Cmd+K open + focus the field.
+  // Global shortcuts: "/" and Ctrl/Cmd+K open + focus.
   useEffect(() => {
     const handler = (e) => {
       const tag = (e.target?.tagName || "").toLowerCase();
       const typing =
         tag === "input" || tag === "textarea" || e.target?.isContentEditable;
       if (typing) return;
-
       const cmdK =
         (e.key === "k" || e.key === "K") && (e.metaKey || e.ctrlKey) &&
         !e.altKey && !e.shiftKey;
       const slash =
         e.key === "/" && !e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey;
-
       if (cmdK || slash) {
         e.preventDefault();
         openBox();
@@ -438,12 +515,55 @@ export default function SearchPopover() {
     return () => window.removeEventListener("keydown", handler);
   }, [openBox]);
 
+  const goToItem = useCallback(
+    (it) => {
+      const raw = it._raw || it;
+      const modHint = it.__module || inferModule(raw);
+      const built = buildHrefForItem({ ...raw, __module: modHint });
+      const href = normalizeHref(built, raw, modHint);
+      const target = href || `/search?q=${encodeURIComponent(term)}`;
+      closeBox();
+      requestAnimationFrame(() => {
+        if (/^https?:\/\//i.test(target)) window.location.assign(target);
+        else navigate(target, { state: { fromSearch: true, item: raw } });
+      });
+    },
+    [term, navigate, closeBox]
+  );
+
+  const submit = useCallback(() => {
+    if (active >= 0 && items[active]) {
+      goToItem(items[active]);
+      return;
+    }
+    if (!term) {
+      inputRef.current?.focus();
+      return;
+    }
+    navigate(`/search?q=${encodeURIComponent(term)}`);
+    closeBox();
+    setQ("");
+  }, [active, items, term, navigate, goToItem, closeBox]);
+
+  const onKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      submit();
+    } else if (e.key === "Escape") {
+      closeBox();
+    } else if (e.key === "ArrowDown" && items.length) {
+      e.preventDefault();
+      setActive((a) => (a + 1) % items.length);
+    } else if (e.key === "ArrowUp" && items.length) {
+      e.preventDefault();
+      setActive((a) => (a - 1 + items.length) % items.length);
+    }
+  };
+
+  const showDropdown = open && !!term;
+
   return (
-    <div
-      className={styles.wrap}
-      ref={wrapRef}
-      data-open={open ? "true" : "false"}
-    >
+    <div className={styles.wrap} ref={wrapRef} data-open={open ? "true" : "false"}>
       <button
         type="button"
         className={styles.iconBtn}
@@ -461,17 +581,52 @@ export default function SearchPopover() {
         placeholder="Search rentals, services, events…"
         value={q}
         onChange={(e) => setQ(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            submit();
-          } else if (e.key === "Escape") {
-            closeBox();
-          }
-        }}
+        onKeyDown={onKeyDown}
         aria-label="Search"
         tabIndex={open ? 0 : -1}
       />
+
+      {showDropdown &&
+        createPortal(
+          <div
+            className={styles.dropdown}
+            ref={listRef}
+            style={pos ? { left: pos.left, top: pos.top, width: pos.width } : undefined}
+          >
+            {busy && items.length === 0 && (
+              <div className={styles.status}>Searching…</div>
+            )}
+            {!busy && items.length === 0 && (
+              <div className={styles.status}>No matches for “{q}”.</div>
+            )}
+            {items.length > 0 && (
+              <div className={styles.dropdownList}>
+                {items.map((it, i) => {
+                  const mod = it.__module || inferModule(it._raw || it);
+                  return (
+                    <button
+                      type="button"
+                      key={`${it.id}-${i}`}
+                      className={`${styles.item} ${i === active ? styles.active : ""}`}
+                      onMouseEnter={() => setActive(i)}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        goToItem(it);
+                      }}
+                    >
+                      <span className={styles.leadingIcon}>
+                        <ModIcon mod={mod} />
+                      </span>
+                      <span className={styles.title}>{it.title}</span>
+                      <span className={styles.badge}>{mod || it.type}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>,
+          document.body
+        )}
     </div>
   );
 }
