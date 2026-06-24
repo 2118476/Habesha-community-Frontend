@@ -1,5 +1,5 @@
 // src/pages/Home/HomeDashboard.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchFeed } from '../../api/feed';
 import useAuth from '../../hooks/useAuth';
@@ -35,11 +35,11 @@ const SECTIONS = {
   home_swap: { label: 'Home swap',     list: '/app/home-swap', post: '/app/home-swap/post', blurb: 'swap homes' },
   event:     { label: 'Events',        list: '/app/events',    post: '/app/events/post',    blurb: 'meetups' },
   travel:    { label: 'Travel',        list: '/app/travel',    post: '/app/travel/post',    blurb: 'trips & rides' },
-  ad:        { label: 'Community ads', list: '/app/ads',       post: '/app/ads/post',       blurb: 'buy & sell' },
+  ad:        { label: 'Marketplace',   list: '/app/ads',       post: '/app/ads/post',       blurb: 'buy & sell' },
 };
 
-// Order shown on the dashboard
-const SECTION_ORDER = ['rental', 'home_swap', 'service', 'travel', 'event', 'ad'];
+// Bento sections shown at the top (Marketplace is its own infinite feed below)
+const SECTION_ORDER = ['rental', 'home_swap', 'service', 'travel', 'event'];
 
 const isAbs = (s) => typeof s === 'string' && /^(https?:)?\/\//i.test(s);
 
@@ -147,6 +147,92 @@ function SkeletonPanel() {
   );
 }
 
+/**
+ * Marketplace — infinite-scroll feed of community ads, loaded a page at a time
+ * as the user scrolls (Facebook-style). Lives at the bottom of the dashboard.
+ */
+function MarketplaceFeed() {
+  const [items, setItems] = useState([]);
+  const [cursor, setCursor] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [done, setDone] = useState(false);
+  const busy = useRef(false);
+  const started = useRef(false);
+
+  const loadPage = useCallback(async (cur) => {
+    const { items: page = [], nextCursor } = await fetchFeed({
+      types: ['ads'],
+      limit: 12,
+      sort: 'newest',
+      cursor: cur,
+    });
+    setItems((prev) => (cur ? [...prev, ...page] : page));
+    setCursor(nextCursor || null);
+    if (!nextCursor) setDone(true);
+  }, []);
+
+  // initial load (once)
+  useEffect(() => {
+    if (started.current) return undefined;
+    started.current = true;
+    (async () => {
+      try { await loadPage(null); } catch { setDone(true); } finally { setLoading(false); }
+    })();
+    return undefined;
+  }, [loadPage]);
+
+  const loadMore = useCallback(async () => {
+    if (busy.current || !cursor || done) return;
+    busy.current = true;
+    setLoadingMore(true);
+    try { await loadPage(cursor); } catch { /* keep what we have */ }
+    finally { setLoadingMore(false); busy.current = false; }
+  }, [cursor, done, loadPage]);
+
+  // load more as the page nears the bottom
+  useEffect(() => {
+    const onScroll = () => {
+      if (busy.current || !cursor || done) return;
+      const el = document.documentElement;
+      if (el.scrollTop + el.clientHeight >= el.scrollHeight * 0.85) loadMore();
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [loadMore, cursor, done]);
+
+  return (
+    <section className={styles.marketSection} aria-labelledby="market-title">
+      <div className={styles.panelHead}>
+        <span className={[styles.panelIcon, styles.ic_ad].join(' ')}>{ICONS.ad}</span>
+        <div className={styles.panelTitleWrap}>
+          <h3 id="market-title" className={styles.panelTitle}>{SECTIONS.ad.label}</h3>
+          <span className={styles.panelBlurb}>{SECTIONS.ad.blurb}</span>
+        </div>
+        <Link to={SECTIONS.ad.list} className={styles.viewAll}>View all →</Link>
+      </div>
+
+      {loading ? (
+        <div className={styles.marketGrid}>
+          {Array.from({ length: 6 }).map((_, i) => <div key={i} className={styles.skelPeek} />)}
+        </div>
+      ) : items.length === 0 ? (
+        <EmptyState type="ad" />
+      ) : (
+        <>
+          <div className={styles.marketGrid}>
+            {items.map((it, i) => (
+              <PreviewCard key={`mk-${it.id ?? i}`} item={it} type="ad" />
+            ))}
+          </div>
+          {loadingMore && <div className={styles.marketStatus}>Loading more…</div>}
+          {done && <div className={styles.marketStatus}>You’re all caught up.</div>}
+        </>
+      )}
+    </section>
+  );
+}
+
 export default function HomeDashboard() {
   const { user } = useAuth();
   const [items, setItems] = useState([]);
@@ -232,6 +318,9 @@ export default function HomeDashboard() {
           ))
         )}
       </div>
+
+      {/* Marketplace — infinite-scroll community ads at the bottom */}
+      <MarketplaceFeed />
     </div>
   );
 }

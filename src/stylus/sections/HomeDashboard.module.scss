@@ -409,6 +409,32 @@
   animation: pulse 1.3s ease-in-out infinite;
 }
 
+/* ---- Marketplace (infinite-scroll grid of ads) ---- */
+.marketSection {
+  background: var(--hc-surface);
+  border: 1px solid var(--hc-line);
+  border-radius: var(--hc-r);
+  box-shadow: var(--hc-sh-1);
+  padding: clamp(14px, 1.6vw, 18px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.marketGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+}
+@media (min-width: 700px) {
+  .marketGrid { grid-template-columns: repeat(auto-fill, minmax(185px, 1fr)); }
+}
+.marketStatus {
+  text-align: center;
+  color: var(--hc-ink-soft);
+  font-size: .9rem;
+  padding: 10px 0;
+}
+
 /* ---- Card grids ---- */
 .gridBig {
   display: grid;
