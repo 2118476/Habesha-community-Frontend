@@ -5,9 +5,28 @@ import styles from '../stylus/components/BottomBar.module.scss';
 
 const SCROLL_THRESHOLD = 8;
 
+const TEXT_INPUT_TYPES_TO_IGNORE = [
+  'checkbox', 'radio', 'button', 'submit', 'reset',
+  'file', 'range', 'color', 'image',
+];
+
+/** True for elements that pop the on-screen keyboard (text fields, textareas). */
+function isEditable(el) {
+  if (!el) return false;
+  const tag = (el.tagName || '').toLowerCase();
+  if (tag === 'textarea') return true;
+  if (el.isContentEditable) return true;
+  if (tag === 'input') {
+    const type = (el.getAttribute('type') || 'text').toLowerCase();
+    return !TEXT_INPUT_TYPES_TO_IGNORE.includes(type);
+  }
+  return false;
+}
+
 const BottomBar = () => {
   const { t, i18n } = useTranslation();
   const [hidden, setHidden] = useState(false);
+  const [typing, setTyping] = useState(false);
   const lastY = useRef(0);
   const ticking = useRef(false);
 
@@ -43,10 +62,31 @@ const BottomBar = () => {
     return () => window.removeEventListener('routechange', reset);
   }, []);
 
+  // Hide the bar while a text field is focused (chat, comments, search, etc.)
+  // so the on-screen keyboard never collides with it. Stays hidden — even on
+  // scroll — until focus leaves the field / the keyboard is dismissed.
+  useEffect(() => {
+    const onFocusIn = (e) => {
+      if (isEditable(e.target)) setTyping(true);
+    };
+    const onFocusOut = () => {
+      // Defer so focus moving between two inputs doesn't flicker the bar.
+      setTimeout(() => setTyping(isEditable(document.activeElement)), 0);
+    };
+    document.addEventListener('focusin', onFocusIn);
+    document.addEventListener('focusout', onFocusOut);
+    return () => {
+      document.removeEventListener('focusin', onFocusIn);
+      document.removeEventListener('focusout', onFocusOut);
+    };
+  }, []);
+
+  const barHidden = hidden || typing;
+
   return (
     <nav
-      className={`${styles.bar} ${hidden ? styles.barHidden : ''}`}
-      aria-hidden={hidden}
+      className={`${styles.bar} ${barHidden ? styles.barHidden : ''}`}
+      aria-hidden={barHidden}
     >
       <NavLink
         to="/app/settings"

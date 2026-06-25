@@ -61,15 +61,22 @@ const ServicePost = () => {
       const { data } = await api.post('/api/services', payload);
 
       // Upload the cover image (if chosen) now that we have the new service id.
-      const newId = data?.id;
+      const newId = data?.id ?? data?.serviceId ?? data?.service?.id;
       if (imageFile && newId) {
         const fd = new FormData();
         fd.append('file', imageFile);
         try {
           // Let axios set multipart/form-data WITH the boundary automatically.
           await api.post(`/api/services/${newId}/image`, fd);
-        } catch {
-          toast.warn('Service created, but the image failed to upload.');
+        } catch (err) {
+          const detail = err?.response?.data;
+          // eslint-disable-next-line no-console
+          console.error('Service image upload failed', err?.response?.status, detail);
+          toast.warn(
+            typeof detail === 'string' && detail
+              ? `Service created, but image upload failed: ${detail}`
+              : 'Service created, but the image failed to upload.'
+          );
         }
       }
 

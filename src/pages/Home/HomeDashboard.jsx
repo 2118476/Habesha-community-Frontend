@@ -200,11 +200,11 @@ function PreviewCard({ item, type }) {
 }
 
 /** A bento panel. `hero` = full-width with a swipeable carousel of cards. */
-function PeekPanel({ type, items, hero = false }) {
+function PeekPanel({ type, items, hero = false, autoSlide = false }) {
   const s = SECTIONS[type];
   const list = items.slice(0, 8);
   const carouselRef = useRef(null);
-  useAutoCarousel(carouselRef, { enabled: hero && list.length > 1 });
+  useAutoCarousel(carouselRef, { enabled: hero && autoSlide && list.length > 1 });
   return (
     <section
       className={`${styles.peekPanel} ${hero ? styles.heroPanel : ''}`}
@@ -437,14 +437,12 @@ export default function HomeDashboard() {
           </div>
         ) : (
           <>
-            {/* Services — full-width hero */}
-            <PeekPanel type="service" items={by('service')} hero />
-            {/* Rentals + Home swap — equal halves */}
-            <PeekPanel type="rental" items={by('rental')} />
-            <PeekPanel type="home_swap" items={by('home_swap')} />
-            {/* Events + Travel — compact shortcuts */}
-            <CompactPanel type="event" items={by('event')} />
-            <CompactPanel type="travel" items={by('travel')} />
+            {/* Full-width stacked feed cards (Facebook-style) */}
+            <PeekPanel type="service" items={by('service')} hero autoSlide />
+            <PeekPanel type="rental" items={by('rental')} hero />
+            <PeekPanel type="home_swap" items={by('home_swap')} hero />
+            <PeekPanel type="event" items={by('event')} hero />
+            <PeekPanel type="travel" items={by('travel')} hero />
           </>
         )}
       </div>

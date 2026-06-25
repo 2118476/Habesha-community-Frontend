@@ -40,14 +40,14 @@
   }
 }
 
-/* Category panels: a 2-column bento (3 columns on wide desktop) */
+/* Full-width feed: each category card stacks vertically (Facebook-style) */
 .panelsGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  grid-template-columns: 1fr;
+  gap: 14px;
   align-items: stretch;
 }
-@media (min-width: 700px) { .panelsGrid { gap: 16px; } }
+@media (min-width: 700px) { .panelsGrid { gap: 18px; } }
 
 /* Services = full-width hero with a taller image */
 .heroPanel {
