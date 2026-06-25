@@ -342,7 +342,7 @@ function Account({ initialSignUp = false, redirect = "/app/home" }) {
             <div className="panel-content">
               <h3>Selam! 👋</h3>
               <p data-autocontrast>
-       New to the community? Create your account and start your journey with us.
+       New to our Ethiopian &amp; Eritrean community? Create your account and join us.
      </p>
               <button
                 className="account-btn transparent"

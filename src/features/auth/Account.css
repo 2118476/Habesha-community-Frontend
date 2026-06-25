@@ -56,7 +56,7 @@
   top: -10%;
   right: 48%;
   transform: translateY(-50%);
-  background-image: linear-gradient(rgba(0,0,0,0.18), rgba(0,0,0,0.18)), linear-gradient(-45deg, #078930 0%, #0a9b38 26%, #f5cf21 55%, #e11f1f 82%, #c8161d 100%);
+  background-image: linear-gradient(rgba(0,0,0,0.22), rgba(0,0,0,0.22)), linear-gradient(-45deg, #12ad2b 0%, #f5c518 34%, #ea2839 66%, #2a6fc9 100%);
   transition: 1.8s ease-in-out;
   border-radius: 50%;
   z-index: 0;
@@ -194,7 +194,7 @@ form.sign-up-form {
   width: 56px;
   height: 4px;
   border-radius: 4px;
-  background: linear-gradient(90deg, #078930 0%, #f5cf21 50%, #da121a 100%);
+  background: linear-gradient(90deg, #078930 0%, #f5cf21 33%, #da121a 66%, #2a6fc9 100%);
 }
 
 /* ---------- input fields ---------- */
@@ -912,7 +912,7 @@ html:has(.account-container),
 }
 .account-container .input-field:focus-within {
   border-color: #1b7a4b !important;
-  box-shadow: 0 0 0 3px rgba(224, 168, 46, 0.45) !important;
+  box-shadow: 0 0 0 2px rgba(224, 168, 46, 0.55), 0 0 0 5px rgba(42, 111, 201, 0.32) !important;
 }
 
 /* Themed forgot/forgot-password + links already green via palette swap */
