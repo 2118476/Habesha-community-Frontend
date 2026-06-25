@@ -437,12 +437,14 @@ export default function HomeDashboard() {
           </div>
         ) : (
           <>
-            {/* Full-width stacked feed cards (Facebook-style) */}
+            {/* Services — full-width hero carousel */}
             <PeekPanel type="service" items={by('service')} hero autoSlide />
-            <PeekPanel type="rental" items={by('rental')} hero />
-            <PeekPanel type="home_swap" items={by('home_swap')} hero />
-            <PeekPanel type="event" items={by('event')} hero />
-            <PeekPanel type="travel" items={by('travel')} hero />
+            {/* Rentals + Home swap — equal halves */}
+            <PeekPanel type="rental" items={by('rental')} />
+            <PeekPanel type="home_swap" items={by('home_swap')} />
+            {/* Events + Travel — compact shortcuts */}
+            <CompactPanel type="event" items={by('event')} />
+            <CompactPanel type="travel" items={by('travel')} />
           </>
         )}
       </div>
