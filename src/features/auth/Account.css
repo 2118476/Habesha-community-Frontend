@@ -42,7 +42,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(rgba(0,0,0,0.18), rgba(0,0,0,0.18)), linear-gradient(-45deg, #078930 0%, #0a9b38 26%, #f5cf21 55%, #e11f1f 82%, #c8161d 100%);
+  background: linear-gradient(rgba(0,0,0,0.18), rgba(0,0,0,0.18)), linear-gradient(135deg, #078930 0%, #0a9b38 26%, #f5cf21 55%, #e11f1f 82%, #c8161d 100%);
   z-index: -2;
   pointer-events: none;
 }
@@ -56,7 +56,7 @@
   top: -10%;
   right: 48%;
   transform: translateY(-50%);
-  background-image: linear-gradient(rgba(0,0,0,0.22), rgba(0,0,0,0.22)), linear-gradient(-45deg, #12ad2b 0%, #f5c518 34%, #ea2839 66%, #2a6fc9 100%);
+  background-image: linear-gradient(rgba(0,0,0,0.22), rgba(0,0,0,0.22)), linear-gradient(135deg, #12ad2b 0%, #f5c518 34%, #ea2839 66%, #2a6fc9 100%);
   transition: 1.8s ease-in-out;
   border-radius: 50%;
   z-index: 0;
@@ -701,7 +701,7 @@ html:has(.account-container),
 #root:has(.account-container) {
   margin: 0 !important;
   padding: 0 !important;
-  background: linear-gradient(rgba(0,0,0,0.18), rgba(0,0,0,0.18)), linear-gradient(-45deg, #078930 0%, #0a9b38 26%, #f5cf21 55%, #e11f1f 82%, #c8161d 100%) !important;
+  background: linear-gradient(rgba(0,0,0,0.18), rgba(0,0,0,0.18)), linear-gradient(135deg, #078930 0%, #0a9b38 26%, #f5cf21 55%, #e11f1f 82%, #c8161d 100%) !important;
   background-attachment: fixed !important;
   min-height: 100vh !important;
 }
@@ -714,7 +714,7 @@ html:has(.account-container),
 .auth-page-active {
   margin: 0 !important;
   padding: 0 !important;
-  background: linear-gradient(rgba(0,0,0,0.18), rgba(0,0,0,0.18)), linear-gradient(-45deg, #078930 0%, #0a9b38 26%, #f5cf21 55%, #e11f1f 82%, #c8161d 100%) !important;
+  background: linear-gradient(rgba(0,0,0,0.18), rgba(0,0,0,0.18)), linear-gradient(135deg, #078930 0%, #0a9b38 26%, #f5cf21 55%, #e11f1f 82%, #c8161d 100%) !important;
   background-attachment: fixed !important;
   min-height: 100vh !important;
 }
@@ -722,7 +722,7 @@ html:has(.account-container),
 .auth-page-active #root {
   margin: 0 !important;
   padding: 0 !important;
-  background: linear-gradient(rgba(0,0,0,0.18), rgba(0,0,0,0.18)), linear-gradient(-45deg, #078930 0%, #0a9b38 26%, #f5cf21 55%, #e11f1f 82%, #c8161d 100%) !important;
+  background: linear-gradient(rgba(0,0,0,0.18), rgba(0,0,0,0.18)), linear-gradient(135deg, #078930 0%, #0a9b38 26%, #f5cf21 55%, #e11f1f 82%, #c8161d 100%) !important;
   min-height: 100vh !important;
   width: 100vw !important;
 }
