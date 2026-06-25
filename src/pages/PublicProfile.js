@@ -1091,29 +1091,12 @@ export default function PublicProfile() {
                 aria-label="Profile actions"
               >
                 {isSelf ? (
-                  <>
-                    <button
-                      className={`${buttonStyles.btn} ${buttonStyles.primary}`}
-                      onClick={() => navigate("/app/settings/profile")}
-                    >
-                      {t("profile.editProfile")}
-                    </button>
-
-                    <button
-                      className={`${buttonStyles.btn} ${buttonStyles.outline}`}
-                      onClick={() =>
-                        navigate(
-                          profile.username
-                            ? `/app/u/${encodeURIComponent(
-                                profile.username
-                              )}?publicView=1`
-                            : `/app/profile/${profile.id}?publicView=1`
-                        )
-                      }
-                    >
-                      View as public
-                    </button>
-                  </>
+                  <button
+                    className={`${buttonStyles.btn} ${buttonStyles.primary}`}
+                    onClick={() => navigate("/app/settings/profile")}
+                  >
+                    {t("profile.editProfile")}
+                  </button>
                 ) : (
                   <>
                     {/* Friend relationship */}
