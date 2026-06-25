@@ -42,7 +42,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(-45deg, #ff6b6b 0%, #feca57 50%, #ff9ff3 100%);
+  background: linear-gradient(-45deg, #0e5132 0%, #1b7a4b 30%, #e0a82e 66%, #c0392b 100%);
   z-index: -2;
   pointer-events: none;
 }
@@ -56,7 +56,7 @@
   top: -10%;
   right: 48%;
   transform: translateY(-50%);
-  background-image: linear-gradient(-45deg, #ff6b6b 0%, #feca57 50%, #ff9ff3 100%);
+  background-image: linear-gradient(-45deg, #0e5132 0%, #1b7a4b 30%, #e0a82e 66%, #c0392b 100%);
   transition: 1.8s ease-in-out;
   border-radius: 50%;
   z-index: 0;
@@ -175,11 +175,26 @@ form.sign-up-form {
 /* ---------- form title ---------- */
 .account-container .form-title {
   font-family: "Poppins", sans-serif;
-  font-size: 2.2rem;
-  color: #333333 !important;
-  margin-bottom: 10px;
-  font-weight: bold;
+  font-size: 2.3rem;
+  color: #ffffff !important;
+  margin-bottom: 18px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.28);
   background: transparent !important;
+  position: relative;
+}
+/* Gold tibeb-style underline accent under the title */
+.account-container .form-title::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -9px;
+  transform: translateX(-50%);
+  width: 56px;
+  height: 4px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #1b7a4b 0%, #e0a82e 50%, #c0392b 100%);
 }
 
 /* ---------- input fields ---------- */
@@ -203,7 +218,7 @@ form.sign-up-form {
 .account-container .input-field i {
   text-align: center;
   line-height: 36px;
-  color: #333333 !important;
+  color: #1b7a4b !important;
   transition: 0.5s;
   font-size: 1.2rem;
   background: transparent !important;
@@ -331,16 +346,17 @@ form.sign-up-form {
 /* ---------- buttons ---------- */
 .account-container .account-btn {
   width: 200px;
-  background-color: #ffffff !important;
-  background: #ffffff !important;
+  background: linear-gradient(135deg, #1b7a4b 0%, #12613a 100%) !important;
+  background-color: #1b7a4b !important;
   border: none !important;
   outline: none !important;
   height: 49px;
   border-radius: 49px;
-  color: #5995fd !important;
-  -webkit-text-fill-color: #5995fd !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
   text-transform: uppercase;
   font-weight: 700;
+  letter-spacing: 0.04em;
   margin: 10px 0;
   cursor: pointer !important;
   transition: 0.5s;
@@ -350,15 +366,15 @@ form.sign-up-form {
 }
 
 .account-container .account-btn:hover {
-  background-color: #f0f4ff !important;
-  background: #f0f4ff !important;
-  color: #4d84e2 !important;
-  -webkit-text-fill-color: #4d84e2 !important;
+  background: linear-gradient(135deg, #c4861a 0%, #e0a82e 100%) !important;
+  background-color: #e0a82e !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
 }
 
 .account-container .account-btn:disabled {
-  background-color: #7692c1 !important;
-  background: #7692c1 !important;
+  background-color: #9bb0a4 !important;
+  background: #9bb0a4 !important;
   cursor: auto !important;
 }
 
@@ -366,33 +382,34 @@ form.sign-up-form {
 .account-container .account-btn.transparent {
   background: transparent !important;
   background-color: transparent !important;
-  border: 2px solid #5995fd !important;
+  border: 2px solid #ffffff !important;
   width: 130px;
   height: 41px;
   font-weight: 700;
   font-size: 1rem;
-  color: #5995fd !important;
-  -webkit-text-fill-color: #5995fd !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
 }
 
 .account-container .account-btn.transparent:hover {
-  background-color: #5995fd !important;
-  background: #5995fd !important;
-  color: #ffffff !important;
-  -webkit-text-fill-color: #ffffff !important;
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  color: #12613a !important;
+  -webkit-text-fill-color: #12613a !important;
 }
 
 /* ---------- forgot password link ---------- */
 .account-container .forgot {
   font-family: "Poppins", sans-serif;
   font-size: 15px;
-  color: #333333 !important;
+  color: #ffffff !important;
   text-decoration: none !important;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
   background: transparent !important;
 }
 
 .account-container .forgot:hover {
-  color: #5995fd !important;
+  color: #ffe9a8 !important;
   font-weight: 500;
   text-decoration: underline !important;
 }
@@ -683,7 +700,7 @@ html:has(.account-container),
 #root:has(.account-container) {
   margin: 0 !important;
   padding: 0 !important;
-  background: linear-gradient(-45deg, #ff6b6b 0%, #feca57 50%, #ff9ff3 100%) !important;
+  background: linear-gradient(-45deg, #0e5132 0%, #1b7a4b 30%, #e0a82e 66%, #c0392b 100%) !important;
   background-attachment: fixed !important;
   min-height: 100vh !important;
 }
@@ -696,7 +713,7 @@ html:has(.account-container),
 .auth-page-active {
   margin: 0 !important;
   padding: 0 !important;
-  background: linear-gradient(-45deg, #ff6b6b 0%, #feca57 50%, #ff9ff3 100%) !important;
+  background: linear-gradient(-45deg, #0e5132 0%, #1b7a4b 30%, #e0a82e 66%, #c0392b 100%) !important;
   background-attachment: fixed !important;
   min-height: 100vh !important;
 }
@@ -704,7 +721,7 @@ html:has(.account-container),
 .auth-page-active #root {
   margin: 0 !important;
   padding: 0 !important;
-  background: linear-gradient(-45deg, #ff6b6b 0%, #feca57 50%, #ff9ff3 100%) !important;
+  background: linear-gradient(-45deg, #0e5132 0%, #1b7a4b 30%, #e0a82e 66%, #c0392b 100%) !important;
   min-height: 100vh !important;
   width: 100vw !important;
 }
@@ -764,7 +781,7 @@ html:has(.account-container),
 }
 
 .account-container .auth-link:hover {
-  color: #5995fd !important;
+  color: #1b7a4b !important;
   text-decoration: underline;
 }
 
@@ -785,7 +802,7 @@ html:has(.account-container),
   background: transparent !important;
   background-color: transparent !important;
   border: none !important;
-  color: #333333 !important;
+  color: #ffffff !important;
   font-family: "Poppins", sans-serif;
   font-size: 0.95rem;
   font-weight: 600;
@@ -797,10 +814,11 @@ html:has(.account-container),
   margin: 0 !important;
   text-transform: none !important;
   border-radius: 0 !important;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
 }
 
 .account-container .back-to-home-btn:hover {
-  color: #5995fd !important;
+  color: #ffe9a8 !important;
   background: transparent !important;
   background-color: transparent !important;
 }
@@ -855,3 +873,45 @@ html:has(.account-container),
     width: 92%;
   }
 }
+
+/* ===================================================================
+ * HABESHA DECORATION — traditional tibeb borders + modern input polish
+ * =================================================================== */
+
+/* Tibeb (woven) pattern strips along the top and bottom edges */
+.account-container .jebena {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 16px;
+  background: var(--tibeb, none) repeat-x left center;
+  background-size: auto 100%;
+  opacity: 0.95;
+  z-index: 40;
+  pointer-events: none;
+}
+.account-container .jebena::after {
+  content: "";
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 16px;
+  background: var(--tibeb, none) repeat-x left center;
+  background-size: auto 100%;
+  opacity: 0.95;
+  pointer-events: none;
+}
+
+/* Modern input pills: faint green outline + gold focus ring */
+.account-container .input-field {
+  border: 1px solid rgba(27, 122, 75, 0.18) !important;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.account-container .input-field:focus-within {
+  border-color: #1b7a4b !important;
+  box-shadow: 0 0 0 3px rgba(224, 168, 46, 0.45) !important;
+}
+
+/* Themed forgot/forgot-password + links already green via palette swap */

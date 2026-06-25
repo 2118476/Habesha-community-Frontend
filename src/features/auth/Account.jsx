@@ -86,14 +86,14 @@ function Account({ initialSignUp = false, redirect = "/app/home" }) {
             showCancelButton: true,
             confirmButtonText: 'Resend Verification',
             cancelButtonText: 'OK',
-            confirmButtonColor: '#5995fd',
+            confirmButtonColor: '#1b7a4b',
           }).then(async (result) => {
             if (result.isConfirmed) {
               try {
                 await api.post('/auth/resend-verification', { email });
-                Swal.fire({ icon: 'success', title: 'Email Sent', text: 'A new verification link has been sent to your email.', confirmButtonColor: '#5995fd' });
+                Swal.fire({ icon: 'success', title: 'Email Sent', text: 'A new verification link has been sent to your email.', confirmButtonColor: '#1b7a4b' });
               } catch {
-                Swal.fire({ icon: 'error', title: 'Failed', text: 'Could not resend verification email. Please try again later.', confirmButtonColor: '#5995fd' });
+                Swal.fire({ icon: 'error', title: 'Failed', text: 'Could not resend verification email. Please try again later.', confirmButtonColor: '#1b7a4b' });
               }
             }
           });
@@ -177,7 +177,10 @@ function Account({ initialSignUp = false, redirect = "/app/home" }) {
   return (
     <div className="body">
       <div className={`account-container ${isSignUpClick ? "sign-up-mode" : ""}`}>
-         <div className="jebena"></div>
+         <div
+           className="jebena"
+           style={{ "--tibeb": `url(${process.env.PUBLIC_URL}/images/habesha-pattern.png)` }}
+         ></div>
         <div className="forms-container">
           <div className="signin-signup">
             {/* Signin/login form */}
@@ -337,9 +340,9 @@ function Account({ initialSignUp = false, redirect = "/app/home" }) {
         <div className="panels-container">
           <div className="panel left-panel">
             <div className="panel-content">
-              <h3>New here ?</h3>
+              <h3>Selam! 👋</h3>
               <p data-autocontrast>
-       Hello, please click here to create an account and start journey with us!
+       New to the community? Create your account and start your journey with us.
      </p>
               <button
                 className="account-btn transparent"
@@ -354,9 +357,9 @@ function Account({ initialSignUp = false, redirect = "/app/home" }) {
 
           <div className="panel right-panel">
             <div className="panel-content">
-              <h3>One of us ?</h3>
+              <h3>እንኳን ደህና መጡ</h3>
               <p>
-                Welcome back, please click here to sign in with your personal info!
+                Welcome back — sign in with your details to continue.
               </p>
               <button
                 className="account-btn transparent"
