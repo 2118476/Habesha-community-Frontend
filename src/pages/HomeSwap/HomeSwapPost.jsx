@@ -19,6 +19,12 @@ export default function HomeSwapPost() {
     description: "",
     homeType: "entire",
     bedrooms: "1",
+    bathrooms: "",
+    floorLevel: "",
+    parking: false,
+    gardenOrBalcony: false,
+    swapWindow: "",
+    preferredLocation: "",
   });
 
   const [photos, setPhotos] = useState([]);     // File[]
@@ -29,6 +35,8 @@ export default function HomeSwapPost() {
 
   const setField = (k) => (e) =>
     setForm((v) => ({ ...v, [k]: e.target.value }));
+  const setCheck = (k) => (e) =>
+    setForm((v) => ({ ...v, [k]: e.target.checked }));
 
   const canSubmit = useMemo(
     () => Boolean(form.title.trim() && form.location.trim()),
@@ -82,12 +90,19 @@ export default function HomeSwapPost() {
     try {
       const fd = new FormData();
 
+      const numOrNull = (v) => (String(v ?? "").trim() === "" ? null : Number(v));
       const payload = {
         title: form.title.trim(),
         location: form.location.trim(),
         description: form.description?.trim() || "",
         homeType: form.homeType,
-        bedrooms: String(form.bedrooms ?? "1"),
+        bedrooms: numOrNull(form.bedrooms),
+        bathrooms: numOrNull(form.bathrooms),
+        floorLevel: form.floorLevel.trim() || null,
+        parking: !!form.parking,
+        gardenOrBalcony: !!form.gardenOrBalcony,
+        swapWindow: form.swapWindow.trim() || null,
+        preferredLocation: form.preferredLocation.trim() || null,
       };
 
       fd.append("data", JSON.stringify(payload));
@@ -159,6 +174,37 @@ export default function HomeSwapPost() {
             disabled={submitting}
           />
         </label>
+
+        <label>
+          {t('homeSwap.bathrooms', 'Bathrooms')}
+          <input type="number" min="0" value={form.bathrooms} onChange={setField("bathrooms")} disabled={submitting} placeholder="e.g. 1" />
+        </label>
+
+        <label>
+          {t('homeSwap.floorLevel', 'Floor level')}
+          <input value={form.floorLevel} onChange={setField("floorLevel")} disabled={submitting} placeholder="e.g. Ground floor, 2nd floor" />
+        </label>
+
+        <label>
+          {t('homeSwap.preferredLocation', 'Preferred swap location')}
+          <input value={form.preferredLocation} onChange={setField("preferredLocation")} disabled={submitting} placeholder="e.g. London, Manchester" />
+        </label>
+
+        <label>
+          {t('homeSwap.swapWindow', 'Swap window')}
+          <input value={form.swapWindow} onChange={setField("swapWindow")} disabled={submitting} placeholder="e.g. Jul–Sep 2026, flexible" />
+        </label>
+
+        <div className={formStyles.formGroup}>
+          <label className={formStyles.checkbox}>
+            <input type="checkbox" checked={form.parking} onChange={setCheck("parking")} disabled={submitting} />
+            <span>{t('homeSwap.parking', 'Parking')}</span>
+          </label>
+          <label className={formStyles.checkbox}>
+            <input type="checkbox" checked={form.gardenOrBalcony} onChange={setCheck("gardenOrBalcony")} disabled={submitting} />
+            <span>{t('homeSwap.gardenBalcony', 'Garden / balcony')}</span>
+          </label>
+        </div>
 
         <label>
           {t('homeSwap.description')}

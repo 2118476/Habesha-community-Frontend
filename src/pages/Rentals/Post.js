@@ -19,6 +19,12 @@ export default function RentalsPost() {
     location: '',
     price: '',
     roomType: 'room',
+    bedrooms: '',
+    bathrooms: '',
+    deposit: '',
+    billsIncluded: false,
+    furnished: false,
+    availableFrom: '',
     contact: '',
     featured: false,
   });
@@ -66,12 +72,19 @@ export default function RentalsPost() {
     try {
       setSubmitting(true);
       // 1) create rental
+      const numOrNull = (v) => (String(v ?? '').trim() === '' ? null : Number(v));
       const payload = {
         title: form.title.trim(),
         description: form.description.trim(),
         location: form.location.trim(),
         price: Number(form.price),
         roomType: form.roomType || 'room',
+        bedrooms: numOrNull(form.bedrooms),
+        bathrooms: numOrNull(form.bathrooms),
+        deposit: numOrNull(form.deposit),
+        billsIncluded: !!form.billsIncluded,
+        furnished: !!form.furnished,
+        availableFrom: form.availableFrom || null,
         contact: form.contact.trim(),
         featured: !!form.featured,
       };
@@ -154,6 +167,41 @@ export default function RentalsPost() {
             <option value="house">{t("rentals.house")}</option>
           </select>
         </label>
+
+        <label>
+          {t("rentals.bedrooms")}
+          <input type="number" min="0" value={form.bedrooms} onChange={setField('bedrooms')}
+            disabled={submitting} className={formStyles.input} placeholder="e.g. 2" />
+        </label>
+
+        <label>
+          {t("rentals.bathrooms")}
+          <input type="number" min="0" value={form.bathrooms} onChange={setField('bathrooms')}
+            disabled={submitting} className={formStyles.input} placeholder="e.g. 1" />
+        </label>
+
+        <label>
+          {t("rentals.deposit")} (£)
+          <input type="number" min="0" step="1" value={form.deposit} onChange={setField('deposit')}
+            disabled={submitting} className={formStyles.input} placeholder="e.g. 500" />
+        </label>
+
+        <label>
+          {t("rentals.availableFrom")}
+          <input type="date" value={form.availableFrom} onChange={setField('availableFrom')}
+            disabled={submitting} className={formStyles.input} />
+        </label>
+
+        <div className={formStyles.formGroup}>
+          <label className={formStyles.checkbox}>
+            <input type="checkbox" checked={form.billsIncluded} onChange={setField('billsIncluded')} disabled={submitting} />
+            <span>{t("rentals.billsIncluded")}</span>
+          </label>
+          <label className={formStyles.checkbox}>
+            <input type="checkbox" checked={form.furnished} onChange={setField('furnished')} disabled={submitting} />
+            <span>{t("rentals.furnished")}</span>
+          </label>
+        </div>
 
         <label>
           {t("rentals.contact")}

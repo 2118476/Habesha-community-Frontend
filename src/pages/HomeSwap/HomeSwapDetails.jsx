@@ -293,12 +293,20 @@ export default function HomeSwapDetails() {
   const facts = [
     { label: t("homeSwapDetails.currentLocation", "Current location"), value: location || np },
     { label: t("homeSwapDetails.preferredLocation", "Preferred location"), value: desiredLocations || np },
-    { label: t("homeSwapDetails.housingType", "Housing type"), value: item?.housingType || item?.propertyType || item?.roomType || np },
+    {
+      label: t("homeSwapDetails.housingType", "Housing type"),
+      value:
+        item?.homeType === "entire"
+          ? t("homeSwap.entirePlace", "Entire place")
+          : item?.homeType === "room"
+          ? t("homeSwap.privateRoom", "Private room")
+          : item?.homeType || item?.housingType || item?.roomType || np,
+    },
     { label: t("homeSwapDetails.bedrooms"), value: item?.bedrooms != null ? String(item.bedrooms) : np },
     { label: t("homeSwapDetails.bathrooms"), value: item?.bathrooms != null ? String(item.bathrooms) : np },
-    { label: t("homeSwapDetails.floorLevel", "Floor level"), value: item?.floor ?? item?.floorLevel ?? np },
+    { label: t("homeSwapDetails.floorLevel", "Floor level"), value: item?.floorLevel || np },
     { label: t("homeSwapDetails.parking", "Parking"), value: ynm(item?.parking) },
-    { label: t("homeSwapDetails.gardenBalcony", "Garden / balcony"), value: (item?.garden || item?.balcony) ? t("homeSwapDetails.yes") : np },
+    { label: t("homeSwapDetails.gardenBalcony", "Garden / balcony"), value: ynm(item?.gardenOrBalcony) },
     { label: t("homeSwapDetails.swapWindow", "Swap window"), value: item?.swapWindow || np },
     { label: t("homeSwapDetails.priceNotes", "Price notes"), value: priceText || np },
   ];
