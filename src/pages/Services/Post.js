@@ -153,15 +153,6 @@ const ServicePost = () => {
           <option value="IN_PERSON">{t('services.inPerson')}</option>
           <option value="ONLINE">{t('services.online')}</option>
         </select>
-        <label className={formStyles.checkboxLabel}>
-          <input
-            type="checkbox"
-            name="featured"
-            checked={form.featured}
-            onChange={handleChange}
-          />
-          Feature this service (£10)
-        </label>
 
         <label className={formStyles.label} htmlFor="svc-image">{t('services.imageOptional')}</label>
         <input id="svc-image" type="file" accept="image/*" className={formStyles.input} onChange={(e)=>setImageFile(e.target.files?.[0]||null)} />

@@ -440,19 +440,6 @@ export default function EditRental() {
           />
         </label>
 
-        {/* Featured toggle */}
-        <div className={formStyles.formGroup}>
-          <label className={formStyles.checkbox}>
-            <input
-              type="checkbox"
-              checked={form.featured}
-              onChange={setField("featured")}
-              disabled={submitting}
-            />
-            <span>{t("rentals.featureListing")}</span>
-          </label>
-        </div>
-
         {/* PHOTOS SECTION */}
         <div className={sectionStyles.photosBox}>
           <div className={sectionStyles.photosHeader}>

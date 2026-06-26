@@ -99,17 +99,45 @@ textarea {
   resize: vertical;
 }
 
-/* Checkbox label */
+/* Checkbox row — clean, modern bordered pill */
 .checkboxLabel {
-  display: flex; align-items: center; gap: var(--s-2, 8px);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   font-size: var(--text-md, 15px);
-  color: var(--on-surface-1, #000000);
+  font-weight: 600;
+  color: var(--on-surface-1, #1a1a1a);
+  cursor: pointer;
+  user-select: none;
+  padding: 11px 14px;
+  border: 1px solid var(--border-soft, rgba(0, 0, 0, 0.14));
+  border-radius: 12px;
+  background: var(--surface-1, rgba(0, 0, 0, 0.02));
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+.checkboxLabel:hover {
+  border-color: var(--primary, #2563eb);
+}
+.checkboxLabel:focus-within {
+  border-color: var(--primary, #2563eb);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
+}
+.checkboxLabel input[type="checkbox"] {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--primary, #2563eb);
   cursor: pointer;
 }
-.checkboxLabel input {
-  width: 20px; height: 20px;
-  accent-color: var(--primary, #2563eb);
+/* Lay out a group of checkbox rows neatly */
+.checkboxRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 2px 0;
 }
+.checkboxRow > .checkboxLabel { flex: 1 1 auto; min-width: 160px; }
 
 /* Inline help / error */
 .helpText {

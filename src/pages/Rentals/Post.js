@@ -192,12 +192,12 @@ export default function RentalsPost() {
             disabled={submitting} className={formStyles.input} />
         </label>
 
-        <div className={formStyles.formGroup}>
-          <label className={formStyles.checkbox}>
+        <div className={formStyles.checkboxRow}>
+          <label className={formStyles.checkboxLabel}>
             <input type="checkbox" checked={form.billsIncluded} onChange={setField('billsIncluded')} disabled={submitting} />
             <span>{t("rentals.billsIncluded")}</span>
           </label>
-          <label className={formStyles.checkbox}>
+          <label className={formStyles.checkboxLabel}>
             <input type="checkbox" checked={form.furnished} onChange={setField('furnished')} disabled={submitting} />
             <span>{t("rentals.furnished")}</span>
           </label>
@@ -225,18 +225,6 @@ export default function RentalsPost() {
             placeholder={t("rentals.descriptionPlaceholder")}
           />
         </label>
-
-        <div className={formStyles.formGroup}>
-          <label className={formStyles.checkbox}>
-            <input
-              type="checkbox"
-              checked={form.featured}
-              onChange={setField('featured')}
-              disabled={submitting}
-            />
-            <span>{t("rentals.featureListing")}</span>
-          </label>
-        </div>
 
         <div className={sectionStyles.photosBox}>
           <div className={sectionStyles.photosHeader}>

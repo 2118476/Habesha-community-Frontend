@@ -162,16 +162,6 @@ const AdPost = () => {
           className={formStyles.input}
           style={{ color: 'var(--text-1, #1a1a1a)' }}
         />
-        <label className={formStyles.checkboxLabel} style={{ color: 'var(--text-1, #1a1a1a)' }}>
-          <input
-            type="checkbox"
-            name="featured"
-            checked={form.featured}
-            onChange={handleChange}
-          />
-          {t('rentals.featureListing', 'Feature this ad (£10)')}
-        </label>
-
         {/* Photo Upload Section */}
         <div className={sectionStyles.photosBox || formStyles.formGroup}>
           <div className={sectionStyles.photosHeader || formStyles.label}>

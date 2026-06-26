@@ -50,12 +50,6 @@ const EventPost = () => {
         featured: form.featured,
       };
       const { data } = await api.post('/events', payload);
-      if (form.featured) {
-        // Promote the event by hitting the promote endpoint; this
-        // simply updates the featured flag on the server. No Stripe
-        // integration is used here.
-        await api.post(`/events/${data.id}/promote`);
-      }
       toast.success('Event created');
       setForm({ title: '', date: '', description: '', imageUrl: '', location: '', featured: false });
     } catch {
@@ -109,15 +103,6 @@ const EventPost = () => {
           placeholder="Image URL"
           className={formStyles.input}
         />
-        <label className={formStyles.checkboxLabel}>
-          <input
-            type="checkbox"
-            name="featured"
-            checked={form.featured}
-            onChange={handleChange}
-          />
-          Feature this event (£10)
-        </label>
         <button
           type="submit"
           className={`${buttonStyles.btn} ${buttonStyles.primary}`}
