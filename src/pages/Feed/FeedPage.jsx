@@ -1827,9 +1827,9 @@ export default function FeedPage() {
           <div className={styles.footerCard}>
             <h4>{t('feed.quickLinks')}</h4>
             <nav className={styles.quickLinks}>
-              <Link to="/app/about">{t('feed.about')}</Link>
-              <Link to="/app/terms">{t('feed.terms')}</Link>
-              <Link to="/app/privacy">{t('feed.privacy')}</Link>
+              <Link to="/about">{t('feed.about')}</Link>
+              <Link to="/terms">{t('feed.terms')}</Link>
+              <Link to="/privacy">{t('feed.privacy')}</Link>
             </nav>
           </div>
         </div>

@@ -96,6 +96,14 @@ const PublicContact = lazyWithPreload(
     ),
   "public-contact"
 );
+const PublicPrivacy = lazyWithPreload(
+  () => import(/* webpackChunkName: "public-privacy" */ "./pages/PublicPrivacy"),
+  "public-privacy"
+);
+const PublicTerms = lazyWithPreload(
+  () => import(/* webpackChunkName: "public-terms" */ "./pages/PublicTerms"),
+  "public-terms"
+);
 
 /* NEW: Global search results page (used by header search “See all results…”) */
 const SearchPage = lazyWithPreload(
@@ -501,6 +509,8 @@ const AppRoutes = () => (
         {/* Informational */}
         <Route path="/about" element={<PublicAbout />} />
         <Route path="/contact" element={<PublicContact />} />
+        <Route path="/privacy" element={<PublicPrivacy />} />
+        <Route path="/terms" element={<PublicTerms />} />
 
         {/* Public global search (used by header search & /search?q=) */}
         <Route path="/search" element={<SearchPage />} />

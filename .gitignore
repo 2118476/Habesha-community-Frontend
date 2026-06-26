@@ -19,9 +19,10 @@ dist/
 /android/local.properties
 /ios/App/Pods/
 /ios/App/build/
-# Signing keys — NEVER commit
+# Signing keys & release credentials — NEVER commit
 *.keystore
 *.jks
+/android/keystore.properties
 
 # Firebase config / credentials — keep local, never commit
 /android/app/google-services.json
