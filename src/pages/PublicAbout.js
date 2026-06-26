@@ -13,9 +13,9 @@ const PublicAbout = () => {
   return (
     <div>
       <div className={styles.container}>
-      <h1>About Habesha Community</h1>
+      <h1>About UK Habesha</h1>
       <p>
-        <strong>Habesha Community</strong> is a welcoming online hub for
+        <strong>UK Habesha</strong> is a welcoming online hub for
         Ethiopians and Habesha friends living across the UK. Whether
         you’re looking for a flat‑share in London, a tutor for your child,
         or a travel companion for your next trip back home, this
@@ -31,7 +31,7 @@ const PublicAbout = () => {
       </p>
       <h2>Who is it for?</h2>
       <p>
-        Habesha Community is open to all Ethiopians, Eritreans and friends
+        UK Habesha is open to all Ethiopians, Eritreans and friends
         of our culture living in the UK. We celebrate diversity and
         inclusivity—everyone is welcome to join, so long as they respect
         our values.

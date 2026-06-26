@@ -11,7 +11,7 @@ export default function HelpSupport() {
       icon: '📚',
       content: (
         <>
-          <h2>Welcome to Habesha Community Help & Support</h2>
+          <h2>Welcome to UK Habesha Help & Support</h2>
           <p>
             We've recently upgraded our theme system to provide you with the best possible experience.
             All pages now have perfect readability in both light and dark modes.
@@ -277,7 +277,7 @@ export default function HelpSupport() {
       <div className={styles.container}>
         <header className={styles.header}>
           <h1>Help & Support</h1>
-          <p>Everything you need to know about using Habesha Community</p>
+          <p>Everything you need to know about using UK Habesha</p>
         </header>
 
         <div className={styles.layout}>

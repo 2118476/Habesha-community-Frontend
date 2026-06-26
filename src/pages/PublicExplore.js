@@ -224,7 +224,7 @@ const PublicExplore = () => {
         {/* WHY / FEATURES */}
         <section className={styles.section}>
           <div className={styles.sectionHead}>
-            <span className={styles.sectionEyebrow}>Why Habesha Community</span>
+            <span className={styles.sectionEyebrow}>Why UK Habesha</span>
             <h2 className={styles.sectionTitle}>Everything you need, in one trusted place</h2>
             <p className={styles.sectionSub}>
               No more scattered Facebook groups and lost messages. One welcoming home for

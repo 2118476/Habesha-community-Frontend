@@ -13,7 +13,7 @@ export default function HCLogo({ size = 30, className }) {
       width={size}
       height={size}
       className={className}
-      aria-label="Habesha Community logo"
+      aria-label="UK Habesha logo"
       role="img"
     >
       {/* Rounded-square background */}

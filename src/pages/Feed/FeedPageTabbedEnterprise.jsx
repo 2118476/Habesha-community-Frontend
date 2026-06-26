@@ -507,7 +507,7 @@ export default function FeedPageTabbedEnterprise() {
    * =================================================================== */
 
   useEffect(() => {
-    document.title = 'Home - Habesha Community';
+    document.title = 'Home - UK Habesha';
   }, []);
 
   /* ===================================================================

@@ -17,7 +17,7 @@ export default function PublicPrivacy() {
         <p><em>Last updated: June 2026</em></p>
 
         <p>
-          <strong>Habesha Community</strong> (“we”, “us”, “the app”) is a community
+          <strong>UK Habesha</strong> (“we”, “us”, “the app”) is a community
           marketplace for Ethiopians, Eritreans and Habesha friends in the UK. This
           policy explains what personal information we collect, how we use it, and
           the choices you have.
@@ -60,7 +60,7 @@ export default function PublicPrivacy() {
         <p>We keep your information while your account is active. When you delete your account, we remove your personal data and content, except where we must keep limited records to comply with the law or resolve disputes.</p>
 
         <h2>Children</h2>
-        <p>Habesha Community is intended for adults (18+) and is not directed at children.</p>
+        <p>UK Habesha is intended for adults (18+) and is not directed at children.</p>
 
         <h2>Security</h2>
         <p>We use industry-standard measures (encrypted connections, hashed passwords) to protect your data. No method of transmission or storage is 100% secure, but we work to safeguard your information.</p>

@@ -14,11 +14,11 @@ export default function PublicTerms() {
         <p><em>Last updated: June 2026</em></p>
 
         <p>
-          Welcome to <strong>Habesha Community</strong>. By creating an account or using
+          Welcome to <strong>UK Habesha</strong>. By creating an account or using
           the app, you agree to these terms. Please read them carefully.
         </p>
 
-        <h2>1. Who can use Habesha Community</h2>
+        <h2>1. Who can use UK Habesha</h2>
         <p>You must be at least 18 years old and provide accurate information. You are responsible for keeping your account secure.</p>
 
         <h2>2. Community conduct</h2>
@@ -30,7 +30,7 @@ export default function PublicTerms() {
 
         <h2>3. Listings &amp; transactions</h2>
         <p>
-          Habesha Community is a place for members to connect — for rentals, services,
+          UK Habesha is a place for members to connect — for rentals, services,
           events, travel, home swaps and marketplace items. We are <strong>not a party</strong>
           to any agreement, payment or transaction between members, and we do not verify
           listings. You are responsible for your own dealings and for taking sensible

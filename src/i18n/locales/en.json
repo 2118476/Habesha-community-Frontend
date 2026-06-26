@@ -26,8 +26,8 @@
     "contact": "Contact",
     "coffeeIcon": "coffee icon",
     "goHome": "Go home",
-    "habeshaCommunity": "Habesha Community",
-    "habesha": "Habesha",
+    "habeshaCommunity": "UK Habesha",
+    "habesha": "UK Habesha",
     "closeMenu": "Close menu"
   },
   "sidebar": {
@@ -58,7 +58,7 @@
     "help": "Help",
     "terms": "Terms",
     "buildVersion": "Build v1.0.0",
-    "habeshaCommunity": "Habesha Community"
+    "habeshaCommunity": "UK Habesha"
   },
   "common": {
     "loading": "Loading…",
@@ -111,7 +111,7 @@
   },
   "cookies": {
     "title": "We value your privacy",
-    "message": "We use cookies to keep you signed in, remember your preferences, and make Habesha Community better. Choose what you're comfortable with.",
+    "message": "We use cookies to keep you signed in, remember your preferences, and make UK Habesha better. Choose what you're comfortable with.",
     "accept": "Accept all",
     "decline": "Essential only",
     "learnMore": "Learn more"
@@ -343,7 +343,7 @@
     "pinned": "Pinned",
     "post": "Post",
     "hello": "Hello",
-    "welcomeMessage": "Welcome to Habesha Community. Find what you need or post something new.",
+    "welcomeMessage": "Welcome to UK Habesha. Find what you need or post something new.",
     "explore": "Explore",
     "viewAll": "View all",
     "safetyTips": "Safety tips",
