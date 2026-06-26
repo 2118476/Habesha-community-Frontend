@@ -106,7 +106,8 @@
     "today": "ዛሬ",
     "posted": "ተለጥፏል",
     "strength": "ጥንካሬ",
-    "unknown": "ያልታወቀ"
+    "unknown": "ያልታወቀ",
+    "notProvided": "አልተገለጸም"
   },
   "cookies": {
     "title": "ግላዊነትዎን እናከብራለን",
@@ -238,7 +239,8 @@
       "rentals": "ኪራይ",
       "services": "አገልግሎቶች",
       "events": "ዝግጅቶች",
-      "photos": "ፎቶዎች"
+      "photos": "ፎቶዎች",
+      "homeSwap": "የቤት ልውውጥ"
     },
     "noBioYet": "ገና ስለ እኔ የተጻፈ የለም።",
     "mutualFriends": "የጋራ ጓደኞች",
@@ -251,10 +253,13 @@
     "decline": "ውድቅ አድርግ",
     "cancel": "ሰርዝ",
     "requestSent": "ጥያቄ ተልኳል",
-    "editProfile": "መገለጫ አርትዕ",
     "joined": "የተቀላቀለበት",
     "reachMe": "ያግኙኝ",
-    "whatsapp": "ዋትስአፕ"
+    "whatsapp": "ዋትስአፕ",
+    "myPosts": "የእኔ ልጥፎች",
+    "noPostsYet": "እስካሁን ምንም አልለጠፉም።",
+    "editBio": "መግለጫ አርትዕ",
+    "change": "ቀይር"
   },
   "homeSwapDetails": {
     "about": "ስለ እኛ",
@@ -304,7 +309,16 @@
     "notFound": "አልተገኘም።",
     "photos": "ፎቶዎች",
     "photo": "ፎቶ",
-    "perSwap": "በልውውጥ"
+    "perSwap": "በልውውጥ",
+    "notProvided": "አልተገለጸም",
+    "floorLevel": "የፎቅ ደረጃ",
+    "parking": "የመኪና ማቆሚያ",
+    "gardenBalcony": "የአትክልት ስፍራ / በረንዳ",
+    "currentLocation": "የአሁኑ ቦታ",
+    "preferredLocation": "የሚመረጥ ቦታ",
+    "housingType": "የቤት ዓይነት",
+    "openToSwap": "ለልውውጥ ክፍት",
+    "noPhotos": "እስካሁን ምንም ፎቶ የለም"
   },
   "feed": {
     "feed": "ዜና",
@@ -313,6 +327,7 @@
     "sharePost": "ልጥፍ አጋራ",
     "writeComment": "አስተያየት ይጻፉ...",
     "like": "ወድጀዋለሁ",
+    "unlike": "አታወድ",
     "comment": "አስተያየት",
     "share": "አጋራ",
     "comments": "አስተያየቶች",
@@ -323,7 +338,69 @@
     "loadMore": "ተጨማሪ ጫን",
     "noPostsYet": "ገና ምንም ልጥፍ የለም። የመጀመሪያው ሆነው የሆነ ነገር ያጋሩ!",
     "postDeleted": "ልጥፍ ተጠፍቷል",
-    "postUpdated": "ልጥፍ ተዘምኗል"
+    "postUpdated": "ልጥፍ ተዘምኗል",
+    "nothingYet": "ገና ምንም የለም።",
+    "pinned": "ተሰክቷል",
+    "post": "ለጥፍ",
+    "hello": "ሰላም",
+    "welcomeMessage": "ወደ ሐበሻ ማህበረሰብ እንኳን በደህና መጡ። የሚፈልጉትን ያግኙ ወይም አዲስ ነገር ያጋሩ።",
+    "explore": "ዳስስ",
+    "viewAll": "ሁሉንም ተመልከት",
+    "safetyTips": "የደህንነት ምክሮች",
+    "meetInPublic": "ለመላላክ በሕዝብ ቦታዎች ይገናኙ።",
+    "useInAppMessages": "መዝገቦችን ለማስቀመጥ በመተግበሪያ ውስጥ መልዕክቶችን ይጠቀሙ።",
+    "noSensitiveDocs": "በውይይት ላይ ሚስጥራዊ ሰነዶችን በጭራሽ አይላኩ።",
+    "comingSoonApp": "በቅርቡ ይመጣል: መተግበሪያውን ያግኙ",
+    "fasterAccess": "ፈጣን መዳረሻ፣ ፈጣን ማሳወቂያዎች።",
+    "stayInLoop": "በመረጃ ውስጥ ይቆዩ",
+    "emailAddress": "የኢሜይል አድራሻ",
+    "subscribe": "ተመዝገብ",
+    "quickLinks": "ፈጣን አገናኞች",
+    "about": "ስለ እኛ",
+    "helpSupport": "እገዛ እና ድጋፍ",
+    "terms": "ውሎች",
+    "privacy": "ግላዊነት",
+    "seeMore": "ተጨማሪ ተመልከት",
+    "ago": "በፊት",
+    "openPost": "ልጥፍ ክፈት",
+    "exploreOtherCategories": "ሌሎች ምድቦችን ዳስስ",
+    "tabsHint": "ትሮችን ለመቀየር የቀስት ቁልፎችን ወይም 1-5ን ይጠቀሙ",
+    "endOfResults": "መጨረሻ ላይ ደርሰዋል",
+    "communityPost": "የማህበረሰብ ልጥፍ",
+    "postStatus": {
+      "placeholder": "በአእምሮዎ ያለውን ማንኛውንም ነገር አጋሩ፣ {{name}}…",
+      "placeholderAria": "አዲስ ልጥፍ ጀምር",
+      "createAd": "ማስታወቂያ ፍጠር",
+      "addPhoto": "ሸጥ/አስተዋውቅ",
+      "moreOptions": "ተጨማሪ አማራጮች"
+    },
+    "a11y": {
+      "viewProfile": "የ{{name}} መገለጫ ይመልከቱ",
+      "openPostDetails": "ዝርዝር ልጥፍ ክፈት",
+      "openPostMedia": "የልጥፉን ሚዲያ ክፈት",
+      "postActions": "የልጥፍ እርምጃዎች",
+      "likesCount": "{{count}} ወደዶች",
+      "commentsCount": "{{count}} አስተያየቶች",
+      "sharesCount": "{{count}} ማጋራቶች",
+      "viewAllPostsAds": "ሁሉንም ልጥፎች እና ማስታወቂያዎች እይ"
+    },
+    "tabs": {
+      "homeRentals": "የቤት ኪራይ",
+      "homeSwap": "የቤት ልውውጥ",
+      "multiServices": "ብዙ አገልግሎቶች",
+      "habeshaAds": "የሐበሻ ማስታወቂያዎች",
+      "events": "ዝግጅቶች",
+      "findTravelers": "ተጓዦች ፈልግ"
+    },
+    "sections": {
+      "rentals": "ኪራይ",
+      "homeSwap": "የቤት ልውውጥ",
+      "services": "አገልግሎቶች",
+      "travel": "ጉዞ",
+      "communityPostsAds": "የማህበረሰብ ልጥፎች እና ማስታወቂያዎች"
+    },
+    "appStore": "አፕ ስቶር",
+    "googlePlay": "ጉግል ፕሌይ"
   },
   "search": {
     "search": "ፈልግ",
@@ -533,7 +610,6 @@
     "photosUpTo": "ፎቶዎች (እስከ {{count}} ድረስ)",
     "posting": "በመለጠፍ ላይ…",
     "createListing": "ዝርዝር ፍጠር",
-    "rental": "ኪራይ",
     "backToRentals": "ወደ ኪራይ ተመለስ",
     "keyFacts": "ዋና እውነታዎች",
     "noDescription": "መግለጫ የለም።",
@@ -551,14 +627,14 @@
     "notAllowedToEdit": "ይህንን ዝርዝር ለማርትዕ ፍቃድ የለዎትም",
     "maxPhotosTotal": "ጠቅላላ ከፍተኛ {{count}} ፎቶዎች።",
     "updateFailed": "ማዘመን አልተሳካም",
-    "editRental": "ኪራይ አርትዕ",
     "backToListing": "ወደ ዝርዝር ተመለስ",
     "existingPhotos": "ያሉ ፎቶዎች",
     "undoRemove": "መወገድን ሰርዝ",
     "newPhotosToAdd": "ለመጨመር አዲስ ፎቶዎች",
     "saving": "በማስቀመጥ ላይ…",
     "saveChanges": "ለውጦችን አስቀምጥ",
-    "listingUpdated": "ዝርዝር ተዘምኗል"
+    "listingUpdated": "ዝርዝር ተዘምኗል",
+    "noPhotos": "እስካሁን ምንም ፎቶ የለም"
   },
   "homeSwap": {
     "homeSwap": "የቤት ልውውጥ",
@@ -729,7 +805,13 @@
     "groupFriendly": "ለቡድን ተስማሚ",
     "businessTravelerFriendly": "ለንግድ ተጓዥ ተስማሚ",
     "studentFriendly": "ለተማሪ ተስማሚ",
-    "seniorFriendly": "ለአረጋውያን ተስማሚ"
+    "seniorFriendly": "ለአረጋውያን ተስማሚ",
+    "bathrooms": "መታጠቢያ ቤቶች",
+    "floorLevel": "የፎቅ ደረጃ",
+    "preferredLocation": "የሚፈለግ የልውውጥ ቦታ",
+    "swapWindow": "የልውውጥ ጊዜ",
+    "parking": "የመኪና ማቆሚያ",
+    "gardenBalcony": "የአትክልት ስፍራ / በረንዳ"
   },
   "services": {
     "services": "አገልግሎቶች",
@@ -1160,8 +1242,7 @@
     "reason": "ምክንያት",
     "reasonPlaceholder": "ምሳሌ: ትንኮሳ / ማጭበርበር / ሐሰተኛ መለያ / ተገቢ ያልሆነ ይዘት",
     "submitReport": "ሪፖርት አስገባ",
-    "reportSubmitted": "ሪፖርት በተሳካ ሁኔታ ተገብሯል",
-    "searchPlaceholder": "ስም/የተጠቃሚ ስም ፈልግ…"
+    "reportSubmitted": "ሪፖርት በተሳካ ሁኔታ ተገብሯል"
   },
   "subscription": {
     "subscription": "ምዝገባ",
@@ -1219,88 +1300,6 @@
     "failedToUpdateRequest": "ጥያቄን ማዘመን አልተሳካም",
     "failedToLoadUsers": "ተጠቃሚዎችን መጫን አልተሳካም"
   },
-  "feed": {
-    "feed": "ዜና",
-    "newPost": "አዲስ ልጥፍ",
-    "whatsOnYourMind": "ምን እያሰቡ ነው?",
-    "sharePost": "ልጥፍ አጋራ",
-    "writeComment": "አስተያየት ይጻፉ...",
-    "like": "ወድጀዋለሁ",
-    "unlike": "አታወድ",
-    "comment": "አስተያየት",
-    "share": "አጋራ",
-    "comments": "አስተያየቶች",
-    "likes": "ወዳጆች",
-    "shares": "አጋሪዎች",
-    "viewAllComments": "ሁሉንም አስተያየቶች ተመልከት",
-    "hideComments": "አስተያየቶችን ደብቅ",
-    "loadMore": "ተጨማሪ ጫን",
-    "noPostsYet": "ገና ምንም ልጥፍ የለም። የመጀመሪያው ሆነው የሆነ ነገር ያጋሩ!",
-    "postDeleted": "ልጥፍ ተጠፍቷል",
-    "postUpdated": "ልጥፍ ተዘምኗል",
-    "nothingYet": "ገና ምንም የለም።",
-    "pinned": "ተሰክቷል",
-    "post": "ለጥፍ",
-    "hello": "ሰላም",
-    "welcomeMessage": "ወደ ሐበሻ ማህበረሰብ እንኳን በደህና መጡ። የሚፈልጉትን ያግኙ ወይም አዲስ ነገር ያጋሩ።",
-    "explore": "ዳስስ",
-    "viewAll": "ሁሉንም ተመልከት",
-    "safetyTips": "የደህንነት ምክሮች",
-    "meetInPublic": "ለመላላክ በሕዝብ ቦታዎች ይገናኙ።",
-    "useInAppMessages": "መዝገቦችን ለማስቀመጥ በመተግበሪያ ውስጥ መልዕክቶችን ይጠቀሙ።",
-    "noSensitiveDocs": "በውይይት ላይ ሚስጥራዊ ሰነዶችን በጭራሽ አይላኩ።",
-    "comingSoonApp": "በቅርቡ ይመጣል: መተግበሪያውን ያግኙ",
-    "fasterAccess": "ፈጣን መዳረሻ፣ ፈጣን ማሳወቂያዎች።",
-    "stayInLoop": "በመረጃ ውስጥ ይቆዩ",
-    "emailAddress": "የኢሜይል አድራሻ",
-    "subscribe": "ተመዝገብ",
-    "quickLinks": "ፈጣን አገናኞች",
-    "about": "ስለ እኛ",
-    "helpSupport": "እገዛ እና ድጋፍ",
-    "terms": "ውሎች",
-    "privacy": "ግላዊነት",
-    "seeMore": "ተጨማሪ ተመልከት",
-    "ago": "በፊት",
-    "openPost": "ልጥፍ ክፈት",
-    "exploreOtherCategories": "ሌሎች ምድቦችን ዳስስ",
-    "tabsHint": "ትሮችን ለመቀየር የቀስት ቁልፎችን ወይም 1-5ን ይጠቀሙ",
-    "endOfResults": "መጨረሻ ላይ ደርሰዋል",
-    "communityPost": "የማህበረሰብ ልጥፍ",
-    "postStatus": {
-      "placeholder": "በአእምሮዎ ያለውን ማንኛውንም ነገር አጋሩ፣ {{name}}…",
-      "placeholderAria": "አዲስ ልጥፍ ጀምር",
-      "createAd": "ማስታወቂያ ፍጠር",
-      "addPhoto": "ሸጥ/አስተዋውቅ",
-      "moreOptions": "ተጨማሪ አማራጮች"
-    },
-    "a11y": {
-      "viewProfile": "የ{{name}} መገለጫ ይመልከቱ",
-      "openPostDetails": "ዝርዝር ልጥፍ ክፈት",
-      "openPostMedia": "የልጥፉን ሚዲያ ክፈት",
-      "postActions": "የልጥፍ እርምጃዎች",
-      "likesCount": "{{count}} ወደዶች",
-      "commentsCount": "{{count}} አስተያየቶች",
-      "sharesCount": "{{count}} ማጋራቶች",
-      "viewAllPostsAds": "ሁሉንም ልጥፎች እና ማስታወቂያዎች እይ"
-    },
-    "tabs": {
-      "homeRentals": "የቤት ኪራይ",
-      "homeSwap": "የቤት ልውውጥ",
-      "multiServices": "ብዙ አገልግሎቶች",
-      "habeshaAds": "የሐበሻ ማስታወቂያዎች",
-      "events": "ዝግጅቶች",
-      "findTravelers": "ተጓዦች ፈልግ"
-    },
-    "sections": {
-      "rentals": "ኪራይ",
-      "homeSwap": "የቤት ልውውጥ",
-      "services": "አገልግሎቶች",
-      "travel": "ጉዞ",
-      "communityPostsAds": "የማህበረሰብ ልጥፎች እና ማስታወቂያዎች"
-    },
-    "appStore": "አፕ ስቶር",
-    "googlePlay": "ጉግል ፕሌይ"
-  },
   "notifications": {
     "notifications": "ማሳወቂያዎች",
     "markAllAsRead": "ሁሉንም እንደተነበበ ምልክት አድርግ",
@@ -1312,7 +1311,7 @@
     "yesterday": "ትናንት"
   },
   "pages": {
-    "notFound": "ገጽ አልተገኘም",
+    "notFound": "አልተገኘም",
     "pageNotExist": "የሚፈልጉት ገጽ አይኖርም።",
     "communityEvents": "የማህበረሰብ ዝግጅቶች",
     "classifiedAds": "የተከፋፈሉ ማስታወቂያዎች",
@@ -1326,7 +1325,6 @@
     "location": "አካባቢ",
     "title": "ርዕስ",
     "description": "መግለጫ",
-    "notFound": "አልተገኘም",
     "page": "ገጽ",
     "previous": "ቀዳሚ",
     "next": "ቀጣይ",
