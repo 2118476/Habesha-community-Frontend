@@ -1,12 +1,12 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import api from "../api/axiosInstance";
 import { toast } from "react-toastify";
 import sectionStyles from "../stylus/sections/Profile.module.scss";
 import buttonStyles from "../stylus/components/Button.module.scss";
 import { avatarSrcFrom } from "../utils/avatar";
-import { InlineSpinner } from "../components/ui/Spinner/Spinner";
 
 const hasEdgeSpaces = (s) => typeof s === "string" && (s.startsWith(" ") || s.endsWith(" "));
 const notTrimCheck = (form) => {
@@ -15,9 +15,19 @@ const notTrimCheck = (form) => {
   return null;
 };
 
+/* ---- "My posts" helpers ---- */
+const asArray = (d) => (Array.isArray(d) ? d : d?.content ?? d?.items ?? []);
+const ownerIdOf = (x) =>
+  x?.ownerId ?? x?.userId ?? x?.providerId ?? x?.posterId ??
+  x?.owner?.id ?? x?.user?.id ?? x?.postedBy?.id ?? null;
+const titleOf = (x) =>
+  x?.title || x?.name || x?.headline ||
+  (x?.originCity ? `${x.originCity} → ${x.destinationCity || ""}` : "") || "Untitled";
+
 const Profile = () => {
   const { t } = useTranslation();
   const { user, refreshMe } = useAuth();
+  const myId = user?.id ?? user?.userId ?? user?._id ?? null;
 
   // -------------------- Account form --------------------
   const [form, setForm] = useState({ name: "", email: "", phone: "", city: "" });
@@ -38,7 +48,6 @@ const Profile = () => {
     setForm((f) => ({ ...f, [name]: value }));
   };
 
-  // email/phone read-only here → exclude from dirty check
   const isDirty = useMemo(() => {
     if (!user) return false;
     return (
@@ -63,19 +72,16 @@ const Profile = () => {
       const payload = {
         name: form.name,
         displayName: form.name,
-        // email omitted (read-only)
         phone: form.phone,
         phoneNumber: form.phone,
         city: form.city,
         location: form.city,
       };
-
       try {
         await api.put("/api/users/me", payload);
       } catch {
         await api.put("/users/me", payload);
       }
-
       await refreshMe?.({ bust: true });
       toast.success("Account details saved.");
     } catch (err) {
@@ -86,39 +92,27 @@ const Profile = () => {
     }
   };
 
-  // -------------------- Avatar/menu/editor --------------------
+  // -------------------- Avatar (FB-style: pick → auto center-crop → upload) --------------------
   const [menuOpen, setMenuOpen] = useState(false);
-  const [showEditor, setShowEditor] = useState(false);
-  const [imgEl, setImgEl] = useState(null);
-  const [zoom, setZoom] = useState(1);
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [uploading, setUploading] = useState(false);
-
-  const [avatarBust, setAvatarBust] = useState(
-    Number(localStorage.getItem("avatarBust") || 0)
-  );
+  const [avatarBust, setAvatarBust] = useState(Number(localStorage.getItem("avatarBust") || 0));
 
   const avatarAnchorRef = useRef(null);
   const menuRef = useRef(null);
   const firstItemRef = useRef(null);
   const fileInputRef = useRef(null);
-  const frameRef = useRef(null);
-  const dragRef = useRef({ dragging: false, x: 0, y: 0 });
 
   const imgSrc = user ? avatarSrcFrom(user, { cacheBust: avatarBust }) : "";
 
-  // Close menu on outside click / Escape
   useEffect(() => {
-    if (!menuOpen) return;
+    if (!menuOpen) return undefined;
     const onDocClick = (e) => {
       const a = avatarAnchorRef.current;
       const m = menuRef.current;
       if (!a || !m) return;
       if (!a.contains(e.target) && !m.contains(e.target)) setMenuOpen(false);
     };
-    const onKey = (e) => {
-      if (e.key === "Escape") setMenuOpen(false);
-    };
+    const onKey = (e) => e.key === "Escape" && setMenuOpen(false);
     document.addEventListener("mousedown", onDocClick);
     document.addEventListener("keydown", onKey);
     return () => {
@@ -127,15 +121,12 @@ const Profile = () => {
     };
   }, [menuOpen]);
 
-  // Focus first menu item when opened
   useEffect(() => {
     if (menuOpen) setTimeout(() => firstItemRef.current?.focus(), 0);
   }, [menuOpen]);
 
-  const onAvatarClick = () => setMenuOpen((v) => !v);
-
-  // File picking
   const openOsPicker = () => {
+    setMenuOpen(false);
     const input = fileInputRef.current;
     if (!input) return;
     try {
@@ -146,134 +137,56 @@ const Profile = () => {
     }
   };
 
-  const onChooseUploadNew = () => {
-    setMenuOpen(false);
-    setShowEditor(true);
-    openOsPicker();
-  };
-
-  const onChooseEditCrop = () => {
-    setMenuOpen(false);
-    if (!imgSrc) {
-      setShowEditor(true);
-      toast.info("No profile photo yet. Use “Upload new photo…” first.");
-      return;
-    }
-    const image = new Image();
-    image.crossOrigin = "anonymous";
-    image.onload = () => {
-      setImgEl(image);
-      setZoom(1);
-      setOffset({ x: 0, y: 0 });
-      setShowEditor(true);
-    };
-    image.onerror = () => {
-      setShowEditor(true);
-      toast.error("Could not load current photo for editing. Try uploading a new one.");
-    };
-    const bust = imgSrc.includes("?") ? "&" : "?";
-    image.src = `${imgSrc}${bust}editBust=${Date.now()}`;
-  };
+  /** Center-crop the largest square (cover) and scale to 512×512 — no manual zoom. */
+  const cropCoverToBlob = (image) =>
+    new Promise((resolve) => {
+      const size = 512;
+      const canvas = document.createElement("canvas");
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext("2d");
+      const side = Math.min(image.width, image.height);
+      const sx = (image.width - side) / 2;
+      const sy = (image.height - side) / 2;
+      ctx.drawImage(image, sx, sy, side, side, 0, 0, size, size);
+      canvas.toBlob((b) => resolve(b), "image/jpeg", 0.9);
+    });
 
   const onPick = (e) => {
     const file = e.target.files?.[0];
     e.target.value = "";
-    if (file) loadImage(file);
-    setShowEditor(true);
-  };
-
-  const onDrop = (e) => {
-    e.preventDefault();
-    const file = e.dataTransfer?.files?.[0];
-    if (file) loadImage(file);
-  };
-
-  const loadImage = (file) => {
+    if (!file) return;
     const allowed = ["image/jpeg", "image/png", "image/webp", "image/gif"];
-    if (!allowed.includes(file.type)) {
-      toast.error("Please choose a JPG, PNG, WEBP or GIF image.");
-      return;
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("Max size is 5MB.");
-      return;
-    }
+    if (!allowed.includes(file.type)) return toast.error("Please choose a JPG, PNG, WEBP or GIF image.");
+    if (file.size > 5 * 1024 * 1024) return toast.error("Max size is 5MB.");
+
     const url = URL.createObjectURL(file);
     const image = new Image();
-    image.onload = () => {
-      setImgEl(image);
-      setZoom(1);
-      setOffset({ x: 0, y: 0 });
-      setShowEditor(true);
+    image.onload = async () => {
+      setUploading(true);
+      try {
+        const blob = await cropCoverToBlob(image);
+        const fd = new FormData();
+        fd.append("image", new File([blob], "avatar.jpg", { type: "image/jpeg" }));
+        await api.post("/users/me/profile-image", fd);
+        const bust = Date.now();
+        localStorage.setItem("avatarBust", String(bust));
+        setAvatarBust(bust);
+        await refreshMe?.({ bust: true });
+        toast.success("Profile photo updated.");
+      } catch (err) {
+        console.error(err);
+        toast.error(err?.response?.data?.message || "Upload failed.");
+      } finally {
+        setUploading(false);
+        URL.revokeObjectURL(url);
+      }
+    };
+    image.onerror = () => {
+      URL.revokeObjectURL(url);
+      toast.error("Could not read that image.");
     };
     image.src = url;
-  };
-
-  const startDrag = (e) => {
-    e.preventDefault();
-    dragRef.current = { dragging: true, x: e.clientX, y: e.clientY };
-    window.addEventListener("mousemove", onDrag);
-    window.addEventListener("mouseup", endDrag);
-  };
-  const onDrag = (e) => {
-    if (!dragRef.current.dragging) return;
-    const dx = e.clientX - dragRef.current.x;
-    const dy = e.clientY - dragRef.current.y;
-    dragRef.current.x = e.clientX;
-    dragRef.current.y = e.clientY;
-    setOffset((o) => ({ x: o.x + dx, y: o.y + dy }));
-  };
-  const endDrag = () => {
-    dragRef.current.dragging = false;
-    window.removeEventListener("mousemove", onDrag);
-    window.removeEventListener("mouseup", endDrag);
-  };
-
-  const makeCanvasBlob = async () => {
-    const size = 512;
-    const canvas = document.createElement("canvas");
-    canvas.width = size;
-    canvas.height = size;
-    const ctx = canvas.getContext("2d");
-    ctx.fillStyle = "#fff";
-    ctx.fillRect(0, 0, size, size);
-
-    if (imgEl) {
-      const iw = imgEl.width * zoom;
-      const ih = imgEl.height * zoom;
-      const cx = size / 2 + offset.x;
-      const cy = size / 2 + offset.y;
-      const x = cx - iw / 2;
-      const y = cy - ih / 2;
-      ctx.drawImage(imgEl, x, y, iw, ih);
-    }
-
-    return new Promise((resolve) => {
-      canvas.toBlob((blob) => resolve(blob), "image/jpeg", 0.9);
-    });
-  };
-
-  const uploadAvatar = async () => {
-    if (!imgEl) return toast.info("Pick an image first.");
-    setUploading(true);
-    try {
-      const blob = await makeCanvasBlob();
-      const fd = new FormData();
-      fd.append("image", new File([blob], "avatar.jpg", { type: "image/jpeg" }));
-      await api.post("/users/me/profile-image", fd);
-      const bust = Date.now();
-      localStorage.setItem("avatarBust", String(bust));
-      setAvatarBust(bust);
-      await refreshMe?.({ bust: true });
-      setShowEditor(false);
-      setImgEl(null);
-      toast.success("Profile photo updated.");
-    } catch (err) {
-      console.error(err);
-      toast.error(err?.response?.data?.message || "Upload failed.");
-    } finally {
-      setUploading(false);
-    }
   };
 
   const removeAvatar = async () => {
@@ -286,7 +199,6 @@ const Profile = () => {
       await refreshMe?.({ bust: true });
       toast.success("Profile photo removed.");
     } catch (err) {
-      console.error(err);
       const msg =
         err?.response?.status === 404 || err?.response?.status === 405
           ? "Your server doesn't support removing photos."
@@ -295,31 +207,65 @@ const Profile = () => {
     }
   };
 
+  // -------------------- My posts --------------------
+  const [myPosts, setMyPosts] = useState([]);
+  const [postsLoading, setPostsLoading] = useState(true);
+
+  const loadMyPosts = useCallback(async () => {
+    if (!myId) return;
+    setPostsLoading(true);
+    try {
+      const reqs = await Promise.allSettled([
+        api.get(`/api/ads`, { params: { ownerId: myId, limit: 50 } }),
+        api.get(`/api/rentals`, { params: { ownerId: myId, limit: 50 } }),
+        api.get(`/api/services`, { params: { ownerId: myId, limit: 50 } }),
+        api.get(`/api/events`, { params: { ownerId: myId, limit: 50 } }),
+        api.get(`/homeswap`, { params: { ownerId: myId, limit: 50 } }),
+      ]);
+      const grab = (i) => (reqs[i].status === "fulfilled" ? asArray(reqs[i].value.data) : []);
+      const mine = (list, type, base) =>
+        list
+          .filter((x) => String(ownerIdOf(x)) === String(myId))
+          .map((x) => ({ type, id: x.id, title: titleOf(x), to: `${base}/${x.id}` }));
+
+      const all = [
+        ...mine(grab(0), t("profile.tabs.ads", "Ads"), "/app/ads"),
+        ...mine(grab(1), t("profile.tabs.rentals", "Rentals"), "/app/rentals"),
+        ...mine(grab(2), t("profile.tabs.services", "Services"), "/app/services"),
+        ...mine(grab(3), t("profile.tabs.events", "Events"), "/app/events"),
+        ...mine(grab(4), t("profile.tabs.homeSwap", "Home Swap"), "/app/home-swap"),
+      ];
+      setMyPosts(all);
+    } catch {
+      setMyPosts([]);
+    } finally {
+      setPostsLoading(false);
+    }
+  }, [myId, t]);
+
+  useEffect(() => {
+    loadMyPosts();
+  }, [loadMyPosts]);
+
   if (!user) return <div className={sectionStyles.container}>Loading profile…</div>;
 
   const handle = user.username || (user.email ? user.email.split("@")[0] : "user");
   const menuId = "avatar-menu";
+  const bio = (user.bio || "").trim();
 
   // -------------------- Render --------------------
   return (
     <div className={sectionStyles.container}>
       <div className={sectionStyles.headerBar}>
-        <h2 className={sectionStyles.pageTitle}>{t('profile.myProfile')}</h2>
+        <h2 className={sectionStyles.pageTitle}>{t("profile.myProfile")}</h2>
       </div>
 
-      {/* Hidden file input for immediate browse */}
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        hidden
-        onChange={onPick}
-      />
+      <input ref={fileInputRef} type="file" accept="image/*" hidden onChange={onPick} />
 
       {/* Summary card */}
       <div className={sectionStyles.section}>
         <div className={sectionStyles.summaryGrid}>
-          {/* Avatar block — circle-only + external menu */}
+          {/* Avatar — click to open the menu */}
           <div className={sectionStyles.avatarShell} ref={avatarAnchorRef}>
             <button
               type="button"
@@ -328,7 +274,8 @@ const Profile = () => {
               aria-haspopup="menu"
               aria-expanded={menuOpen}
               aria-controls={menuId}
-              onClick={onAvatarClick}
+              onClick={() => setMenuOpen((v) => !v)}
+              disabled={uploading}
             >
               <img
                 src={imgSrc}
@@ -337,41 +284,23 @@ const Profile = () => {
                 height={112}
                 draggable={false}
                 className={sectionStyles.avatarImg}
-                onError={(e) => {
-                  e.currentTarget.src = "/default-avatar.png";
-                }}
+                onError={(e) => { e.currentTarget.src = "/default-avatar.png"; }}
               />
-              <span className={sectionStyles.avatarOverlay}>Change</span>
+              <span className={sectionStyles.avatarOverlay}>
+                {uploading ? t("forms.uploading", "Uploading…") : t("profile.change", "Change")}
+              </span>
             </button>
 
             {menuOpen && (
-              <div
-                id={menuId}
-                className={sectionStyles.menu}
-                ref={menuRef}
-                role="menu"
-                aria-label={t('profile.avatarActions')}
-              >
-                <button
-                  ref={firstItemRef}
-                  type="button"
-                  role="menuitem"
-                  onClick={onChooseUploadNew}
-                >
-                  {t('profile.uploadNewPhoto')}
+              <div id={menuId} className={sectionStyles.menu} ref={menuRef} role="menu" aria-label={t("profile.avatarActions")}>
+                <button ref={firstItemRef} type="button" role="menuitem" onClick={openOsPicker}>
+                  {t("profile.uploadNewPhoto")}
                 </button>
-                <button type="button" role="menuitem" onClick={onChooseEditCrop}>
-                  {t('profile.editAndCrop')}
-                </button>
-                <button
-                  type="button"
-                  role="menuitem"
-                  onClick={() => imgSrc && window.open(imgSrc, "_blank", "noopener")}
-                >
-                  {t('profile.viewPhoto')}
+                <button type="button" role="menuitem" onClick={() => imgSrc && window.open(imgSrc, "_blank", "noopener")}>
+                  {t("profile.viewPhoto")}
                 </button>
                 <button type="button" role="menuitem" onClick={removeAvatar}>
-                  {t('profile.removePhoto')}
+                  {t("profile.removePhoto")}
                 </button>
               </div>
             )}
@@ -389,22 +318,12 @@ const Profile = () => {
               <div className={sectionStyles.handle}>@{handle}</div>
             </div>
 
+            {bio && <p className={sectionStyles.bioText}>{bio}</p>}
+
             <ul className={sectionStyles.metaList}>
-              {user.email && (
-                <li>
-                  <strong>{t('profile.email')}:</strong> {user.email}
-                </li>
-              )}
-              {(user.city || user.location) && (
-                <li>
-                  <strong>{t('profile.city')}:</strong> {user.city || user.location}
-                </li>
-              )}
-              {(user.phone || user.phoneNumber) && (
-                <li>
-                  <strong>{t('profile.phone')}:</strong> {user.phone || user.phoneNumber}
-                </li>
-              )}
+              {user.email && (<li><strong>{t("profile.email")}:</strong> {user.email}</li>)}
+              {(user.city || user.location) && (<li><strong>{t("profile.city")}:</strong> {user.city || user.location}</li>)}
+              {(user.phone || user.phoneNumber) && (<li><strong>{t("profile.phone")}:</strong> {user.phone || user.phoneNumber}</li>)}
             </ul>
           </div>
         </div>
@@ -412,139 +331,63 @@ const Profile = () => {
 
       {/* Account form */}
       <div className={sectionStyles.section}>
-        <h3 className={sectionStyles.sectionTitle}>{t('profile.accountDetails')}</h3>
+        <h3 className={sectionStyles.sectionTitle}>{t("profile.accountDetails")}</h3>
         <form onSubmit={saveAccount} className={sectionStyles.formList}>
           <label className={sectionStyles.field}>
-            <span>{t('profile.name')}</span>
-            <input
-              name="name"
-              value={form.name}
-              onChange={onFormChange}
-              autoComplete="name"
-              className={sectionStyles.input}
-            />
+            <span>{t("profile.name")}</span>
+            <input name="name" value={form.name} onChange={onFormChange} autoComplete="name" className={sectionStyles.input} />
           </label>
 
           <div className={sectionStyles.field}>
-            <span>{t('profile.email')}</span>
-            <div aria-readonly="true" className={sectionStyles.readonlyBox}>
-              {form.email || "—"}
-            </div>
+            <span>{t("profile.email")}</span>
+            <div aria-readonly="true" className={sectionStyles.readonlyBox}>{form.email || "—"}</div>
           </div>
 
           <div className={sectionStyles.field}>
-            <span>{t('profile.phone')}</span>
-            <div aria-readonly="true" className={sectionStyles.readonlyBox}>
-              {form.phone || "—"}
-            </div>
+            <span>{t("profile.phone")}</span>
+            <div aria-readonly="true" className={sectionStyles.readonlyBox}>{form.phone || "—"}</div>
           </div>
 
           <label className={sectionStyles.field}>
-            <span>{t('profile.city')}</span>
-            <input
-              name="city"
-              value={form.city}
-              onChange={onFormChange}
-              autoComplete="address-level2"
-              className={sectionStyles.input}
-            />
+            <span>{t("profile.city")}</span>
+            <input name="city" value={form.city} onChange={onFormChange} autoComplete="address-level2" className={sectionStyles.input} />
           </label>
 
           <div className={sectionStyles.actions}>
-            <button
-              type="submit"
-              className={`${buttonStyles.btn} ${buttonStyles.primary}`}
-              disabled={saving || !isDirty}
-            >
-              {saving ? t('forms.saving') : t('profile.saveChanges')}
+            <Link to="/app/settings/account" className={`${buttonStyles.btn}`} style={{ marginRight: "auto" }}>
+              {t("profile.editBio", "Edit bio")}
+            </Link>
+            <button type="submit" className={`${buttonStyles.btn} ${buttonStyles.primary}`} disabled={saving || !isDirty}>
+              {saving ? t("forms.saving") : t("profile.saveChanges")}
             </button>
           </div>
         </form>
       </div>
 
-      {/* Inline avatar editor */}
-      {showEditor && (
-        <div className={sectionStyles.section}>
-          <h3 className={sectionStyles.sectionTitle}>{t('profile.profilePhoto')}</h3>
-
-          <div
-            className={sectionStyles.dropzone}
-            onDrop={onDrop}
-            onDragOver={(e) => e.preventDefault()}
-            onClick={onChooseUploadNew}
-            tabIndex={0}
-            role="button"
-            aria-label="Upload image"
-          >
-            <p className={sectionStyles.dropText}>
-              {t('profile.dragDropImage')} <span>{t('profile.browse')}</span>
-            </p>
-          </div>
-
-          {imgEl && (
-            <div className={sectionStyles.editorWrap}>
-              <div
-                className={sectionStyles.frame}
-                ref={frameRef}
-                onMouseDown={startDrag}
-              >
-                <img
-                  src={imgEl.src}
-                  alt="preview"
-                  className={sectionStyles.frameImg}
-                  style={{
-                    transform: `translate(-50%, -50%) translate(${offset.x}px, ${offset.y}px) scale(${zoom})`,
-                  }}
-                  draggable={false}
-                />
-              </div>
-
-              <div className={sectionStyles.sliderWrap}>
-                <label htmlFor="zoom-range">{t('profile.zoom')}</label>
-                <input
-                  id="zoom-range"
-                  className={sectionStyles.slider}
-                  type="range"
-                  min="0.5"
-                  max="3"
-                  step="0.01"
-                  value={zoom}
-                  onChange={(e) => setZoom(parseFloat(e.target.value))}
-                />
-              </div>
-
-              <div className={sectionStyles.editorActions}>
-                <button
-                  type="button"
-                  className={`${buttonStyles.btn} ${buttonStyles.primary}`}
-                  onClick={uploadAvatar}
-                  disabled={uploading}
-                >
-                  {uploading ? (
-                    <>
-                      <InlineSpinner size="sm" color="white" />
-                      {t('forms.uploading')}
-                    </>
-                  ) : (
-                    t('profile.saveAvatar')
-                  )}
-                </button>
-                <button
-                  type="button"
-                  className={buttonStyles.btn}
-                  onClick={() => {
-                    setImgEl(null);
-                    setShowEditor(false);
-                  }}
-                  disabled={uploading}
-                >
-                  {t('common.cancel')}
-                </button>
-              </div>
-            </div>
+      {/* My posts */}
+      <div className={sectionStyles.section}>
+        <h3 className={sectionStyles.sectionTitle}>
+          {t("profile.myPosts", "My posts")}
+          {!postsLoading && myPosts.length > 0 && (
+            <span className={sectionStyles.countPill}>{myPosts.length}</span>
           )}
-        </div>
-      )}
+        </h3>
+
+        {postsLoading ? (
+          <p className={sectionStyles.muted}>{t("common.loading", "Loading…")}</p>
+        ) : myPosts.length === 0 ? (
+          <p className={sectionStyles.muted}>{t("profile.noPostsYet", "You haven't posted anything yet.")}</p>
+        ) : (
+          <div className={sectionStyles.postsGrid}>
+            {myPosts.map((p) => (
+              <Link key={`${p.type}-${p.id}`} to={p.to} className={sectionStyles.postCard}>
+                <span className={sectionStyles.postType}>{p.type}</span>
+                <span className={sectionStyles.postTitle}>{p.title}</span>
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

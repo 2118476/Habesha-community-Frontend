@@ -357,3 +357,68 @@
     color: var(--on-surface-1) !important;
   }
 }
+/* ---- Bio + My posts ---- */
+.bioText {
+  margin: 6px 0 4px;
+  color: var(--pf-ink-1);
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.muted { color: var(--pf-ink-2); font-size: .92rem; }
+
+.countPill {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 9px;
+  border-radius: 999px;
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--pf-brand);
+  background: color-mix(in oklab, var(--pf-brand) 14%, transparent);
+  vertical-align: middle;
+}
+
+.postsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+.postCard {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px;
+  border: 1px solid var(--pf-border);
+  border-radius: var(--pf-radius-md);
+  background: var(--pf-surface-2);
+  text-decoration: none;
+  color: var(--pf-ink-1);
+  transition: border-color .15s ease, transform .15s ease, box-shadow .15s ease;
+}
+.postCard:hover {
+  border-color: var(--pf-brand);
+  transform: translateY(-2px);
+  box-shadow: var(--pf-shadow-2);
+}
+.postType {
+  align-self: flex-start;
+  font-size: .68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--pf-brand);
+  background: color-mix(in oklab, var(--pf-brand) 14%, transparent);
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+.postTitle {
+  font-weight: 600;
+  font-size: .95rem;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
