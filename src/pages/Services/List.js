@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import api from '../../api/axiosInstance';
 import { toast } from 'react-toastify';
 import EntityCard from '../../components/common/EntityCard';
@@ -12,6 +13,7 @@ import buttonStyles from '../../stylus/components/Button.module.scss';
  * basic information and provider summaries.
  */
 const ServicesList = () => {
+  const { t } = useTranslation();
   const [services, setServices] = useState([]);
   const [page, setPage] = useState(0);
   const size = 6;
@@ -43,21 +45,26 @@ const ServicesList = () => {
 
   return (
     <div className={styles.container}>
-      <h2>Service Marketplace</h2>
-      <div>
+      <div className={styles.listHead}>
+        <div>
+          <h2 className={styles.listTitle}>{t('services.marketplaceTitle', 'Service Marketplace')}</h2>
+          <p className={styles.listSub}>
+            {t('services.marketplaceSub', 'Find trusted services from the Habesha community.')}
+          </p>
+        </div>
         <Link
           to="/app/services/post"
           className={`${buttonStyles.btn} ${buttonStyles.primary}`}
         >
-          Post Service
+          {t('services.postService', 'Post Service')}
         </Link>
       </div>
       {loading ? (
-        <p>Loading services…</p>
+        <p className={styles.muted}>{t('services.loadingList', 'Loading services…')}</p>
       ) : (
         <>
           {services.length === 0 ? (
-            <p>No services yet. Be the first to post!</p>
+            <p className={styles.muted}>{t('services.empty', 'No services yet. Be the first to post!')}</p>
           ) : (
             <div className={styles.list}>
               {services.map((srv) => (

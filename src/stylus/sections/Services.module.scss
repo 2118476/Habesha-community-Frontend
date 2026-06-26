@@ -1,9 +1,38 @@
 /* Minimal section styles for the services pages */
 .container {
-  padding: var(--s-8);
+  padding: min(5vw, var(--s-8));
+  max-width: 1180px;
+  margin-inline: auto;
   display: flex;
   flex-direction: column;
   gap: var(--s-6);
+}
+@media (max-width: 900px) {
+  .container { padding-bottom: calc(92px + env(safe-area-inset-bottom, 0px)); }
+}
+
+/* List header: title + subtitle on the left, post button on the right */
+.listHead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--s-4);
+  flex-wrap: wrap;
+}
+.listTitle {
+  margin: 0;
+  font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2.1rem);
+  font-weight: 800;
+  letter-spacing: -0.2px;
+  color: var(--text-1, #0b1324);
+}
+.listSub {
+  margin: 4px 0 0;
+  color: var(--text-2, #5a6b84);
+  font-size: 0.95rem;
+}
+.muted {
+  color: var(--text-2, #5a6b84);
 }
 
 /* Grid layout for the service cards */
