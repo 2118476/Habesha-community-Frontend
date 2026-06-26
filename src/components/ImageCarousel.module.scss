@@ -1,94 +1,192 @@
-/*
- * Styles for the ImageCarousel component.
- * The carousel maintains a consistent aspect ratio for all images and
- * positions navigation arrows on top of the image. Dots below the
- * carousel indicate the active image. Colours are kept neutral so they
- * work on both light and dark backgrounds. Theme CSS variables are used
- * when available to better integrate with the existing design.
- */
+/* Premium gallery: controlled height, cover crop, count badge, lightbox. */
 
-.carousel {
+.gallery {
   position: relative;
   width: 100%;
-  /* Removed fixed aspect ratio to prevent cropping */
+}
+
+.frame {
+  position: relative;
+  width: 100%;
+  height: clamp(200px, 38vh, 440px);
+  border-radius: 16px;
   overflow: hidden;
-  border-radius: var(--radius-lg);
-  background: rgba(0,0,0,0.04); /* Subtle background for letterboxing */
-  border: 1px solid var(--border-1);
+  background: rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--border-1, rgba(0, 0, 0, 0.1));
+  cursor: zoom-in;
 }
 
-/* Container for the image and nav buttons */
-.inner {
-  position: relative;
-  width: 100%;
-  height: auto; /* Changed from 100% to auto for responsive height */
-}
-
-/* Main image fills the carousel area without cropping */
 .img {
   width: 100%;
-  height: auto; /* Changed from 100% to auto for responsive height */
-  object-fit: contain; /* Changed from cover to contain to prevent cropping */
+  height: 100%;
+  object-fit: cover;
   display: block;
-  border-radius: inherit;
-  background: transparent;
-  max-height: 70vh; /* Optional: prevents extremely tall images */
 }
 
-/* Shared styles for navigation buttons */
+/* Placeholder when there are no photos */
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: clamp(200px, 34vh, 380px);
+  border-radius: 16px;
+  border: 1px dashed var(--border-1, rgba(0, 0, 0, 0.16));
+  background:
+    repeating-linear-gradient(45deg, rgba(125, 125, 125, 0.05) 0 10px, transparent 10px 20px);
+  color: var(--muted, #8a93a3);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.placeholder svg { opacity: 0.6; }
+
+/* Arrows */
 .nav {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  font-size: 22px;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  z-index: 2;
+  transition: background 0.15s ease, transform 0.15s ease;
+  backdrop-filter: blur(2px);
+}
+.nav:hover { background: rgba(0, 0, 0, 0.62); }
+.nav:active { transform: translateY(-50%) scale(0.92); }
+.prev { left: 10px; }
+.next { right: 10px; }
+
+/* "1 / N photos" badge */
+.count {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  z-index: 2;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(3px);
+  pointer-events: none;
+}
+
+/* expand (fullscreen) hint, top-right */
+.expandHint {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  z-index: 2;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(3px);
+  pointer-events: none;
+}
+
+/* Dots */
+.dots {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  gap: 6px;
+}
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: var(--border, #cbd5e1);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+.dot.active {
+  background: var(--brand, #2563eb);
+  transform: scale(1.35);
+}
+
+/* ===== Lightbox ===== */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: rgba(0, 0, 0, 0.92);
+  display: grid;
+  grid-template-rows: 1fr auto;
+  place-items: center;
+  padding: env(safe-area-inset-top, 0) 12px env(safe-area-inset-bottom, 0);
+  animation: lbFade 0.18s ease both;
+}
+@keyframes lbFade { from { opacity: 0; } to { opacity: 1; } }
+
+.lbStage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+.lbImg {
+  max-width: 96vw;
+  max-height: 82vh;
+  object-fit: contain;
+  border-radius: 8px;
+  user-select: none;
+}
+.lbClose {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 12px);
+  right: 14px;
+  z-index: 3;
   width: 40px;
   height: 40px;
   border-radius: 50%;
   border: none;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(255, 255, 255, 0.14);
   color: #fff;
-  font-size: 24px;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  font-size: 18px;
   cursor: pointer;
-  z-index: 1;
-  transition: background 0.15s ease;
 }
-
-.nav:hover {
-  background: rgba(0, 0, 0, 0.55);
-}
-
-/* Position nav buttons left/right */
-.prev {
-  left: 12px;
-}
-
-.next {
-  right: 12px;
-}
-
-/* Dots container */
-.dots {
-  display: flex;
-  justify-content: center;
-  margin-top: 8px;
-  gap: 6px;
-}
-
-/* Individual dot */
-.dot {
-  width: 8px;
-  height: 8px;
+.lbClose:hover { background: rgba(255, 255, 255, 0.26); }
+.lbNav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   border: none;
-  background: var(--border, #d1d5db);
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  font-size: 28px;
   cursor: pointer;
-  padding: 0;
+  z-index: 3;
+}
+.lbNav:hover { background: rgba(255, 255, 255, 0.26); }
+.lbCount {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 12px 0 4px;
 }
 
-/* Active dot highlighted */
-.dot.active {
-  background: var(--brand, #4f46e5);
+@media (prefers-reduced-motion: reduce) {
+  .lightbox { animation: none; }
+  .dot, .nav { transition: none; }
 }

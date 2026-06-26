@@ -236,7 +236,9 @@ export default function RentalDetails() {
   );
   if (!item) return <div className={styles.page}>{t("common.notFound")}</div>;
 
-  // build facts grid
+  // build key-details grid — always show the core fields ("Not provided" when empty)
+  const np = t("common.notProvided", "Not provided");
+  const yn = (v) => (v == null ? np : v ? t("common.yes") : t("common.no"));
   const facts = [
     {
       label: t("rentals.price"),
@@ -245,58 +247,26 @@ export default function RentalDetails() {
           ? `£${Number(item.price).toLocaleString("en-GB")}${
               item?.period ? `/${item.period}` : `/${t("rentals.month")}`
             }`
-          : null,
-    },
-    {
-      label: t("rentals.deposit"),
-      value:
-        item?.deposit != null
-          ? `£${Number(item.deposit).toLocaleString("en-GB")}`
-          : null,
+          : np,
     },
     {
       label: t("rentals.houseType"),
-      value: item?.roomType ? String(item.roomType).toUpperCase() : null,
+      value: item?.roomType ? String(item.roomType).toUpperCase() : np,
     },
+    { label: t("rentals.bedrooms"), value: item?.bedrooms != null ? String(item.bedrooms) : np },
+    { label: t("rentals.bathrooms"), value: item?.bathrooms != null ? String(item.bathrooms) : np },
+    { label: t("rentals.location"), value: item?.location || np },
     {
-      label: t("rentals.furnished"),
-      value:
-        item?.furnished == null
-          ? null
-          : item.furnished
-          ? t("common.yes")
-          : t("common.no"),
+      label: t("rentals.deposit"),
+      value: item?.deposit != null ? `£${Number(item.deposit).toLocaleString("en-GB")}` : np,
     },
-    {
-      label: t("rentals.billsIncluded"),
-      value:
-        item?.billsIncluded == null
-          ? null
-          : item.billsIncluded
-          ? t("common.yes")
-          : t("common.no"),
-    },
-    {
-      label: t("rentals.bedrooms"),
-      value:
-        item?.bedrooms != null ? String(item.bedrooms) : null,
-    },
-    {
-      label: t("rentals.bathrooms"),
-      value:
-        item?.bathrooms != null ? String(item.bathrooms) : null,
-    },
+    { label: t("rentals.billsIncluded"), value: yn(item?.billsIncluded) },
+    { label: t("rentals.furnished"), value: yn(item?.furnished) },
     {
       label: t("rentals.availableFrom"),
-      value: item?.availableFrom
-        ? new Date(item.availableFrom).toLocaleDateString("en-GB")
-        : null,
+      value: item?.availableFrom ? new Date(item.availableFrom).toLocaleDateString("en-GB") : np,
     },
-    {
-      label: t("rentals.minTerm"),
-      value: item?.minTerm ? `${item.minTerm} ${t("rentals.months")}` : null,
-    },
-  ].filter((f) => f.value);
+  ];
 
   // chips / amenities list
   const chips = [
@@ -349,11 +319,9 @@ export default function RentalDetails() {
       </div>
 
       {/* photos */}
-      {photos.length > 0 && (
-        <div className={styles.mediaWrap}>
-          <ImageCarousel photos={photos} />
-        </div>
-      )}
+      <div className={styles.mediaWrap}>
+        <ImageCarousel photos={photos} placeholderLabel={t("rentals.noPhotos", "No photos yet")} />
+      </div>
 
       {/* main content grid */}
       <div className={styles.contentGrid}>

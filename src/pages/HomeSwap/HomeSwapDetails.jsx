@@ -278,21 +278,30 @@ export default function HomeSwapDetails() {
       ? `£${Number(item.price).toLocaleString("en-GB")}${item?.pricePeriod ? `/${item.pricePeriod}` : `/${t("homeSwapDetails.perSwap")}`}`
       : null;
 
-  const facts = [
-    { label: t("homeSwapDetails.swapWindow"), value: item?.swapWindow || null },
-    { label: t("homeSwapDetails.minNights"), value: item?.minNights != null ? String(item.minNights) : null },
-    { label: t("homeSwapDetails.maxNights"), value: item?.maxNights != null ? String(item.maxNights) : null },
-    { label: t("homeSwapDetails.bedrooms"), value: item?.bedrooms != null ? String(item.bedrooms) : null },
-    { label: t("homeSwapDetails.bathrooms"), value: item?.bathrooms != null ? String(item.bathrooms) : null },
-    { label: t("homeSwapDetails.petsAllowed"), value: item?.petsAllowed == null ? null : (item.petsAllowed ? t("homeSwapDetails.yes") : t("homeSwapDetails.no")) },
-    { label: t("homeSwapDetails.smoking"), value: item?.smokingAllowed == null ? null : (item.smokingAllowed ? t("homeSwapDetails.allowed") : t("homeSwapDetails.notAllowed")) },
-    { label: t("homeSwapDetails.priceNotes"), value: priceText },
-  ].filter((f) => f.value);
+  const location =
+    item?.location || item?.city || item?.area || item?.address || null;
 
   const desiredLocations =
     Array.isArray(item?.desiredLocations) && item.desiredLocations.length > 0
       ? item.desiredLocations.join(", ")
-      : null;
+      : item?.preferredLocation || null;
+
+  const np = t("homeSwapDetails.notProvided", "Not provided");
+  const ynm = (v) => (v == null ? np : v ? t("homeSwapDetails.yes") : t("homeSwapDetails.no"));
+
+  // Key details — always shown ("Not provided" when empty)
+  const facts = [
+    { label: t("homeSwapDetails.currentLocation", "Current location"), value: location || np },
+    { label: t("homeSwapDetails.preferredLocation", "Preferred location"), value: desiredLocations || np },
+    { label: t("homeSwapDetails.housingType", "Housing type"), value: item?.housingType || item?.propertyType || item?.roomType || np },
+    { label: t("homeSwapDetails.bedrooms"), value: item?.bedrooms != null ? String(item.bedrooms) : np },
+    { label: t("homeSwapDetails.bathrooms"), value: item?.bathrooms != null ? String(item.bathrooms) : np },
+    { label: t("homeSwapDetails.floorLevel", "Floor level"), value: item?.floor ?? item?.floorLevel ?? np },
+    { label: t("homeSwapDetails.parking", "Parking"), value: ynm(item?.parking) },
+    { label: t("homeSwapDetails.gardenBalcony", "Garden / balcony"), value: (item?.garden || item?.balcony) ? t("homeSwapDetails.yes") : np },
+    { label: t("homeSwapDetails.swapWindow", "Swap window"), value: item?.swapWindow || np },
+    { label: t("homeSwapDetails.priceNotes", "Price notes"), value: priceText || np },
+  ];
 
   const chips = [
     ...(Array.isArray(item?.amenities) ? item.amenities.map(String) : []),
@@ -305,9 +314,6 @@ export default function HomeSwapDetails() {
     </div>
   );
   if (!item) return <div className={styles.pageLoading} role="alert">{t("homeSwapDetails.notFound")}</div>;
-
-  const location =
-    item?.location || item?.city || item?.area || item?.address || null;
 
   const mapsQuery = location
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`
@@ -356,25 +362,13 @@ export default function HomeSwapDetails() {
         )}
       </div>
 
-      {/* Header: media + title/meta */}
+      {/* Header: title/meta FIRST, then the gallery */}
       <header className={styles.header}>
-        <div className={styles.mediaWrap} aria-label="Listing photos">
-          {photos.length > 0 ? (
-            <>
-              <ImageCarousel photos={photos} />
-              <div className={styles.mediaBadge} aria-hidden="true">
-                {photos.length} {photos.length === 1 ? t("homeSwapDetails.photo") : t("homeSwapDetails.photos")}
-              </div>
-            </>
-          ) : (
-            <div className={styles.mediaFallback} />
-          )}
-        </div>
-
         <div className={styles.titleWrap}>
           <h1 className={styles.title}>
             {item?.title || item?.headline || "Home Swap"}
           </h1>
+          <span className={styles.statusBadge}>{t("homeSwapDetails.openToSwap", "Open to swap")}</span>
           <EntityMetaBar
             location={location}
             price={item?.price || null}
@@ -382,6 +376,10 @@ export default function HomeSwapDetails() {
             ownerName={ownerName}
             postedAt={item?.createdAt || item?.postedAt}
           />
+        </div>
+
+        <div className={styles.mediaWrap} aria-label="Listing photos">
+          <ImageCarousel photos={photos} placeholderLabel={t("homeSwapDetails.noPhotos", "No photos yet")} />
         </div>
       </header>
 

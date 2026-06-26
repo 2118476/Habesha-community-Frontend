@@ -36,6 +36,10 @@
   color: var(--r-ink-1);
   background: transparent;
 }
+/* Clear the mobile bottom navigation so nothing hides behind it */
+@media (max-width: 900px) {
+  .page { padding-bottom: calc(92px + env(safe-area-inset-bottom, 0px)); }
+}
 .topBar {
   display: flex;
   align-items: center;
@@ -172,10 +176,11 @@
 /* Owner / actions */
 .ownerCard {
   position: relative;
-  background: transparent;
-  border: 0;
+  background: var(--r-surface-0);
+  border: 1px solid var(--r-line);
+  border-radius: var(--r-radius-md);
   box-shadow: var(--shadow-1);
-  padding: 0;
+  padding: var(--s-4);
 
   @media (min-width: 980px) {
     position: sticky;
@@ -183,9 +188,8 @@
   }
 
   > div:first-child {
-    border-top: 1px solid var(--r-line);
     border-bottom: 1px solid var(--r-line);
-    padding: var(--s-3) 0;
+    padding: 0 0 var(--s-3);
     margin-bottom: var(--s-3);
   }
 
