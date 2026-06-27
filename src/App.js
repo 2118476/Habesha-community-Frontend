@@ -108,6 +108,10 @@ const PublicDeleteAccount = lazyWithPreload(
   () => import(/* webpackChunkName: "public-delete-account" */ "./pages/PublicDeleteAccount"),
   "public-delete-account"
 );
+const PublicChildSafety = lazyWithPreload(
+  () => import(/* webpackChunkName: "public-child-safety" */ "./pages/PublicChildSafety"),
+  "public-child-safety"
+);
 
 /* NEW: Global search results page (used by header search “See all results…”) */
 const SearchPage = lazyWithPreload(
@@ -516,6 +520,7 @@ const AppRoutes = () => (
         <Route path="/privacy" element={<PublicPrivacy />} />
         <Route path="/terms" element={<PublicTerms />} />
         <Route path="/delete-account" element={<PublicDeleteAccount />} />
+        <Route path="/child-safety" element={<PublicChildSafety />} />
 
         {/* Public global search (used by header search & /search?q=) */}
         <Route path="/search" element={<SearchPage />} />
