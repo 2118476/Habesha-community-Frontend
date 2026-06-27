@@ -15,6 +15,7 @@ import buttonStyles from "../../stylus/components/Button.module.scss";
 
 import ImageCarousel from "../../components/ImageCarousel.jsx";
 import OwnerActions from "../../components/OwnerActions.jsx";
+import ReportContentButton from "../../components/ReportContentButton.jsx";
 
 import {
   resolveOwnerId,
@@ -466,6 +467,14 @@ export default function RentalDetails() {
               >
                 {t("profile.viewProfile")}
               </button>
+
+              <ReportContentButton
+                contentType="RENTAL"
+                contentId={item.id ?? id}
+                ownerId={ownerId}
+                className={`${buttonStyles.btn} ${styles.compactBtn} ${styles.hoverBrand}`}
+                label={`🚩 ${t("report.report", "Report")}`}
+              />
             </div>
           )}
 

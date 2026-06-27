@@ -15,6 +15,7 @@ import buttonStyles from '../../stylus/components/Button.module.scss';
 import ImageCarousel from '../../components/ImageCarousel.jsx';
 import OwnerActions from '../../components/OwnerActions.jsx';
 import ServiceReviews from '../../components/reviews/ServiceReviews';
+import ReportContentButton from '../../components/ReportContentButton.jsx';
 import { navigateToDM } from '../../utils/dmNavigation';
 
 const FALLBACK_PIXEL =
@@ -289,6 +290,13 @@ export default function ServiceDetails() {
               >
                 {t('profile.viewProfile', 'View profile')}
               </button>
+              <ReportContentButton
+                contentType="SERVICE"
+                contentId={service.id ?? id}
+                ownerId={ownerId}
+                className={`${buttonStyles.btn} ${styles.compactBtn} ${styles.hoverBrand}`}
+                label={`🚩 ${t('report.report', 'Report')}`}
+              />
             </div>
           )}
 
