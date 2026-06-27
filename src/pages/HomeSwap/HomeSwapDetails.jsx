@@ -10,6 +10,7 @@ import { makeApiUrl } from "../../api/httpUrl";
 
 import styles from "../../stylus/sections/HomeSwap.module.scss";
 import buttonStyles from "../../stylus/components/Button.module.scss";
+import ReportContentButton from "../../components/ReportContentButton.jsx";
 import { PageLoader } from "../../components/ui/PageLoader/PageLoader";
 
 import EntityMetaBar from "../../components/EntityMetaBar.jsx";
@@ -424,6 +425,15 @@ export default function HomeSwapDetails() {
             <Link to={`/app/profile/${ownerId}`} className={styles.chip}>
               {t("homeSwapDetails.viewProfile")}
             </Link>
+          )}
+          {!isOwner && ownerId && (
+            <ReportContentButton
+              contentType="HOMESWAP"
+              contentId={item?.id ?? id}
+              ownerId={ownerId}
+              className={styles.chip}
+              label={`🚩 ${t("report.report", "Report")}`}
+            />
           )}
           {moreFromUserHref && (
             <Link to={moreFromUserHref} className={styles.chip}>

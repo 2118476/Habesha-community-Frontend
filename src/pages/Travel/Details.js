@@ -4,6 +4,7 @@ import api from '../../api/axiosInstance';
 import { toast } from 'react-toastify';
 import styles from '../../stylus/sections/TravelDetails.module.scss';
 import buttonStyles from '../../stylus/components/Button.module.scss';
+import ReportContentButton from '../../components/ReportContentButton.jsx';
 import EntityMetaBar from '../../components/EntityMetaBar';
 import { PageLoader } from '../../components/ui/PageLoader/PageLoader';
 
@@ -131,6 +132,13 @@ const TravelDetails = () => {
         >
           View poster profile
         </button>
+        <ReportContentButton
+          contentType="TRAVEL"
+          contentId={post?.id ?? id}
+          ownerId={post.postedBy?.id || post.userId}
+          className={buttonStyles.btn}
+          label="🚩 Report"
+        />
       </div>
     </div>
   );

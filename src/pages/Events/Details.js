@@ -8,6 +8,7 @@ import styles from '../../stylus/sections/Events.module.scss';
 import buttonStyles from '../../stylus/components/Button.module.scss';
 import EntityMetaBar from '../../components/EntityMetaBar.jsx';
 import ContactButton from '../../components/ContactButton.jsx';
+import ReportContentButton from '../../components/ReportContentButton.jsx';
 import { PageLoader } from '../../components/ui/PageLoader/PageLoader';
 
 export default function EventDetails() {
@@ -104,6 +105,16 @@ export default function EventDetails() {
         >
           View Organizer
         </button>
+
+        {!isOwner && posterId && (
+          <ReportContentButton
+            contentType="EVENT"
+            contentId={eventItem.id ?? id}
+            ownerId={posterId}
+            className={buttonStyles.btn}
+            label="🚩 Report"
+          />
+        )}
       </div>
     </div>
   );

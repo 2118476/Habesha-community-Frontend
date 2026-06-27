@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 
 import styles from "../../stylus/sections/Ads.module.scss";
 import buttonStyles from "../../stylus/components/Button.module.scss";
+import ReportContentButton from "../../components/ReportContentButton.jsx";
 
 import Avatar from "../../components/Avatar.jsx";
 import CommentsThread from "../../components/ads/CommentsThread.jsx";
@@ -1020,6 +1021,16 @@ export default function AdDetails() {
             Message Seller
           </span>
         </button>
+
+        {!isOwner && posterId && (
+          <ReportContentButton
+            contentType="AD"
+            contentId={ad?.id ?? id}
+            ownerId={posterId}
+            className={styles.postActionBtn}
+            label={<><span className={styles.actionIcon}>🚩</span><span className={styles.actionLabel}>Report</span></>}
+          />
+        )}
       </div>
 
       {/* DIVIDER */}
